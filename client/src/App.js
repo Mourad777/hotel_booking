@@ -2,6 +2,7 @@ import { Router } from 'react-router-dom';
 import './App.css';
 import Layout from './hoc/Layout';
 import history from './utility/history';
+import BasicDateRangePicker from './components/date-selector/DateSelector';
 
 function App() {
   return (
@@ -10,9 +11,11 @@ function App() {
         
         <div className="App">
 
-          Hotel app
+        Home
 
         </div>
+        <BasicDateRangePicker />
+        
       </Router>
     </Layout>
   );

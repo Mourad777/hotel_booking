@@ -8,5 +8,6 @@ Room.hasMany(Booking);
 
 module.exports = {
     Booking,
-    Room
+    Room,
+    // User,
 };

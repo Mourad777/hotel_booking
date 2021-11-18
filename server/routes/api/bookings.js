@@ -2,6 +2,7 @@ const router = require("express").Router();
 const { Booking } = require("../../db/models");
 // expects {recipientId, text, conversationId } in body (conversationId will be null if no conversation exists yet)
 router.post("/", async (req, res, next) => {
+  console.log('creating a booking')
   try {
 
     const { userId, bookingStart, bookingEnd, checkin, roomId } = req.body;

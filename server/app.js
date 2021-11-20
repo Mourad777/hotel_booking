@@ -1,9 +1,12 @@
 const express = require("express");
 const session = require("express-session");
+const http = require("http");
+const cors = require('cors')
+const { Client } = require('pg');
 
-require("dotenv").config();
 
 const app = express();
+app.use(cors());
 
 const port = process.env.PORT || "3001"
 app.set("port", port);
@@ -21,12 +24,14 @@ app.use(urlencoded({ extended: false }));
 // app.use("/auth", require("./routes/auth"));
 app.use("/api", require("./routes/api"));
 
+const server = http.createServer(app);
+
 sessionStore
   .sync()
   .then(() => db.sync())
   .then(() => {
-    app.listen(port);
-    console.log('listening on port 3001')
+    server.listen(port);
+    console.log(`listening on port ${port}`)
     // app.on("error", onError);
     // app.on("listening", onListening);
   });

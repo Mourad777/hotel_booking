@@ -1,5 +1,6 @@
 const Sequelize = require("sequelize");
 const db = require("../db");
+const Booking = require("./booking");
 
 const User = db.define("user", {
     firstName: {
@@ -19,5 +20,15 @@ const User = db.define("user", {
         allowNull: false,
     },
 });
+
+// User.associate = (models) => {
+//     User.hasMany(models.Booking, {
+//         foreignKey: {
+//             name: 'userId',
+//             allowNull: false
+//         },
+//     });
+// };
+
 
 module.exports = User;

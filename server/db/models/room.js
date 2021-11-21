@@ -1,6 +1,5 @@
 const Sequelize = require("sequelize");
 const db = require("../db");
-const Booking = require("./booking");
 
 const Room = db.define("room", {
   type: {

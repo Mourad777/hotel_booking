@@ -1,7 +1,5 @@
 const Sequelize = require("sequelize");
 const db = require("../db");
-const Room = require("./room");
-const User = require("./user");
 
 const Booking = db.define("booking", {
   bookingStart: {
@@ -14,6 +12,22 @@ const Booking = db.define("booking", {
   },
   checkinTime: {
     type: Sequelize.DATE,
+    allowNull: true,
+  },
+  adults: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+  },
+  children: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+  },
+  transactionId: {
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
+  message: {
+    type: Sequelize.STRING,
     allowNull: true,
   },
 });

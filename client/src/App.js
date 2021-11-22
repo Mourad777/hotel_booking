@@ -2,7 +2,6 @@ import { Router } from 'react-router-dom';
 import './App.css';
 import Layout from './hoc/Layout';
 import history from './utility/history';
-import BasicDateRangePicker from './components/date-selector/DateSelector';
 import { useEffect, useState } from 'react';
 import axios from 'axios'
 import { DatePicker, Space } from 'antd'

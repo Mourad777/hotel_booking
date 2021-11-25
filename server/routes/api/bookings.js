@@ -10,8 +10,8 @@ router.post("/", async (req, res, next) => {
     console.log('example time: ', moment(new Date(bookingStart)).format('YYYY-MM-DD'))
     const booking = await Booking.create({
       userId,
-      bookingStart: moment(bookingStart).format('YYYY-MM-DD'),
-      bookingEnd: moment(bookingEnd).format('YYYY-MM-DD'),
+      bookingStart: bookingStart,
+      bookingEnd: bookingEnd,
       checkinTime: null,
       transactionId: 'abc123',
       adults: 2,

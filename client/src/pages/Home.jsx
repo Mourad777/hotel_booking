@@ -13,9 +13,10 @@ const validateDates = (checkin, checkout) => {
     return error
 }
 
-const Header = () => (
-    <div style={{ height: 400, background: 'blue', width: '100%' }}>
+const Header = ({ children }) => (
+    <div style={{ height: 700, background: 'blue', width: '100%', position: 'relative' }}>
         {/* <img  /> */}
+        {children}
     </div>
 )
 
@@ -28,24 +29,39 @@ const Rooms = ({ rooms }) => (
                 gridRowEnd: 'span 2',
                 gridColumnEnd: 'span 2',
                 background: 'red',
-                height: 200,
-            }}><h1>a</h1></div>
+                height: 400,
+            }}><h1>a</h1>
+            </div>
+
             <div style={{
                 gridRowStart: 1,
                 gridColumnStart: 3,
                 gridRowEnd: 'span 2',
                 gridColumnEnd: 'span 2',
                 background: 'green',
-                height: 200,
-            }}><h1>b</h1></div>
+                height: 400,
+            }}><h1>b</h1>
+            </div>
+
             <div style={{
                 gridRowStart: 2,
                 gridColumnStart: 1,
                 gridRowEnd: 'span 2',
-                gridColumnEnd: 'span 2',
+                gridColumnEnd: 'span 1',
                 background: 'purple',
-                height: 200,
-            }}><h1>c</h1></div>
+                height: 400,
+            }}><h1>c</h1>
+            </div>
+
+            <div style={{
+                gridRowStart: 2,
+                gridColumnStart: 2,
+                gridRowEnd: 'span 2',
+                gridColumnEnd: 'span 3',
+                background: 'blue',
+                height: 400,
+            }}><h1>d</h1>
+            </div>
         </div>
 
         <ul>
@@ -71,45 +87,41 @@ const Home = () => {
         if (!value) return;
         const checkinDate = moment(value[0])
         const checkoutDate = moment(value[1])
-        const error = validateDates(checkinDate, checkoutDate)
-        if (error) {
-            setDateError(error)
-            return
-        } else setDateError('')
+        // const error = validateDates(checkinDate, checkoutDate)
+        // if (error) {
+        //     setDateError(error)
+        //     return
+        // } else setDateError('')
         getRooms(checkinDate, checkoutDate)
         // setFromMomentDate(checkinDate);
         // setToMomentDate(checkoutDate);
     }
-    const getRooms = async (fromMomentDate, toMomentDate) => {
-        const checkinDate = fromMomentDate.format('YYYY-MM-DD HH:mm z');
-        const checkoutDate = toMomentDate.format('YYYY-MM-DD HH:mm z');
+    const getRooms = async (fromDate, toDate) => {
+        const checkinDate = moment(fromDate).format('YYYY-MM-DD HH:mm z');
+        const checkoutDate = moment(toDate).format('YYYY-MM-DD HH:mm z');
         const res = await axios.get(`http://localhost:3001/api/rooms/${checkinDate}/${checkoutDate}`);
         setRooms(res.data)
         console.log('res rooms', res)
     }
 
-    useEffect(() => {
-        // getRooms()
-    }, [])
     return (
         <Fragment>
-
-            <Header />
-
+            <Header >
+                <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)' }}>
+                    <Space direction="vertical" size={12}>
+                        <RangePicker
+                            placeholder={["Check-in", "Check-out"]}
+                            onChange={onDateSelect}
+                            disabledDate={current => {
+                                const currentWithoutTime = current.format('YYYY-MM-DD');
+                                return moment(currentWithoutTime).isBefore(moment().subtract(1, 'days')); //disable all dates before today
+                            }}
+                        />
+                        <p> {dateError}</p>
+                    </Space>
+                </div>
+            </Header>
             <Rooms rooms={rooms} />
-
-
-            <Space direction="vertical" size={12}>
-                <RangePicker
-                    placeholder={["Check-in", "Check-out"]}
-                    onChange={onDateSelect}
-                    disabledDate={current => {
-                        return current.isBefore(new Date().getTime() - 86400000); //disable all dates before today
-                    }}
-
-                />
-                <p> {dateError}</p>
-            </Space>
         </Fragment>
     )
 }

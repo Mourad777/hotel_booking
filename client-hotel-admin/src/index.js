@@ -13,7 +13,7 @@ const AdminLayout = React.lazy(() => import("./components/Layout/AdminLayout"));
 const RegisterUser = React.lazy(() => import("./pages/register/Register"));
 const Login = React.lazy(() => import("./pages/login/Login"));
 const Posts = React.lazy(() => import("./pages/posts/Posts"));
-const CreatePost = React.lazy(() => import("./pages/create-post/CreatePost"));
+const CreateRoom = React.lazy(() => import("./pages/create-room/CreateRoom"));
 const Messages = React.lazy(() => import("./pages/messages/Messages"));
 const Message = React.lazy(() => import("./pages/messages/Message"));
 const Settings = React.lazy(() => import("./pages/settings/Settings"));
@@ -55,8 +55,8 @@ const App = () => {
             </Route>
             <PrivateRoute isLoggedIn={isLoggedIn} winSize={winSize} path="/" component={Posts} />
             <PrivateRoute isLoggedIn={isLoggedIn} winSize={winSize} path="/posts" component={Posts} />
-            <PrivateRoute isLoggedIn={isLoggedIn} path="/create-post" component={CreatePost} />
-            <PrivateRoute isLoggedIn={isLoggedIn} path="/edit-post/:id" isEditing component={CreatePost} />
+            <PrivateRoute isLoggedIn={isLoggedIn} path="/create-room" component={CreateRoom} />
+            <PrivateRoute isLoggedIn={isLoggedIn} path="/edit-post/:id" isEditing component={CreateRoom} />
             <PrivateRoute isLoggedIn={isLoggedIn} path="/messages" component={Messages} />
             <PrivateRoute isLoggedIn={isLoggedIn} path="/message/:id" component={Message} />
             <PrivateRoute isLoggedIn={isLoggedIn} path="/settings" component={Settings} />

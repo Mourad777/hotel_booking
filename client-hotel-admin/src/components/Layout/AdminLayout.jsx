@@ -113,23 +113,29 @@ export default function Layout({ children, isLoggedIn,onLogin }) {
         setOpen(false);
     };
 
-    const [nestedOpen, setNestedOpen] = useState(false);
-
-    const handleClick = () => {
-        setNestedOpen(!nestedOpen);
+    const [nestedReservationsOpen, setNestedReservationsOpen] = useState(false);
+    const [nestedRoomsOpen, setNestedRoomsOpen] = useState(false);
+    
+    const handleReservationsExpansion = () => {
+        setNestedReservationsOpen(!nestedReservationsOpen);
     };
+
+    const handleRoomsExpansion = () => {
+        setNestedRoomsOpen(!nestedRoomsOpen);
+    };
+
 
     history.listen((location, action) => {
         setLocation(location.pathname)
     });
 
-    useEffect(() => {
-        const path = history.location.pathname;
-        setLocation(path);
-        if (path === '/create-post' || path === '/posts'|| path === '/') {
-            setNestedOpen(true)
-        }
-    }, []);
+    // useEffect(() => {
+    //     const path = history.location.pathname;
+    //     setLocation(path);
+    //     if (path === '/create-post' || path === '/posts'|| path === '/') {
+    //         setNestedOpen(true)
+    //     }
+    // }, []);
 
     return (
         <div className={classes.root}>
@@ -173,14 +179,14 @@ export default function Layout({ children, isLoggedIn,onLogin }) {
                 {isLoggedIn ?
                     <Fragment>
                         <List>
-                            <ListItem button onClick={handleClick}>
+                            <ListItem button onClick={handleRoomsExpansion}>
                                 <ListItemIcon>
                                     <ChromeReaderModeIcon />
                                 </ListItemIcon>
                                 <ListItemText primary="Rooms" />
-                                {nestedOpen ? <ExpandLess /> : <ExpandMore />}
+                                {nestedRoomsOpen ? <ExpandLess /> : <ExpandMore />}
                             </ListItem>
-                            <Collapse in={nestedOpen} timeout="auto" unmountOnExit>
+                            <Collapse in={nestedRoomsOpen} timeout="auto" unmountOnExit>
                                 <List component="div" disablePadding>
                                     {[
                                         { text: 'New room', icon: PostAddIcon, url: '/create-room' },
@@ -197,14 +203,14 @@ export default function Layout({ children, isLoggedIn,onLogin }) {
 
                         </List>
                         <List>
-                            <ListItem button onClick={handleClick}>
+                            <ListItem button onClick={handleReservationsExpansion}>
                                 <ListItemIcon>
                                     <ChromeReaderModeIcon />
                                 </ListItemIcon>
                                 <ListItemText primary="Reservations" />
-                                {nestedOpen ? <ExpandLess /> : <ExpandMore />}
+                                {nestedReservationsOpen ? <ExpandLess /> : <ExpandMore />}
                             </ListItem>
-                            <Collapse in={nestedOpen} timeout="auto" unmountOnExit>
+                            <Collapse in={nestedReservationsOpen} timeout="auto" unmountOnExit>
                                 <List component="div" disablePadding>
                                     {[
                                         { text: 'New reservation', icon: PostAddIcon, url: '/create-reservation' },

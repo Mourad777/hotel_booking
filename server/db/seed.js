@@ -1,6 +1,7 @@
 const db = require("./db");
 const { User } = require("./models");
 const { Room } = require("./models");
+const { Configuration } = require("./models");
 
 async function seed() {
     await db.sync({ force: true });
@@ -8,16 +9,18 @@ async function seed() {
 
     await User.create({
         firstName: "Thomas",
-        lastName:"Edisson",
+        lastName: "Edisson",
         email: "thomas@email.com",
         password: "123456",
+        isAdmin: true,
     });
 
     await User.create({
         firstName: "Robert",
-        lastName:"Santiago",
+        lastName: "Santiago",
         email: "robert@email.com",
         password: "123456",
+        isAdmin: false,
     });
 
     await Room.create({
@@ -35,6 +38,11 @@ async function seed() {
         isPetsAllowed: true,
         isWifi: true,
     });
+
+    await Configuration.create({
+        bookingPaymentRequired: true,
+    });
+
 
 }
 async function runSeed() {

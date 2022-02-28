@@ -28,7 +28,7 @@ const CreatePost = ({ isEditing }) => {
     const [title, setTitle] = useState('');
     const [file, setFile] = useState('');
     const [country, setCountry] = useState('');
-    const [author, setAuthor] = useState('');
+    const [type, setType] = useState('');
     const [summary, setSummary] = useState('');
     const [content, setContent] = useState('');
     const [categories, setCategories] = useState([]);
@@ -60,9 +60,9 @@ const CreatePost = ({ isEditing }) => {
         setCountry(value);
     };
 
-    const handleAuthor = e => {
+    const handleRoomType = e => {
         e.preventDefault()
-        setAuthor(e.target.value);
+        setType(e.target.value);
     };
 
     const handleSummary = e => {
@@ -95,7 +95,6 @@ const CreatePost = ({ isEditing }) => {
             const id = params.id;
             const post = await initializePostForm(id, setIsLoading)
             setTitle(post.title || '');
-            setAuthor(post.author || '');
             setSummary(post.summary || '');
             const timeStamp = new Date(post.created_at).getTime();
             console.log('timeStamp', timeStamp)
@@ -151,7 +150,7 @@ const CreatePost = ({ isEditing }) => {
 
         const selectedCategoriesIds = categories.filter(cat => selectedCategories.includes(cat.text)).map(cat => cat._id);
         formData.append('title', title || '');
-        formData.append('author', author || '');
+        formData.append('type', type || '');
         formData.append('summary', summary || '');
         formData.append('date_written', dateWritten || '');
         formData.append('content', content || 'Write something...');
@@ -189,10 +188,6 @@ const CreatePost = ({ isEditing }) => {
                 <StyledFormTextInput value={title} onChange={handleTitle} placeholder='Title' />
             </div>
             <div style={{ marginTop: 20 }}>
-                <label style={{ fontSize: '1.2em' }}>Author</label>
-                <StyledFormTextInput value={author} onChange={handleAuthor} placeholder='Author' />
-            </div>
-            <div style={{ marginTop: 20 }}>
                 <StyledThumbnailPreview file={file instanceof File ? URL.createObjectURL(file) : file} />
             </div>
             <div style={{ marginTop: 20 }}>
@@ -212,18 +207,38 @@ const CreatePost = ({ isEditing }) => {
                 />
             </div>
             <div style={{ marginTop: 20 }}>
-                <label style={{ fontSize: '1.2em' }}>Country</label>
+                <label style={{ fontSize: '1.2em' }}>Room Type</label>
                 <Dropdown
                     clearable
-                    placeholder='Select Country'
+                    placeholder='Select Room Type'
                     fluid
                     search
                     selection
-                    options={countries}
-                    onChange={handleCountry}
+                    options={[
+                          {
+                            key: "pr",
+                            value: "privateRoom",
+                            text: "privateRoom",
+                          },
+                          {
+                            key: "sr",
+                            value: "sharedRoom",
+                            text: "sharedRoom",
+                          },
+                          {
+                            key: "ea",
+                            value: "entireAppartment",
+                            text: "entireAppartment",
+                          },
+                          {
+                            key: "ea",
+                            value: "entireHouse",
+                            text: "entireHouse",
+                          },
+                    ]}
+                    onChange={handleRoomType}
                     value={country}
                 >
-
                 </Dropdown>
             </div>
             <div style={{ marginTop: 20 }}>

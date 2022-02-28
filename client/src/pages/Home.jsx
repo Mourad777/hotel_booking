@@ -3,6 +3,7 @@ import moment from 'moment';
 import { Link } from 'react-router-dom';
 import axios from 'axios'
 import { DatePicker, Space } from 'antd'
+import { StyledRoomListItem } from '../components/room-list-item/RoomListItem';
 const { RangePicker } = DatePicker;
 
 const validateDates = (checkin, checkout) => {
@@ -121,7 +122,12 @@ const Home = () => {
                     </Space>
                 </div>
             </Header>
-            <Rooms rooms={rooms} />
+            {/* <Rooms rooms={rooms} /> */}
+            {rooms.map(room =>(
+                <StyledRoomListItem>
+
+                </StyledRoomListItem>
+            ))}
         </Fragment>
     )
 }

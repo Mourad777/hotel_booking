@@ -1,6 +1,7 @@
 const Booking = require("./booking");
 const User = require("./user");
 const Room = require("./room");
+const Configuration = require("./configuration");
 
 // associations
 
@@ -13,4 +14,5 @@ module.exports = {
     Booking,
     Room,
     User,
+    Configuration,
 };

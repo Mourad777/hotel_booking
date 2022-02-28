@@ -4,6 +4,7 @@ import { AppUrl } from '../../utility/utility';
 import Loader from '../../components/Loader/Loader';
 import { useHistory } from 'react-router';
 import { registerUser } from '../../utility/api';
+import axios from 'axios';
 
 const RegisterUser = ({ onLogin }) => {
     const history = useHistory();
@@ -44,11 +45,24 @@ const RegisterUser = ({ onLogin }) => {
             formData.append('first_name', firstName || '');
             formData.append('last_name', lastName || '');
             formData.append('email', email || '');
+            console.log('email', email)
             formData.append('password', password || '');
-            const url = `${AppUrl}api/register`;
-            await registerUser(url, formData, setIsLoading);
+            const url = `${AppUrl}api/auth/register`;
+            const response = await axios.post(url, {
+                firstName,
+                lastName,
+                email,
+                password
+            });
+
+            console.log('registration response', response)
+            const token = response.data.token;
+            if (token) {
+                localStorage.setItem('token', token)
+            }
+            // registerUser(url, formData, setIsLoading);
             onLogin(true);
-            history.push('/create-post');
+            history.push('/create-room');
         }
     }
 
@@ -56,33 +70,39 @@ const RegisterUser = ({ onLogin }) => {
     return (
         <div style={{ margin: 'auto', maxWidth: 400 }}>
             <h1>Register</h1>
-            <div style={{ maxWidth: 350 }}>
+            <form onSubmit={handleForm}>
+                {/* <div style={{ maxWidth: 350 }}>
                 <p style={{ color: 'red' }}>Registration for the demo version is disabled</p>
-            </div>
-            {isLoading && <div style={{ position: 'fixed', zIndex: 5, top: '50%', left: '50%', transform: 'translateX(-50%)' }}><Loader /></div>}
-            <div style={{ marginTop: 20 }}>
-                <label style={{ fontSize: '1.2em' }}>First Name</label>
-                <StyledFormTextInput value={firstName} onChange={handleFirstName} placeholder='First Name' />
-            </div>
-            <div style={{ marginTop: 20 }}>
-                <label style={{ fontSize: '1.2em' }}>Last Name</label>
-                <StyledFormTextInput value={lastName} onChange={handleLastName} placeholder='Last Name' />
-            </div>
-            <div style={{ marginTop: 20 }}>
-                <label style={{ fontSize: '1.2em' }}>Email</label>
-                <StyledFormTextInput value={email} onChange={handleEmail} placeholder='Email' />
-            </div>
-            <div style={{ marginTop: 20 }}>
-                <label style={{ fontSize: '1.2em' }}>Password</label>
-                <StyledFormTextInput type="password" value={password} onChange={handlePassword} placeholder='Password' />
-            </div>
-            <div style={{ marginTop: 20 }}>
-                <label style={{ fontSize: '1.2em' }}>Confirm Password</label>
-                <StyledFormTextInput type="password" value={confirmPassword} onChange={handleConfirmPassword} placeholder='Confirm Password' />
-            </div>
-            <div style={{ textAlign: 'center', padding: '20px 0' }}>
-                <StyledSubmitButton style={{backgroundColor:'#f2f2f2'}} disabled onClick={handleForm} >{'Submit'}</StyledSubmitButton>
-            </div>
+            </div> */}
+                {isLoading && <div style={{ position: 'fixed', zIndex: 5, top: '50%', left: '50%', transform: 'translateX(-50%)' }}><Loader /></div>}
+                <div style={{ marginTop: 20 }}>
+                    <label style={{ fontSize: '1.2em' }}>First Name</label>
+                    <StyledFormTextInput value={firstName} onChange={handleFirstName} placeholder='First Name' />
+                </div>
+                <div style={{ marginTop: 20 }}>
+                    <label style={{ fontSize: '1.2em' }}>Last Name</label>
+                    <StyledFormTextInput value={lastName} onChange={handleLastName} placeholder='Last Name' />
+                </div>
+                <div style={{ marginTop: 20 }}>
+                    <label style={{ fontSize: '1.2em' }}>Email</label>
+                    <StyledFormTextInput value={email} onChange={handleEmail} placeholder='Email' />
+                </div>
+                <div style={{ marginTop: 20 }}>
+                    <label style={{ fontSize: '1.2em' }}>Password</label>
+                    <StyledFormTextInput type="password" value={password} onChange={handlePassword} placeholder='Password' />
+                </div>
+                <div style={{ marginTop: 20 }}>
+                    <label style={{ fontSize: '1.2em' }}>Confirm Password</label>
+                    <StyledFormTextInput type="password" value={confirmPassword} onChange={handleConfirmPassword} placeholder='Confirm Password' />
+                </div>
+                <div style={{ textAlign: 'center', padding: '20px 0' }}>
+                    <StyledSubmitButton
+                        type='submit'
+                        // style={{backgroundColor:'#f2f2f2'}} 
+                        onClick={handleForm} >{'Submit'}
+                    </StyledSubmitButton>
+                </div>
+            </form>
         </div>
     )
 }

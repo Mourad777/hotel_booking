@@ -46,4 +46,36 @@ router.get("/:checkin/:checkout", async (req, res, next) => {
     }
 });
 
+
+
+router.post("/create", async (req, res, next) => {
+
+
+    try {
+
+    } catch (error) {
+        next(error);
+    }
+});
+
+router.put("/update", async (req, res, next) => {
+
+
+    try {
+
+    } catch (error) {
+        next(error);
+    }
+});
+
+router.delete("/delete", async (req, res, next) => {
+
+
+    try {
+
+    } catch (error) {
+        next(error);
+    }
+});
+
 module.exports = router;

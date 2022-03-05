@@ -2,7 +2,8 @@ import React, { Fragment, useEffect, useState } from 'react';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
 import axios from 'axios'
-import { DatePicker, Space } from 'antd'
+import { DatePicker, Space, Menu, Dropdown } from 'antd'
+import { DownOutlined } from '@ant-design/icons';
 import { StyledRoomListItem } from '../components/room-list-item/RoomListItem';
 import { StyledRoomThumbnail, StyledRoomThumbnailContainer } from '../components/room-thumbnail/RoomThumbnail';
 import { StyledRoomDescription, StyledRoomDescriptionContainer } from '../components/room-description/RoomDescription';
@@ -44,6 +45,14 @@ const Home = () => {
         console.log('res accommodations', res)
     }
 
+    const handleBooking = () => {
+
+    }
+
+    const handleDetails = () => {
+
+    }
+
     return (
         <Fragment>
             <Header >
@@ -71,18 +80,45 @@ const Home = () => {
             {/* <Rooms rooms={rooms} /> */}
             {accommodations.map(accommodation => {
 
-                    return (
-                        <StyledRoomListItem key={`accommodation[${accommodation.id}]`}>
-                            <StyledRoomThumbnailContainer>
-                                <StyledRoomThumbnail src={accommodation.image} />
-                            </StyledRoomThumbnailContainer>
-                            <StyledRoomDescriptionContainer>
-                                <h1>{accommodation.type}</h1>
+                return (
+                    <StyledRoomListItem key={`accommodation[${accommodation.id}]`}>
+                        <StyledRoomThumbnailContainer>
+                            <StyledRoomThumbnail src={accommodation.image} />
+                        </StyledRoomThumbnailContainer>
+                        <StyledRoomDescriptionContainer>
+                            <div>
+                                <h1 onClick={handleDetails}>{accommodation.title}</h1>
+                                <h3 onClick={handleDetails}>{accommodation.type}</h3>
                                 <p>Wifi: {accommodation.isWifi ? 'yes' : 'no'}</p>
                                 <p>Pets allowed: {accommodation.isPetsAllowed ? 'yes' : 'no'}</p>
-                            </StyledRoomDescriptionContainer>
-                        </StyledRoomListItem>
-                    )
+                            </div>
+
+                            <div>
+                                {accommodation.roomId && (
+                                    <Dropdown overlay={
+                                        <Menu>
+                                            {accommodation.beds.map(bed => (
+                                                <Menu.Item key={`bed[${bed.bedNumber}]`}>
+                                                    <a target="_blank" rel="noopener noreferrer" href="https://www.antgroup.com">
+                                                        Bed {bed.bedNumber}
+                                                    </a>
+                                                </Menu.Item>
+                                            ))}
+                                        </Menu>
+                                    }>
+                                        <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
+                                            Select a bed <DownOutlined />
+                                        </a>
+                                    </Dropdown>
+                                )}
+                                <button style={{ cursor: 'pointer' }} onClick={handleDetails}>Details</button>
+                                {!accommodation.roomId && <button style={{ cursor: 'pointer' }} onClick={handleBooking}>Book</button>}
+                            </div>
+                        </StyledRoomDescriptionContainer>
+
+
+                    </StyledRoomListItem>
+                )
             })}
         </Fragment>
     )

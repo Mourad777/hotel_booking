@@ -24,6 +24,8 @@ async function seed() {
     });
 
     await Accommodation.create({
+        title:'A cozy room inside a quiet guest house',
+        description:'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.',
         type: 'privateRoom',
         capacity: 4,
         isRefrigerator: true,
@@ -33,15 +35,20 @@ async function seed() {
     });
 
     await Accommodation.create({
+        title:'A new apartment in soho',
+        description:'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
         type: 'apartment',
         capacity: 6,
         isRefrigerator: true,
         isPetsAllowed: true,
         isWifi: true,
-        image:'/hotel-rooms/hotel-g1f6091865_640.jpg'
+        image:'/hotel-rooms/hotel-g1f6091865_640.jpg',
+
     });
 
     await Accommodation.create({
+        title:'A little house by a beautiful lake',
+        description:'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
         type: 'house',
         capacity: 10,
         isRefrigerator: true,
@@ -51,6 +58,8 @@ async function seed() {
     });
 
     await Accommodation.create({
+        title:'A bed in a 6 bed mixed dorm',
+        description:'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
         type: 'dorm',
         bedNumber:1,
         capacity: 10,
@@ -62,6 +71,8 @@ async function seed() {
     });
 
     await Accommodation.create({
+        title:'A bed in a 6 bed mixed dorm',
+        description:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
         type: 'dorm',
         bedNumber:3,
         roomId:2,

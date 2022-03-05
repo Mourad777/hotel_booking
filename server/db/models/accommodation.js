@@ -6,6 +6,14 @@ const Accommodation = db.define("accommodation", {
     type: Sequelize.STRING,
     allowNull: false,
   },
+  title: {
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
+  description: {
+    type: Sequelize.STRING,
+    allowNull: true,
+  },
   capacity: {
     type: Sequelize.INTEGER,
     allowNull: false,

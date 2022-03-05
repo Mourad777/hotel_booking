@@ -1,6 +1,6 @@
 const db = require("./db");
 const { User } = require("./models");
-const { Room } = require("./models");
+const { Accommodation } = require("./models");
 const { Configuration } = require("./models");
 
 async function seed() {
@@ -23,20 +23,53 @@ async function seed() {
         isAdmin: false,
     });
 
-    await Room.create({
-        type: 'private room',
+    await Accommodation.create({
+        type: 'privateRoom',
         capacity: 4,
         isRefrigerator: true,
         isPetsAllowed: false,
         isWifi: true,
+        image:'/hotel-rooms/bedroom-gb8c0d4db8_640.jpg'
     });
 
-    await Room.create({
-        type: 'Apartment',
+    await Accommodation.create({
+        type: 'apartment',
         capacity: 6,
         isRefrigerator: true,
         isPetsAllowed: true,
         isWifi: true,
+        image:'/hotel-rooms/hotel-g1f6091865_640.jpg'
+    });
+
+    await Accommodation.create({
+        type: 'house',
+        capacity: 10,
+        isRefrigerator: true,
+        isPetsAllowed: true,
+        isWifi: true,
+        image:'/hotel-rooms/hotel-g8a8ee587a_640.jpg'
+    });
+
+    await Accommodation.create({
+        type: 'dorm',
+        bedNumber:1,
+        capacity: 10,
+        roomId:2,
+        isRefrigerator: true,
+        isPetsAllowed: true,
+        isWifi: true,
+        image:'/hotel-rooms/hotel-g8a8ee587a_640.jpg'
+    });
+
+    await Accommodation.create({
+        type: 'dorm',
+        bedNumber:3,
+        roomId:2,
+        capacity: 10,
+        isRefrigerator: true,
+        isPetsAllowed: true,
+        isWifi: true,
+        image:'/hotel-rooms/hotel-g8a8ee587a_640.jpg'
     });
 
     await Configuration.create({

@@ -42,6 +42,20 @@ router.post("/", async (req, res, next) => {
 
     const { userId, bookingStart, bookingEnd, checkin, roomId, adults, children, message } = req.body;
     console.log('example time: ', moment(new Date(bookingStart)).format('YYYY-MM-DD'))
+
+    //if room is a dorm than check to see if there is enough beds available
+    const room = await Room.findById(roomId)
+    console.log('found room: ', room);
+    if(room.type === 'dorm') {
+      const totalBeds = room.totalBeds;
+      const bedsOccupied = await Booking.count({ where: { roomId: roomId }});
+      const availableBeds = totalBeds - bedsOccupied;
+      console.log('availableBeds',availableBeds)
+      if(availableBeds <= 0) {
+        return
+      }
+    }
+
     const booking = await Booking.create({
       userId,
       bookingStart: bookingStart,

@@ -1,7 +1,7 @@
 const Sequelize = require("sequelize");
 const db = require("../db");
 
-const Room = db.define("room", {
+const Accommodation = db.define("accommodation", {
   type: {
     type: Sequelize.STRING,
     allowNull: false,
@@ -22,6 +22,18 @@ const Room = db.define("room", {
     type: Sequelize.BOOLEAN,
     allowNull: false,
   },
+  image: {
+    type: Sequelize.STRING,
+    allowNull: true,
+  },
+  roomId: {
+    type: Sequelize.INTEGER,
+    allowNull: true,
+  },
+  bedNumber: {
+    type: Sequelize.INTEGER,
+    allowNull: true,
+  },
 });
 
-module.exports = Room;
+module.exports = Accommodation;

@@ -2,14 +2,14 @@ import { Router, Route } from 'react-router-dom';
 import './App.css';
 import history from './utility/history';
 import Home from './pages/Home';
-import Room from './pages/Room';
+import Accommodation from './pages/Accommodation';
 
 function App() {
 
   return (
       <Router history={history}>
         <Route path="/" exact component={Home} />
-        <Route path="/room/:roomId" exact component={Room} />
+        <Route path="/accomodation/:accomodationId" exact component={Accommodation} />
       
       </Router>
   );

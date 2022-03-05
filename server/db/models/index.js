@@ -1,18 +1,17 @@
 const Booking = require("./booking");
 const User = require("./user");
-const Room = require("./room");
+const Accommodation = require("./accommodation");
 const Configuration = require("./configuration");
-
 // associations
 
-Room.hasMany(Booking);
+Accommodation.hasMany(Booking);
 User.hasMany(Booking);
 Booking.belongsTo(User);
-Booking.belongsTo(Room);
+Booking.belongsTo(Accommodation);
 
 module.exports = {
     Booking,
-    Room,
+    Accommodation,
     User,
     Configuration,
 };

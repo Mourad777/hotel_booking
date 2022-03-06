@@ -1,17 +1,18 @@
 const router = require("express").Router();
-const { Booking, User, Room } = require("../../db/models");
+const { Booking, User, Accommodation } = require("../../db/models");
 const moment = require('moment');
 
-router.get("/:roomId", async (req, res, next) => {
-  const room = req.params.roomId;
+router.get("/:accommodationId", async (req, res, next) => {
+  const accommodation = req.params.accommodationId;
+  console.log('accommodation id',accommodation)
   try {
     const bookings = await Booking.findAll({
       where: {
-        roomId:room
+        accommodationId:accommodation
       },
       include: [
         { model: User, order: ["createdAt", "DESC"] },
-        { model: Room, order: ["createdAt", "DESC"] },
+        { model: Accommodation, order: ["createdAt", "DESC"] },
       ],
     });
 
@@ -26,7 +27,7 @@ router.get("/", async (req, res, next) => {
     const bookings = await Booking.findAll({
       include: [
         { model: User, order: ["createdAt", "DESC"] },
-        { model: Room, order: ["createdAt", "DESC"] },
+        { model: Accommodation, order: ["createdAt", "DESC"] },
       ],
     });
 
@@ -40,15 +41,15 @@ router.post("/", async (req, res, next) => {
   console.log('creating a booking', req.body)
   try {
 
-    const { userId, bookingStart, bookingEnd, checkin, roomId, adults, children, message } = req.body;
+    const { userId, bookingStart, bookingEnd, checkin, accommodationId, adults, children, message } = req.body;
     console.log('example time: ', moment(new Date(bookingStart)).format('YYYY-MM-DD'))
 
-    //if room is a dorm than check to see if there is enough beds available
-    const room = await Room.findById(roomId)
-    console.log('found room: ', room);
-    if(room.type === 'dorm') {
-      const totalBeds = room.totalBeds;
-      const bedsOccupied = await Booking.count({ where: { roomId: roomId }});
+    //if accommodation is a dorm than check to see if there is enough beds available
+    const accommodation = await Accommodation.findByPk(accommodationId);
+    console.log('found accommodation: ', accommodation);
+    if(accommodation.type === 'dorm') {
+      const totalBeds = accommodation.totalBeds;
+      const bedsOccupied = await Booking.count({ where: { accommodationId: accommodationId }});
       const availableBeds = totalBeds - bedsOccupied;
       console.log('availableBeds',availableBeds)
       if(availableBeds <= 0) {
@@ -64,7 +65,7 @@ router.post("/", async (req, res, next) => {
       transactionId: 'abc123',
       adults: 2,
       children: 0,
-      roomId,
+      accommodationId,
       message,
     });
 

@@ -2,11 +2,12 @@ import React, { Fragment, useEffect, useState } from 'react';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
 import axios from 'axios'
-import { DatePicker, Space, Menu, Dropdown } from 'antd'
+import { DatePicker, Space, Menu, Dropdown, Select  } from 'antd'
 import { DownOutlined } from '@ant-design/icons';
 import { StyledRoomListItem } from '../components/room-list-item/RoomListItem';
 import { StyledRoomThumbnail, StyledRoomThumbnailContainer } from '../components/room-thumbnail/RoomThumbnail';
 import { StyledRoomDescription, StyledRoomDescriptionContainer } from '../components/room-description/RoomDescription';
+const { Option } = Select;
 
 const { RangePicker } = DatePicker;
 
@@ -25,8 +26,9 @@ const Header = ({ children }) => (
     </div>
 )
 
-const Home = () => {
-
+const Home = (props) => {
+    console.log('props');
+    const {handleAccommodationDates,accommodationDates} = props;
     // const [fromMomentDate, setFromMomentDate] = useState('')
     // const [toMomentDate, setToMomentDate] = useState('')
     const [adults, setAdults] = useState('')
@@ -34,24 +36,41 @@ const Home = () => {
     const [accommodations, setAccommodations] = useState([])
     const [dateError, setDateError] = useState('')
 
+    function onChange(value) {
+        console.log(`selected ${value}`);
+      }
+
     const getAccommodations = async (value) => {
-        if (!value) return;
-        const fromDate = moment(value[0])
-        const toDate = moment(value[1])
+        if (!value || (value[0] === value[1])) return;
+       
+        const fromDate = moment(value[0]);
+        const toDate = moment(value[1]);
+        handleAccommodationDates(value);
         const checkinDateFormatted = moment(fromDate).format('YYYY-MM-DD HH:mm z');
         const checkoutDateFormatted = moment(toDate).format('YYYY-MM-DD HH:mm z');
+        console.log('checkinDateFormatted',checkinDateFormatted,'checkoutDateFormatted',checkoutDateFormatted)
         const res = await axios.get(`http://localhost:3001/api/accommodations/${checkinDateFormatted}/${checkoutDateFormatted}`);
-        setAccommodations(res.data)
         console.log('res accommodations', res)
+        setAccommodations(res.data)
+        
     }
 
-    const handleBooking = () => {
-
-    }
 
     const handleDetails = () => {
 
     }
+
+    useEffect(() => {
+        if (accommodationDates) {
+            getAccommodations(accommodationDates)
+            // const checkinDateFormatted = moment(fromDate).format('YYYY-MM-DD HH:mm z');
+            // const checkoutDateFormatted = moment(toDate).format('YYYY-MM-DD HH:mm z');
+            // const res = await axios.get(`http://localhost:3001/api/accommodations/${checkinDateFormatted}/${checkoutDateFormatted}`);
+            // setAccommodations(res.data)
+            // console.log('res accommodations', res)
+        }
+
+    }, [])
 
     return (
         <Fragment>
@@ -66,6 +85,7 @@ const Home = () => {
 
                     <Space direction="vertical" size={12}>
                         <RangePicker
+                            value={accommodationDates}
                             placeholder={["Check-in", "Check-out"]}
                             onChange={getAccommodations}
                             disabledDate={current => {
@@ -99,9 +119,7 @@ const Home = () => {
                                         <Menu>
                                             {accommodation.beds.map(bed => (
                                                 <Menu.Item key={`bed[${bed.bedNumber}]`}>
-                                                    <a target="_blank" rel="noopener noreferrer" href="https://www.antgroup.com">
-                                                        Bed {bed.bedNumber}
-                                                    </a>
+                                                    Bed {bed.bedNumber}
                                                 </Menu.Item>
                                             ))}
                                         </Menu>
@@ -111,8 +129,12 @@ const Home = () => {
                                         </a>
                                     </Dropdown>
                                 )}
-                                <button style={{ cursor: 'pointer' }} onClick={handleDetails}>Details</button>
-                                {!accommodation.roomId && <button style={{ cursor: 'pointer' }} onClick={handleBooking}>Book</button>}
+                                <Link to={`/accommodation/${accommodation.id}`}>
+                                    Details
+                                </Link>
+                                {!accommodation.roomId && <Link to={`/book/${accommodation.id}`}>
+                                    Book
+                                </Link>}
                             </div>
                         </StyledRoomDescriptionContainer>
 

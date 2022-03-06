@@ -1,7 +1,7 @@
 const Sequelize = require("sequelize");
 const db = require("../db");
 
-const Accommodation = db.define("accommodation", {
+const Accommodation = db.define("accommodations", {
   type: {
     type: Sequelize.STRING,
     allowNull: false,

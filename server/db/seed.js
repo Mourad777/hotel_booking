@@ -20,13 +20,13 @@ async function seed() {
         lastName: "Santiago",
         email: "robert@email.com",
         password: "123456",
-        isAdmin: false,
+        isAdmin: false, 
     });
 
     await Accommodation.create({
         title:'A cozy room inside a quiet guest house',
         description:'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.',
-        type: 'privateRoom',
+        type: 'Private room',
         capacity: 4,
         isRefrigerator: true,
         isPetsAllowed: false,
@@ -37,7 +37,7 @@ async function seed() {
     await Accommodation.create({
         title:'A new apartment in soho',
         description:'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-        type: 'apartment',
+        type: 'Apartment',
         capacity: 6,
         isRefrigerator: true,
         isPetsAllowed: true,
@@ -49,7 +49,7 @@ async function seed() {
     await Accommodation.create({
         title:'A little house by a beautiful lake',
         description:'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
-        type: 'house',
+        type: 'House',
         capacity: 10,
         isRefrigerator: true,
         isPetsAllowed: true,
@@ -60,7 +60,7 @@ async function seed() {
     await Accommodation.create({
         title:'A bed in a 6 bed mixed dorm',
         description:'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-        type: 'dorm',
+        type: 'Dorm',
         bedNumber:1,
         capacity: 10,
         roomId:2,
@@ -73,7 +73,7 @@ async function seed() {
     await Accommodation.create({
         title:'A bed in a 6 bed mixed dorm',
         description:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-        type: 'dorm',
+        type: 'Dorm',
         bedNumber:3,
         roomId:2,
         capacity: 10,

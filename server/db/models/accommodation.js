@@ -34,14 +34,18 @@ const Accommodation = db.define("accommodations", {
     type: Sequelize.STRING,
     allowNull: true,
   },
-  roomId: {
+  bedCount:{
     type: Sequelize.INTEGER,
     allowNull: true,
-  },
-  bedNumber: {
-    type: Sequelize.INTEGER,
-    allowNull: true,
-  },
+  }
+  // roomId: {
+  //   type: Sequelize.INTEGER,
+  //   allowNull: true,
+  // },
+  // bedNumber: {
+  //   type: Sequelize.INTEGER,
+  //   allowNull: true,
+  // },
 });
 
 module.exports = Accommodation;

@@ -1,5 +1,5 @@
 const db = require("./db");
-const { User } = require("./models");
+const { User, Bed, Tour } = require("./models");
 const { Accommodation } = require("./models");
 const { Configuration } = require("./models");
 
@@ -57,7 +57,7 @@ async function seed() {
         image:'/hotel-rooms/hotel-g8a8ee587a_640.jpg'
     });
 
-    await Accommodation.create({
+    const dorm1 = await Accommodation.create({
         title:'A bed in a 6 bed mixed dorm',
         description:'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
         type: 'Dorm',
@@ -70,17 +70,40 @@ async function seed() {
         image:'/hotel-rooms/hotel-g8a8ee587a_640.jpg'
     });
 
-    await Accommodation.create({
-        title:'A bed in a 6 bed mixed dorm',
-        description:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-        type: 'Dorm',
-        bedNumber:3,
-        roomId:2,
-        capacity: 10,
-        isRefrigerator: true,
-        isPetsAllowed: true,
-        isWifi: true,
-        image:'/hotel-rooms/hotel-g8a8ee587a_640.jpg'
+    await Bed.create({
+        isBunkbed:true,
+        accommodationId:5,
+        bunkbedLevel:1,
+        accommodationId:dorm1.id,
+    });
+
+    await Bed.create({
+        isBunkbed:true,
+        accommodationId:5,
+        bunkbedLevel:2,
+        accommodationId:dorm1.id,
+    });
+    
+
+    await Bed.create({
+        isBunkbed:true,
+        accommodationId:5,
+        bunkbedLevel:1,
+        accommodationId:dorm1.id,
+    });
+
+    await Bed.create({
+        isBunkbed:true,
+        accommodationId:2,
+        accommodationId:dorm1.id,
+    });
+
+    await Tour.create({
+        type:'Boat tour',
+        title:'Half day catamaran trip in the San Blas islands',
+        capacity:10,
+        duration:10,
+        timeSlots:[12,14],
     });
 
     await Configuration.create({
@@ -106,3 +129,34 @@ async function runSeed() {
 if (module === require.main) {
     runSeed();
 }
+
+
+
+// type: {
+//     type: Sequelize.STRING,
+//     allowNull: false,
+//   },
+//   title: {
+//     type: Sequelize.STRING,
+//     allowNull: false,
+//   },
+//   description: {
+//     type: Sequelize.STRING,
+//     allowNull: true,
+//   },
+//   capacity: {
+//     type: Sequelize.INTEGER,
+//     allowNull: false,
+//   },
+//   image: {
+//     type: Sequelize.STRING,
+//     allowNull: true,
+//   },
+//   duration: {
+//     type: Sequelize.INTEGER,
+//     allowNull: false,
+//   },
+//   timeSlots: {
+//     type: [Sequelize.INTEGER],
+//     allowNull: false,
+//   }

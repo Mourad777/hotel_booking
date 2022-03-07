@@ -1,12 +1,12 @@
 const router = require("express").Router();
-const { Booking, User, Accommodation } = require("../../db/models");
+const { AccommodationBooking, User, Accommodation } = require("../../db/models");
 const moment = require('moment');
 
 router.get("/:accommodationId", async (req, res, next) => {
   const accommodation = req.params.accommodationId;
   console.log('accommodation id',accommodation)
   try {
-    const bookings = await Booking.findAll({
+    const bookings = await AccommodationBooking.findAll({
       where: {
         accommodationId:accommodation
       },
@@ -24,7 +24,7 @@ router.get("/:accommodationId", async (req, res, next) => {
 
 router.get("/", async (req, res, next) => {
   try {
-    const bookings = await Booking.findAll({
+    const bookings = await AccommodationBooking.findAll({
       include: [
         { model: User, order: ["createdAt", "DESC"] },
         { model: Accommodation, order: ["createdAt", "DESC"] },
@@ -49,7 +49,7 @@ router.post("/", async (req, res, next) => {
     console.log('found accommodation: ', accommodation);
     if(accommodation.type === 'dorm') {
       const totalBeds = accommodation.totalBeds;
-      const bedsOccupied = await Booking.count({ where: { accommodationId: accommodationId }});
+      const bedsOccupied = await AccommodationBooking.count({ where: { accommodationId: accommodationId }});
       const availableBeds = totalBeds - bedsOccupied;
       console.log('availableBeds',availableBeds)
       if(availableBeds <= 0) {
@@ -57,7 +57,7 @@ router.post("/", async (req, res, next) => {
       }
     }
 
-    const booking = await Booking.create({
+    const booking = await AccommodationBooking.create({
       userId,
       bookingStart: bookingStart,
       bookingEnd: bookingEnd,

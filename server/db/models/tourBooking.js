@@ -1,24 +1,16 @@
 const Sequelize = require("sequelize");
 const db = require("../db");
 
-const Booking = db.define("booking", {
-  bookingStart: {
+const TourBooking = db.define("tour_booking", {
+  tourDate: {
     type: Sequelize.DATE,
     allowNull: false,
   },
-  bookingEnd: {
-    type: Sequelize.DATE,
-    allowNull: false,
-  },
-  checkinTime: {
-    type: Sequelize.DATE,
-    allowNull: true,
-  },
-  adults: {
+  timeSlot: {
     type: Sequelize.INTEGER,
     allowNull: false,
-  },
-  children: {
+  }, 
+  peopleCount: {
     type: Sequelize.INTEGER,
     allowNull: false,
   },
@@ -32,4 +24,4 @@ const Booking = db.define("booking", {
   },
 });
 
-module.exports = Booking;
+module.exports = TourBooking;

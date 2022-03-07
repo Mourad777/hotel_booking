@@ -114,12 +114,12 @@ const Home = (props) => {
                             </div>
 
                             <div>
-                                {accommodation.roomId && (
+                                {accommodation.beds.length > 0 && (
                                     <Dropdown overlay={
                                         <Menu>
                                             {accommodation.beds.map(bed => (
-                                                <Menu.Item key={`bed[${bed.bedNumber}]`}>
-                                                    Bed {bed.bedNumber}
+                                                <Menu.Item key={`bed[${bed.id}]`}>
+                                                    Bed {bed.id}
                                                 </Menu.Item>
                                             ))}
                                         </Menu>

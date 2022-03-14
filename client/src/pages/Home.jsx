@@ -2,7 +2,7 @@ import React, { Fragment, useEffect, useState } from 'react';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
 import axios from 'axios'
-import { DatePicker, Space, Menu, Dropdown, Select  } from 'antd'
+import { DatePicker, Space, Menu, Dropdown, Select } from 'antd'
 import { DownOutlined } from '@ant-design/icons';
 import { StyledRoomListItem } from '../components/room-list-item/RoomListItem';
 import { StyledRoomThumbnail, StyledRoomThumbnailContainer } from '../components/room-thumbnail/RoomThumbnail';
@@ -28,7 +28,7 @@ const Header = ({ children }) => (
 
 const Home = (props) => {
     console.log('props');
-    const {handleAccommodationDates,accommodationDates} = props;
+    const { handleAccommodationDates, accommodationDates } = props;
     // const [fromMomentDate, setFromMomentDate] = useState('')
     // const [toMomentDate, setToMomentDate] = useState('')
     const [adults, setAdults] = useState('')
@@ -36,23 +36,19 @@ const Home = (props) => {
     const [accommodations, setAccommodations] = useState([])
     const [dateError, setDateError] = useState('')
 
-    function onChange(value) {
-        console.log(`selected ${value}`);
-      }
-
     const getAccommodations = async (value) => {
         if (!value || (value[0] === value[1])) return;
-       
+
         const fromDate = moment(value[0]);
         const toDate = moment(value[1]);
         handleAccommodationDates(value);
         const checkinDateFormatted = moment(fromDate).format('YYYY-MM-DD HH:mm z');
         const checkoutDateFormatted = moment(toDate).format('YYYY-MM-DD HH:mm z');
-        console.log('checkinDateFormatted',checkinDateFormatted,'checkoutDateFormatted',checkoutDateFormatted)
+        console.log('checkinDateFormatted', checkinDateFormatted, 'checkoutDateFormatted', checkoutDateFormatted)
         const res = await axios.get(`http://localhost:3001/api/accommodations/${checkinDateFormatted}/${checkoutDateFormatted}`);
         console.log('res accommodations', res)
         setAccommodations(res.data)
-        
+
     }
 
 
@@ -117,15 +113,15 @@ const Home = (props) => {
                                 {accommodation.beds.length > 0 && (
                                     <Dropdown overlay={
                                         <Menu>
-                                            {accommodation.beds.map(bed => (
+                                            {accommodation.beds.map((bed, i) => (
                                                 <Menu.Item key={`bed[${bed.id}]`}>
-                                                    Bed {bed.id}
+                                                    {`${i + 1} (${accommodation.price * (i + 1)}$)`}
                                                 </Menu.Item>
                                             ))}
                                         </Menu>
                                     }>
                                         <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
-                                            Select a bed <DownOutlined />
+                                            Select beds <DownOutlined />
                                         </a>
                                     </Dropdown>
                                 )}

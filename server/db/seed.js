@@ -31,7 +31,8 @@ async function seed() {
         isRefrigerator: true,
         isPetsAllowed: false,
         isWifi: true,
-        image:'/hotel-rooms/bedroom-gb8c0d4db8_640.jpg'
+        image:'/hotel-rooms/bedroom-gb8c0d4db8_640.jpg',
+        price:40,
     });
 
     await Accommodation.create({
@@ -43,6 +44,7 @@ async function seed() {
         isPetsAllowed: true,
         isWifi: true,
         image:'/hotel-rooms/hotel-g1f6091865_640.jpg',
+        price:55,
 
     });
 
@@ -54,7 +56,8 @@ async function seed() {
         isRefrigerator: true,
         isPetsAllowed: true,
         isWifi: true,
-        image:'/hotel-rooms/hotel-g8a8ee587a_640.jpg'
+        image:'/hotel-rooms/hotel-g8a8ee587a_640.jpg',
+        price:120
     });
 
     const dorm1 = await Accommodation.create({
@@ -67,7 +70,8 @@ async function seed() {
         isRefrigerator: true,
         isPetsAllowed: true,
         isWifi: true,
-        image:'/hotel-rooms/hotel-g8a8ee587a_640.jpg'
+        image:'/hotel-rooms/hotel-g8a8ee587a_640.jpg',
+        price:12,
     });
 
     await Bed.create({
@@ -104,6 +108,7 @@ async function seed() {
         capacity:10,
         duration:10,
         timeSlots:[12,14],
+        price:30
     });
 
     await Configuration.create({

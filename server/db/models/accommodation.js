@@ -14,6 +14,10 @@ const Accommodation = db.define("accommodations", {
     type: Sequelize.STRING,
     allowNull: true,
   },
+  price: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+  },
   capacity: {
     type: Sequelize.INTEGER,
     allowNull: false,

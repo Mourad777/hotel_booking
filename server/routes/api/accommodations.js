@@ -1,7 +1,6 @@
 const router = require("express").Router();
 const { AccommodationBooking, User, Accommodation, Bed } = require("../../db/models");
 const moment = require('moment');
-const { QueryTypes } = require("sequelize");
 
 function isEmpty(obj) {
     return Object.keys(obj).length === 0;
@@ -11,7 +10,16 @@ router.get("/:accommodationId", async (req, res, next) => {
     const accommodationId = req.params.accommodationId;
 
     try {
-        const accommodation = await Accommodation.findByPk(accommodationId);
+        const accommodation = await Accommodation.findOne({
+            where: { id: accommodationId }, include: [
+                { model: AccommodationBooking, order: ["createdAt", "DESC"] },
+                {
+                    model: Bed, order: ["createdAt", "DESC"], include: [
+                        { model: AccommodationBooking, order: ["createdAt", "DESC"] },
+                    ],
+                },
+            ],
+        });
         res.json(accommodation);
     } catch (error) {
         next(error);
@@ -29,7 +37,7 @@ router.get("/:checkin/:checkout", async (req, res, next) => {
                 {
                     model: Bed, order: ["createdAt", "DESC"], include: [
                         { model: AccommodationBooking, order: ["createdAt", "DESC"] },
-                    ], 
+                    ],
                 },
             ],
             // raw: true,
@@ -42,7 +50,7 @@ router.get("/:checkin/:checkout", async (req, res, next) => {
         // res.json(accommodations)
 
 
-        
+
 
         console.log('query:', accommodations);
 
@@ -57,9 +65,9 @@ router.get("/:checkin/:checkout", async (req, res, next) => {
 
         accommodations.forEach(accommodation => {
 
-            
 
-            accommodation.beds.forEach(bed=>{
+
+            accommodation.beds.forEach(bed => {
                 let isBedAvailable = true;
 
                 if (bed.accommodation_bookings.length === 0) {
@@ -74,13 +82,13 @@ router.get("/:checkin/:checkout", async (req, res, next) => {
                     const momentBookingEnd = moment(booking.bookingEnd);
                     const isDatesOccupied = (momentCheckinDate.isBetween(momentBookingStart, momentBookingEnd)) ||
                         (momentCheckoutDate.isBetween(momentBookingStart, momentBookingEnd))
-    
+
                     if (isDatesOccupied) {
                         isBedAvailable = false;
                         return
                     }
                 })
-    
+
                 if (isBedAvailable) {
                     availableBeds.push(bed)
                 }
@@ -117,11 +125,11 @@ router.get("/:checkin/:checkout", async (req, res, next) => {
 
         //get only data values from accommodations array
         const rawAvailableAccommodations = availableAccommodations.map(accommodation => accommodation.dataValues)
-        const rawAvailableAccommodationsWithBeds = rawAvailableAccommodations.map(accommodation=>{
-            return {...accommodation,beds:accommodation.beds.filter(bed=>availableBeds.findIndex(availableBed=>availableBed.accommodationId===bed.accommodationId) > -1)}
+        const rawAvailableAccommodationsWithBeds = rawAvailableAccommodations.map(accommodation => {
+            return { ...accommodation, beds: accommodation.beds.filter(bed => availableBeds.findIndex(availableBed => availableBed.accommodationId === bed.accommodationId) > -1) }
         })
         console.log('rawAvailableAccommodations', rawAvailableAccommodations);
-        console.log('rawAvailableAccommodationsWithBeds',rawAvailableAccommodationsWithBeds)
+        console.log('rawAvailableAccommodationsWithBeds', rawAvailableAccommodationsWithBeds)
         //since the available accomodations will include beds in dorm rooms and a bed is considered an accommodation, need to make sure that the 
         //list of accomodations doesn't included the same room twice but rather group the beds of the same room inside a nested array
 

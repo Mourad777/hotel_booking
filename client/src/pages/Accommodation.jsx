@@ -1,9 +1,11 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import axios from 'axios'
-import { DatePicker } from 'antd'
+import { DatePicker, Select } from 'antd'
 import moment from 'moment';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import { Option } from 'antd/lib/mentions';
+import { isAccommodationAvailable } from '../utility/utils';
 
 const { RangePicker } = DatePicker;
 
@@ -26,32 +28,40 @@ const StyledRangePicker = styled(DatePicker)`
 
 `;
 //.ant-picker-input > input {
-  //  text-align:center;
+//  text-align:center;
 //}
 
 const StyledBookLinkContainer = styled.div`
 padding: 10px; width: 100%; border: none; background: #e2e2e2; display:flex; justify-content:center;
 `
 
-const Accommodation = ({ match,accommodationDates, handleAccommodationDates }) => {
+const Accommodation = ({ match, accommodationDates, handleAccommodationDates }) => {
     const accommodationId = match.params.accommodationId
+    const bedCount = match.params.bedCount
+
     const [fromMomentDate, setFromDate] = useState('')
     const [toMomentDate, setToDate] = useState('')
 
     const [accommodation, setAccommodation] = useState({})
-    const [bookings, setBookings] = useState([])
     const [dateError, setDateError] = useState('')
+    const [selectedBeds, setSelectedBeds] = useState(null)
+
+    console.log('accommodationDates',accommodationDates)
 
     useEffect(() => {
         getAccommodationDetails()
-        getBookings()
+        if (bedCount) {
+            setSelectedBeds(bedCount)
+        }
     }, [])
 
     const bookAccommodation = async () => {
+        if (accommodation.type === 'Dorm' && !selectedBeds) return;
         const response = await axios.post('http://localhost:3001/api/bookings', {
             bookingStart: moment.utc(accommodationDates[0]).format('YYYY-MM-DD HH:mm z'),
             bookingEnd: moment.utc(accommodationDates[1]).format('YYYY-MM-DD HH:mm z'),
             accommodationId: accommodationId,
+            bedCount: selectedBeds,
             userId: 1
         });
 
@@ -62,7 +72,7 @@ const Accommodation = ({ match,accommodationDates, handleAccommodationDates }) =
     const getAccommodationDetails = async () => {
         const res = await axios.get(`http://localhost:3001/api/accommodations/${accommodationId}`);
         setAccommodation(res.data);
-        console.log('res', res);
+        console.log('get accommodation response', res)
     }
 
     const onDateSelect = (value) => {
@@ -81,17 +91,23 @@ const Accommodation = ({ match,accommodationDates, handleAccommodationDates }) =
         //     setDateError(error)
         //     return
         // } else setDateError('');
-        
+
         // setFromDate(checkinDate);
         // setToDate(checkoutDate);
     }
 
+
     const getBookings = async () => {
         const res = await axios.get(`http://localhost:3001/api/bookings/${accommodationId}`)
-        setBookings(res.data)
+        // setBookings(res.data)
         console.log('res', res)
     }
-    console.log('accommodationDates',accommodationDates)
+
+    const onChange = (value) => {
+        setSelectedBeds(value)
+    }
+
+    console.log('accommodationDates', accommodationDates)
     return (
         <Fragment>
 
@@ -110,17 +126,41 @@ const Accommodation = ({ match,accommodationDates, handleAccommodationDates }) =
                         style={{ width: '100%' }}
                         placeholder={["Check-in", "Check-out"]}
                         onChange={onDateSelect}
+                        disabled={!selectedBeds && accommodation.type === 'Dorm'}
                         disabledDate={current => {
+                            // return false;
                             const formattedDate = current.format('YYYY-MM-DD');
-                            return (bookings.findIndex(booking => moment(formattedDate).isBetween(booking.bookingStart, booking.bookingEnd)
-                                ||
-                                moment(formattedDate).isSame(booking.bookingStart)
-                            ) > -1) //disable dates between the checkin checkout date but exclude checkout date to allow users to book on that date in the afternoon
-                                ||
-                                moment(formattedDate).isBefore(moment().subtract(1, 'days'))//disable dates before today
+                            if (accommodation.type === 'Dorm') {
+                                const availableBeds = [];
+
+                                accommodation.beds.forEach(bed => {
+                                    const isAvailable = 
+                                    isAccommodationAvailable(bed.accommodation_bookings,formattedDate)
+                                        ||
+                                        moment(formattedDate).isBefore(moment().subtract(1, 'days'))//disable dates before today
+
+                                    if (isAvailable) { availableBeds.push(bed) }
+
+                                })
+                                return availableBeds.length > accommodation.beds.length - selectedBeds
+                            } else {
+                                return isAccommodationAvailable(accommodation.accommodation_bookings, formattedDate)
+                                    ||
+                                    moment(formattedDate).isBefore(moment().subtract(1, 'days'))//disable dates before today
+                            }
                         }}
                     />
                     <p> {dateError}</p>
+
+                    {(!!accommodation.id && accommodation.type === 'Dorm') && <Select
+                        placeholder="Select number of beds"
+                        onChange={onChange}
+                        value={selectedBeds}
+                        style={{ minWidth: 300 }}
+
+                    >
+                        {accommodation.beds.map((bed, i) => <Option key={bed.id} value={i + 1}>{`${i + 1} (${accommodation.price * (i + 1)})$`}</Option>)}
+                    </Select>}
                     {/* <button style={{ padding: 10, width: '100%', border: 'none', background: '#e2e2e2', cursor: 'pointer' }} onClick={bookAccommodation} >Book</button> */}
                     <StyledBookLinkContainer>
                         <StyledLink to={`/book/${accommodation.id}`}>

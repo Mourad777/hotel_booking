@@ -16,11 +16,11 @@ const AccommodationBooking = db.define("accommodation_booking", {
   },
   adults: {
     type: Sequelize.INTEGER,
-    allowNull: false,
+    allowNull: true,
   },
   children: {
     type: Sequelize.INTEGER,
-    allowNull: false,
+    allowNull: true,
   },
   transactionId: {
     type: Sequelize.STRING,

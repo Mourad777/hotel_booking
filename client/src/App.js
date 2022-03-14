@@ -10,6 +10,7 @@ import { useState } from 'react';
 function App() {
 
   const [accommodationDates, setAccommodationDates] = useState({})
+  const [selectedBeds, setSelectedBeds] = useState(null) 
 
   const handleAccommodationDates = (value) => {
     console.log('handling dates')
@@ -18,10 +19,13 @@ function App() {
 
   return (
     <Router history={history}>
-      <Route path="/" exact render={(props) => <Home {...props} handleAccommodationDates={handleAccommodationDates} accommodationDates={accommodationDates} />}/>
-      <Route path="/accommodation/:accommodationId" exact render={(props) => <Accommodation {...props} handleAccommodationDates={handleAccommodationDates} accommodationDates={accommodationDates} />}/>
+      <Route path="/" exact render={(props) => <Home {...props} handleAccommodationDates={handleAccommodationDates} accommodationDates={accommodationDates} />} />
+      <Route path="/accommodation/:accommodationId" exact render={(props) => {
+        return (<Accommodation {...props} selectedBeds={selectedBeds} handleAccommodationDates={handleAccommodationDates} accommodationDates={accommodationDates} />)
+      }
+      } />
       <Route path="/tour/:tour" exact component={Tour} />
-      <Route path="/booking/accommodation/:accommodationId/:checkin/:checkout" exact component={Booking} />
+      <Route path="/booking/accommodation/:checkin/:checkout/:accommodationId/:bedCount?" exact selectedBeds={selectedBeds} component={Booking} />
       <Route path="/booking/tour/:tourId/:date/:timeslot" exact render={(props) => <Booking {...props} accommodationDates={accommodationDates} />} />
     </Router>
   );

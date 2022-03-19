@@ -28,7 +28,7 @@ const Header = ({ children }) => (
 
 const Home = (props) => {
     console.log('props');
-    const { handleAccommodationDates, accommodationDates } = props;
+    const { handleAccommodationDates, accommodationDates, handleAccommodation } = props;
     // const [fromMomentDate, setFromMomentDate] = useState('')
     // const [toMomentDate, setToMomentDate] = useState('')
     const [adults, setAdults] = useState('')
@@ -128,7 +128,7 @@ const Home = (props) => {
                                 <Link to={`/accommodation/${accommodation.id}`}>
                                     Details
                                 </Link>
-                                {!accommodation.roomId && <Link to={`/book/${accommodation.id}`}>
+                                {!accommodation.roomId && <Link onClick={() => handleAccommodation(accommodation)} to={`/booking`}>
                                     Book
                                 </Link>}
                             </div>

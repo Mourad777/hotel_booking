@@ -3,7 +3,7 @@ const { AccommodationBooking, User, Accommodation, Bed } = require("../../db/mod
 const moment = require('moment');
 
 
-const {isAccommodationAvailableAtDate} = require('../../utils')
+const { isAccommodationAvailableAtDate } = require('../../utils')
 
 
 router.get("/:accommodationId", async (req, res, next) => {
@@ -43,15 +43,34 @@ router.get("/", async (req, res, next) => {
 
 router.post("/", async (req, res, next) => {
 
-  
+
   console.log('creating a booking', req.body)
   try {
 
-    const { userId, bookingStart, bookingEnd, checkin, accommodationId, adults, children, message, bedCount } = req.body;
+    const { email, firstName, lastName, bookingStart, bookingEnd, checkin, accommodationId, adults, children, message, bedCount } = req.body;
     console.log('example time: ', moment(new Date(bookingStart)).format('YYYY-MM-DD'))
 
     console.log('bed count', bedCount)
+    console.log(' email, firstName, lastName,', email, firstName, lastName,)
+    const user = await User.findOne({ where: { email } });
 
+    return
+    let userId;  
+    if (!user) {
+      console.log('no user found')
+      const newUser = await User.create({
+        email,
+        firstName,
+        lastName,
+        password: 'abc',
+        isAdmin: false,
+      })
+      userId = newUser.id;
+    } else {
+      console.log('found user',user)
+      userId = user.id
+    }
+    return
     //if accommodation is a dorm than check to see if there is enough beds available
     const accommodation = await Accommodation.findOne({
       where: { id: accommodationId }, include: [
@@ -63,8 +82,6 @@ router.post("/", async (req, res, next) => {
         },
       ],
     });
-
-    console.log('is dorm: ', accommodation.type === 'Dorm')
 
     let booking;
     if (accommodation.type === 'Dorm') {
@@ -80,7 +97,7 @@ router.post("/", async (req, res, next) => {
         console.log('DATE ******************************: ', m)
         for (let i = 0; i < beds.length; i++) {
           console.log('BED ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^', beds[i].id)
-          const isAvailable = isAccommodationAvailableAtDate(beds[i].accommodation_bookings,formattedDate)
+          const isAvailable = isAccommodationAvailableAtDate(beds[i].accommodation_bookings, formattedDate)
 
           if (!isAvailable) {
             unavailableBedIds.push(beds[i].id)
@@ -114,13 +131,13 @@ router.post("/", async (req, res, next) => {
       }
       booking = bookings
     } else {
-      
+
 
       let isAccommodationAvailable = true;
       for (var m = moment(bookingStart); m.isBefore(bookingEnd); m.add(1, 'days')) {
         const formattedDate = m.format('YYYY-MM-DD');
         console.log('DATE ******************************: ', m)
-        const isAvailable = isAccommodationAvailableAtDate(accommodation.accommodation_bookings,formattedDate);
+        const isAvailable = isAccommodationAvailableAtDate(accommodation.accommodation_bookings, formattedDate);
 
         if (!isAvailable) {
           isAccommodationAvailable = false;

@@ -9,24 +9,56 @@ import { useState } from 'react';
 
 function App() {
 
-  const [accommodationDates, setAccommodationDates] = useState({})
-  const [selectedBeds, setSelectedBeds] = useState(null) 
+  const [selectedAccommodationDates, setSelectedAccommodationDates] = useState({})
+  const [selectedAccommodation, setSelectedAccommodation] = useState({})
+  const [selectedBeds, setSelectedBeds] = useState(1)
 
   const handleAccommodationDates = (value) => {
-    console.log('handling dates')
-    setAccommodationDates(value)
+    setSelectedAccommodationDates(value)
+  }
+
+  const handleAccommodation = (value) => {
+    setSelectedAccommodation(value)
+  }
+
+  const handleSelectedBeds = (value) => {
+    console.log('value',value)
+    console.log('value2',value.target.value)
+    setSelectedBeds(value)
   }
 
   return (
     <Router history={history}>
-      <Route path="/" exact render={(props) => <Home {...props} handleAccommodationDates={handleAccommodationDates} accommodationDates={accommodationDates} />} />
+      <Route path="/"
+        exact
+        render={(props) => <Home
+          {...props}
+          handleAccommodation={handleAccommodation}
+          handleAccommodationDates={handleAccommodationDates}
+          accommodationDates={selectedAccommodationDates} />} />
       <Route path="/accommodation/:accommodationId" exact render={(props) => {
-        return (<Accommodation {...props} selectedBeds={selectedBeds} handleAccommodationDates={handleAccommodationDates} accommodationDates={accommodationDates} />)
+        return (<Accommodation
+          {...props}
+          selectedBeds={selectedBeds}
+          handleSelectedBeds={handleSelectedBeds}
+          handleAccommodation={handleAccommodation}
+          accommodation={selectedAccommodation}
+          handleAccommodationDates={handleAccommodationDates}
+          accommodationDates={selectedAccommodationDates} />)
       }
       } />
       <Route path="/tour/:tour" exact component={Tour} />
-      <Route path="/booking/accommodation/:checkin/:checkout/:accommodationId/:bedCount?" exact selectedBeds={selectedBeds} component={Booking} />
-      <Route path="/booking/tour/:tourId/:date/:timeslot" exact render={(props) => <Booking {...props} accommodationDates={accommodationDates} />} />
+      <Route path="/booking" exact render={(props) => {
+        return (<Booking
+          {...props}
+          selectedBeds={selectedBeds}
+          selectedAccommodation={selectedAccommodation}
+          selectedAccommodationDates={selectedAccommodationDates}
+          handleAccommodationDates={handleAccommodationDates}
+          handleSelectedBeds={handleSelectedBeds}
+           />)
+      }
+      } />
     </Router>
   );
 }

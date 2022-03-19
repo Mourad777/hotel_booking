@@ -38,7 +38,7 @@ padding: 10px; width: 100%; border: none; background: #e2e2e2; display:flex; jus
 const Accommodation = ({ match, accommodationDates, handleAccommodationDates }) => {
     const accommodationId = match.params.accommodationId
     const bedCount = match.params.bedCount
-
+ 
     const [fromMomentDate, setFromDate] = useState('')
     const [toMomentDate, setToDate] = useState('')
 
@@ -104,6 +104,7 @@ const Accommodation = ({ match, accommodationDates, handleAccommodationDates }) 
     }
 
     const onChange = (value) => {
+        
         setSelectedBeds(value)
     }
 
@@ -163,7 +164,7 @@ const Accommodation = ({ match, accommodationDates, handleAccommodationDates }) 
                     </Select>}
                     {/* <button style={{ padding: 10, width: '100%', border: 'none', background: '#e2e2e2', cursor: 'pointer' }} onClick={bookAccommodation} >Book</button> */}
                     <StyledBookLinkContainer>
-                        <StyledLink to={`/book/${accommodation.id}`}>
+                        <StyledLink to={`/booking`}>
                             Book
                         </StyledLink>
                     </StyledBookLinkContainer>

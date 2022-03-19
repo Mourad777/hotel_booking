@@ -11,22 +11,42 @@ import {
     TreeSelect,
     Switch,
 } from 'antd';
-
+import axios from 'axios';
+import moment from 'moment';
 const { RangePicker } = DatePicker;
 
-export default function Booking({ match }) {
-    let bookingType;
-    const accommodationId = match.params.accommodationId
-    const tourId = match.params.tourId
-    if (accommodationId) bookingType = 'accommodation';
-    if (tourId) bookingType = 'tour';
+export default function Booking({ selectedBeds, handleAccommodationDates, handleSelectedBeds, selectedAccommodation, selectedAccommodationDates }) {
+    
+    const [formValues,setFormValues] = useState({})
 
-    const submitReservation = (values) => {
-        console.log('values: ', values)
+    const handleForm = (event) => {
+        const name = event.target.name;
+        const value = event.target.value;
+        setFormValues({ ...formValues, [name]: value });
+    }
+
+    const submitReservation = async (values) => {
+        console.log('values: ', values);
+
+        const response = await axios.post('http://localhost:3001/api/bookings', {...formValues,
+            bookingStart: moment.utc(selectedAccommodationDates[0]).format('YYYY-MM-DD HH:mm z'),
+            bookingEnd: moment.utc(selectedAccommodationDates[1]).format('YYYY-MM-DD HH:mm z'),
+            accommodationId: selectedAccommodation.id,
+            bedCount: selectedBeds,
+        });
+
+        console.log('response', response)
+    }
+
+    const onDateSelect = (value) => {
+        if (!value) return;
+        handleAccommodationDates(value)
     }
 
     return (
-        <div style={{maxWidth:500 }}>
+        <div style={{ maxWidth: 700, margin: 'auto', padding: 30 }}>
+            <h1 style={{ textAlign: 'center' }}>Booking</h1>
+            <img style={{ height: 400, width: 500 }} src={selectedAccommodation.image} />
             <Form
                 labelCol={{
                     span: 4,
@@ -37,37 +57,43 @@ export default function Booking({ match }) {
                 layout="horizontal"
                 size="large"
             >
-                <Form.Item label="First name">
-                    <Input />
+                <Form.Item label="First name"> 
+                    <Input value={formValues.firstName} name="firstName" onChange={handleForm} />
                 </Form.Item>
                 <Form.Item label="Last name">
-                    <Input />
+                    <Input value={formValues.lastName} name="lastName" onChange={handleForm} />
                 </Form.Item>
                 <Form.Item label="E-mail">
-                    <Input />
+                    <Input value={formValues.email} name="email" onChange={handleForm} />
                 </Form.Item>
-                <Form.Item label="Select">
-                    <Select>
-                        <Select.Option value="demo">Demo</Select.Option>
+                {selectedAccommodation.id && <Form.Item label="Select">
+                    <Select disabled={selectedAccommodation.type !== 'Dorm'} value={selectedBeds} onChange={handleSelectedBeds}>
+                        {selectedAccommodation.beds.map((bed, i) => <Select.Option key={bed.id} value="demo">Bed {i + 1}</Select.Option>)}
                     </Select>
-                </Form.Item>
+                </Form.Item>}
                 <Form.Item label="DatePicker">
-                    <RangePicker />
+                    <RangePicker
+                        value={selectedAccommodationDates}
+                        style={{ width: '100%' }}
+                        placeholder={["Check-in", "Check-out"]}
+                        onChange={onDateSelect}
+                    />
                 </Form.Item>
-                <Form.Item label="Beds">
-                    <InputNumber />
-                </Form.Item>
+                {/* <Form.Item label="Beds">
+                    <InputNumber  disabled={selectedAccommodation.type !== 'Dorm'} />
+                </Form.Item> */}
                 <Form.Item label="I am bringing a pet" valuePropName="checked">
                     <Switch />
                 </Form.Item>
                 <Form.Item label="Credit card information">
-                    <Input />
+                    <Input value={formValues.creditCard} name="creditCard" onChange={handleForm} />
                 </Form.Item>
                 <Form.Item label="I agree to the terms and conditions" valuePropName="checked">
                     <Switch />
                 </Form.Item>
+                <p style={{ fontSize: '1.5em' }}>{`${selectedAccommodation.type === 'Dorm' ? selectedAccommodation.price * selectedBeds : selectedAccommodation.price}$`}</p>
                 <Form.Item>
-                    <Button>Reserve</Button>
+                    <Button onClick={submitReservation}>Reserve</Button>
                 </Form.Item>
             </Form>
         </div>

@@ -1,6 +1,7 @@
 import moment from 'moment';
 
 export const isAccommodationAvailable = (bookings, currentDate) => {
+    if (!bookings) return false;
     return (bookings.findIndex(booking => moment(currentDate).isBetween(moment(booking.bookingStart).subtract(1, 'days'), moment(booking.bookingEnd).subtract(1, 'days'))
         ||
         moment(currentDate).isSame(booking.bookingStart)

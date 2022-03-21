@@ -47,31 +47,9 @@ router.post("/", async (req, res, next) => {
   console.log('creating a booking', req.body)
   try {
 
-    const { email, firstName, lastName, bookingStart, bookingEnd, checkin, accommodationId, adults, children, message, bedCount } = req.body;
-    console.log('example time: ', moment(new Date(bookingStart)).format('YYYY-MM-DD'))
-
-    console.log('bed count', bedCount)
-    console.log(' email, firstName, lastName,', email, firstName, lastName,)
-    const user = await User.findOne({ where: { email } });
-
-    return
-    let userId;  
-    if (!user) {
-      console.log('no user found')
-      const newUser = await User.create({
-        email,
-        firstName,
-        lastName,
-        password: 'abc',
-        isAdmin: false,
-      })
-      userId = newUser.id;
-    } else {
-      console.log('found user',user)
-      userId = user.id
-    }
-    return
-    //if accommodation is a dorm than check to see if there is enough beds available
+    const { email, firstName, lastName, bookingStart, bookingEnd, accommodationId, bedCount } = req.body;
+    // console.log('example time: ', moment(new Date(bookingStart)).format('YYYY-MM-DD'))
+     
     const accommodation = await Accommodation.findOne({
       where: { id: accommodationId }, include: [
         { model: AccommodationBooking, order: ["createdAt", "DESC"] },
@@ -82,6 +60,29 @@ router.post("/", async (req, res, next) => {
         },
       ],
     });
+    console.log('accommodation',accommodation)
+    if(!accommodation) {
+      return res.json({ message: 'No accommodation found with the provided Id' })
+    }
+ 
+    const user = await User.findOne({ where: { email:email.trim().toLowerCase() } });
+    let userId;  
+    if (!user) {
+      console.log('no user found')
+      const newUser = await User.create({
+        email:email.trim().toLowerCase(),
+        firstName,
+        lastName,
+        password: 'abc',
+        isAdmin: false,
+      })
+      userId = newUser.id;
+    } else {
+      console.log('found user',user)
+      userId = user.id
+    }
+
+    //if accommodation is a dorm than check to see if there is enough beds available
 
     let booking;
     if (accommodation.type === 'Dorm') {
@@ -112,20 +113,15 @@ router.post("/", async (req, res, next) => {
 
       console.log(' bedIdsAvailable', bedIdsAvailable)
 
-      return
-
       if (bedIdsAvailable.length === 0) return res.json({ message: 'there are no beds available for these dates' })
 
       const bookings = []
       for (let i = 0; i < bedCount; i++) {
         booking = await AccommodationBooking.create({
           userId,
-          bookingStart: bookingStart,
-          bookingEnd: bookingEnd,
-          checkinTime: null,
           transactionId: 'abc123',
           bedId: bedIdsAvailable[i],
-          message,
+          ...req.body,
         });
         bookings.push(booking)
       }
@@ -143,26 +139,24 @@ router.post("/", async (req, res, next) => {
           isAccommodationAvailable = false;
         }
       }
-
+      console.log('isAccommodationAvailable', isAccommodationAvailable)
       if (!isAccommodationAvailable) {
         isAccommodationAvailable = false;
         return res.json({ message: 'the accommodation is not available on these dates' })
       }
 
-      console.log('isAccommodationAvailable', isAccommodationAvailable)
-
-      return
-
       booking = await AccommodationBooking.create({
-        userId,
-        bookingStart: bookingStart,
-        bookingEnd: bookingEnd,
-        checkinTime: null,
+        // userId,
+        // bookingStart,
+        // bookingEnd,
+        // checkinTime: null,
         transactionId: 'abc123',
-        adults: 2,
-        children: 0,
-        accommodationId,
-        message,
+        // adults: null,
+        // children: null,
+        // accommodationId,
+        // message,
+        userId,
+        ...req.body
       });
     }
 

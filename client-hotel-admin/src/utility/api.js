@@ -506,21 +506,56 @@ export const deleteCategory = async (id, setIsLoading) => {
     console.log('Delete Response', deleteResponse);
 }
 
-//posts api
-export const getPosts = async (setPosts, setIsLoading) => {
+//accommodations api
+export const getAccommodations = async (setAccommodations, setIsLoading) => {
     const token = localStorage.getItem('token');
     let res = {};
     setIsLoading(true)
     try {
-        res = await axios.get(`${AppUrl}api/posts`, getDefaultHeader(token));
+        res = await axios.get(`${AppUrl}api/accommodations/all/all`, getDefaultHeader(token));
 
     } catch (e) {
-        console.log('Fetch posts error', e)
+        console.log('Fetch accommodations error', e)
         setIsLoading(false)
     }
-    console.log('Fetch posts response', res)
-    const posts = res.data || [];
-    setPosts(posts);
+    console.log('Fetch accommodations response', res)
+    const accommodations = res.data || [];
+    setAccommodations(accommodations);
+    setIsLoading(false)
+}
+
+export const getAccommodation = async (setAccommodation, accommodationId, setIsLoading) => {
+    const token = localStorage.getItem('token');
+    let res = {};
+    setIsLoading(true)
+    try {
+        res = await axios.get(`${AppUrl}api/accommodations/${accommodationId}`, getDefaultHeader(token));
+
+    } catch (e) {
+        console.log('Fetch accommodation error', e)
+        setIsLoading(false)
+    }
+    console.log('Fetch accommodation response', res)
+    const accommodation = res.data || [];
+    setAccommodation(accommodation);
+    setIsLoading(false)
+}
+
+//bookings api
+export const getBookings = async (setBookings, setIsLoading) => {
+    const token = localStorage.getItem('token');
+    let res = {};
+    setIsLoading(true)
+    try {
+        res = await axios.get(`${AppUrl}api/bookings`, getDefaultHeader(token));
+
+    } catch (e) {
+        console.log('Fetch bookings error', e)
+        setIsLoading(false)
+    }
+    console.log('Fetch bookings response', res)
+    const bookings = res.data || [];
+    setBookings(bookings);
     setIsLoading(false)
 }
 
@@ -559,7 +594,7 @@ export const updatePostForm = async (url, formData, setIsLoading) => {
     console.log('Update post response', res)
 }
 
-export const deletePost = async (id, setIsLoading) => {
+export const deleteAccommodation = async (id, setIsLoading) => {
     const token = localStorage.getItem('token');
     let res;
     setIsLoading(true)

@@ -96,11 +96,7 @@ const RegisterUser = ({ onLogin }) => {
                     <StyledFormTextInput type="password" value={confirmPassword} onChange={handleConfirmPassword} placeholder='Confirm Password' />
                 </div>
                 <div style={{ textAlign: 'center', padding: '20px 0' }}>
-                    <StyledSubmitButton
-                        type='submit'
-                        // style={{backgroundColor:'#f2f2f2'}} 
-                        onClick={handleForm} >{'Submit'}
-                    </StyledSubmitButton>
+                    <StyledSubmitButton type='submit' >Submit </StyledSubmitButton>
                 </div>
             </form>
         </div>

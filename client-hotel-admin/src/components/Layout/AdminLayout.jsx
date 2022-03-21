@@ -157,7 +157,7 @@ export default function Layout({ children, isLoggedIn,onLogin }) {
                         <MenuIcon />
                     </IconButton>
                     <Typography variant="h6" noWrap>
-                        Blog admin panel
+                        Hotel admin panel
                     </Typography>
                 </Toolbar>
             </AppBar>
@@ -200,7 +200,6 @@ export default function Layout({ children, isLoggedIn,onLogin }) {
                                     ))}
                                 </List>
                             </Collapse>
-
                         </List>
                         <List>
                             <ListItem button onClick={handleReservationsExpansion}>
@@ -213,8 +212,8 @@ export default function Layout({ children, isLoggedIn,onLogin }) {
                             <Collapse in={nestedReservationsOpen} timeout="auto" unmountOnExit>
                                 <List component="div" disablePadding>
                                     {[
-                                        { text: 'New reservation', icon: PostAddIcon, url: '/create-reservation' },
-                                        { text: 'View reservations', icon: DynamicFeedIcon, url: '/reservations',altUrl:'/' },
+                                        { text: 'New reservation', icon: PostAddIcon, url: '/create-reservation' }, 
+                                        { text: 'View reservations', icon: DynamicFeedIcon, url: '/bookings',altUrl:'/' },
                                         // { text: 'Comments', icon: CommentIcon }
                                     ].map((item, index) => (
                                         <ListItem style={item.url === location || item.altUrl === location ? { background: 'rgb(240,240,240)' } : {}} onClick={() => history.push(item.url)} button key={item.text} className={classes.nested}>

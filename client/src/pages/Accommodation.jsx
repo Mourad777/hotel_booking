@@ -35,18 +35,13 @@ const StyledBookLinkContainer = styled.div`
 padding: 10px; width: 100%; border: none; background: #e2e2e2; display:flex; justify-content:center;
 `
 
-const Accommodation = ({ match, accommodationDates, handleAccommodationDates }) => {
+const Accommodation = ({ match, accommodationDates, handleAccommodationDates, handleAccommodation }) => {
     const accommodationId = match.params.accommodationId
     const bedCount = match.params.bedCount
- 
-    const [fromMomentDate, setFromDate] = useState('')
-    const [toMomentDate, setToDate] = useState('')
 
     const [accommodation, setAccommodation] = useState({})
     const [dateError, setDateError] = useState('')
     const [selectedBeds, setSelectedBeds] = useState(null)
-
-    console.log('accommodationDates',accommodationDates)
 
     useEffect(() => {
         getAccommodationDetails()
@@ -54,20 +49,6 @@ const Accommodation = ({ match, accommodationDates, handleAccommodationDates }) 
             setSelectedBeds(bedCount)
         }
     }, [])
-
-    const bookAccommodation = async () => {
-        if (accommodation.type === 'Dorm' && !selectedBeds) return;
-        const response = await axios.post('http://localhost:3001/api/bookings', {
-            bookingStart: moment.utc(accommodationDates[0]).format('YYYY-MM-DD HH:mm z'),
-            bookingEnd: moment.utc(accommodationDates[1]).format('YYYY-MM-DD HH:mm z'),
-            accommodationId: accommodationId,
-            bedCount: selectedBeds,
-            userId: 1
-        });
-
-        console.log('response', response)
-
-    }
 
     const getAccommodationDetails = async () => {
         const res = await axios.get(`http://localhost:3001/api/accommodations/${accommodationId}`);
@@ -96,15 +77,7 @@ const Accommodation = ({ match, accommodationDates, handleAccommodationDates }) 
         // setToDate(checkoutDate);
     }
 
-
-    const getBookings = async () => {
-        const res = await axios.get(`http://localhost:3001/api/bookings/${accommodationId}`)
-        // setBookings(res.data)
-        console.log('res', res)
-    }
-
-    const onChange = (value) => {
-        
+    const handleSelectedBeds = (value) => {
         setSelectedBeds(value)
     }
 
@@ -135,8 +108,8 @@ const Accommodation = ({ match, accommodationDates, handleAccommodationDates }) 
                                 const availableBeds = [];
 
                                 accommodation.beds.forEach(bed => {
-                                    const isAvailable = 
-                                    isAccommodationAvailable(bed.accommodation_bookings,formattedDate)
+                                    const isAvailable =
+                                        isAccommodationAvailable(bed.accommodation_bookings, formattedDate)
                                         ||
                                         moment(formattedDate).isBefore(moment().subtract(1, 'days'))//disable dates before today
 
@@ -155,7 +128,7 @@ const Accommodation = ({ match, accommodationDates, handleAccommodationDates }) 
 
                     {(!!accommodation.id && accommodation.type === 'Dorm') && <Select
                         placeholder="Select number of beds"
-                        onChange={onChange}
+                        onChange={handleSelectedBeds}
                         value={selectedBeds}
                         style={{ minWidth: 300 }}
 
@@ -164,11 +137,10 @@ const Accommodation = ({ match, accommodationDates, handleAccommodationDates }) 
                     </Select>}
                     {/* <button style={{ padding: 10, width: '100%', border: 'none', background: '#e2e2e2', cursor: 'pointer' }} onClick={bookAccommodation} >Book</button> */}
                     <StyledBookLinkContainer>
-                        <StyledLink to={`/booking`}>
+                        <StyledLink onClick={() => handleAccommodation(accommodation)} to={`/booking`}>
                             Book
                         </StyledLink>
                     </StyledBookLinkContainer>
-                    <button onClick={bookAccommodation}>book</button>
                 </div>
 
             </div>

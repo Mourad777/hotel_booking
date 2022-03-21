@@ -31,6 +31,25 @@ router.get("/:checkin/:checkout", async (req, res, next) => {
     const checkoutDate = req.params.checkout;
 
     try {
+
+        if(checkinDate === 'all' && checkoutDate === 'all') {
+            const accommodations = await Accommodation.findAll({
+                include: [
+                    { model: AccommodationBooking, order: ["createdAt", "DESC"] },
+                    {
+                        model: Bed, order: ["createdAt", "DESC"], include: [
+                            { model: AccommodationBooking, order: ["createdAt", "DESC"] },
+                        ],
+                    },
+                ],
+                // raw: true,
+                // nest: true,
+                // rowMode: "array"
+            });
+
+           return res.json(accommodations)
+        }
+
         const accommodations = await Accommodation.findAll({
             include: [
                 { model: AccommodationBooking, order: ["createdAt", "DESC"] },

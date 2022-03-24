@@ -183,14 +183,14 @@ export default function Layout({ children, isLoggedIn,onLogin }) {
                                 <ListItemIcon>
                                     <ChromeReaderModeIcon />
                                 </ListItemIcon>
-                                <ListItemText primary="Rooms" />
+                                <ListItemText primary="Accommodations" />
                                 {nestedRoomsOpen ? <ExpandLess /> : <ExpandMore />}
                             </ListItem>
                             <Collapse in={nestedRoomsOpen} timeout="auto" unmountOnExit>
                                 <List component="div" disablePadding>
                                     {[
-                                        { text: 'New room', icon: PostAddIcon, url: '/create-room' },
-                                        { text: 'View rooms', icon: DynamicFeedIcon, url: '/rooms',altUrl:'/' },
+                                        { text: 'New accommodation', icon: PostAddIcon, url: '/create-accommodation' },
+                                        { text: 'View accommodations', icon: DynamicFeedIcon, url: '/accommodations',altUrl:'/' },
                                         // { text: 'Comments', icon: CommentIcon }
                                     ].map((item, index) => (
                                         <ListItem style={item.url === location || item.altUrl === location ? { background: 'rgb(240,240,240)' } : {}} onClick={() => history.push(item.url)} button key={item.text} className={classes.nested}>
@@ -213,7 +213,7 @@ export default function Layout({ children, isLoggedIn,onLogin }) {
                                 <List component="div" disablePadding>
                                     {[
                                         { text: 'New reservation', icon: PostAddIcon, url: '/create-reservation' }, 
-                                        { text: 'View reservations', icon: DynamicFeedIcon, url: '/bookings',altUrl:'/' },
+                                        { text: 'View reservations', icon: DynamicFeedIcon, url: '/bookings' },
                                         // { text: 'Comments', icon: CommentIcon }
                                     ].map((item, index) => (
                                         <ListItem style={item.url === location || item.altUrl === location ? { background: 'rgb(240,240,240)' } : {}} onClick={() => history.push(item.url)} button key={item.text} className={classes.nested}>

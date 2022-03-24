@@ -23,7 +23,6 @@ function App() {
 
   const handleSelectedBeds = (value) => {
     console.log('value',value)
-    console.log('value2',value.target.value)
     setSelectedBeds(value)
   }
 

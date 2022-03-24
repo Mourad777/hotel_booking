@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { AppUrl, resizeImageFn } from './utility'
+import { AppUrl } from './utility'
 import { processComments } from './helper-functions'
 
 const getDefaultHeader = (token) => {
@@ -541,6 +541,24 @@ export const getAccommodation = async (setAccommodation, accommodationId, setIsL
     setIsLoading(false)
 }
 
+//users api
+export const getUsers = async (setUsers, setIsLoading) => {
+    const token = localStorage.getItem('token');
+    let res = {};
+    setIsLoading(true)
+    try {
+        res = await axios.get(`${AppUrl}api/users`, getDefaultHeader(token));
+
+    } catch (e) {
+        console.log('Fetch users error', e)
+        setIsLoading(false)
+    }
+    console.log('Fetch users response', res)
+    const users = res.data || [];
+    setUsers(users.map(user => ({ key: user.id, value: user.id, text: user.firstName + ' ' + `(${user.email})` })));
+    setIsLoading(false)
+}
+
 //bookings api
 export const getBookings = async (setBookings, setIsLoading) => {
     const token = localStorage.getItem('token');
@@ -557,6 +575,27 @@ export const getBookings = async (setBookings, setIsLoading) => {
     const bookings = res.data || [];
     setBookings(bookings);
     setIsLoading(false)
+}
+
+export const createBooking = async (values, setIsLoading) => {
+    const token = localStorage.getItem('token');
+    let res = {};
+    setIsLoading(true)
+    try {
+
+        const response = await axios.post('http://localhost:3001/api/bookings', values);
+
+        console.log('response', response)
+
+        return response.data
+
+    } catch (e) {
+        console.log('Create bookings error', e)
+        setIsLoading(false)
+    }
+    console.log('Create bookings response', res)
+    setIsLoading(false)
+    return res.data
 }
 
 export const initializePostForm = async (id, setIsLoading) => {
@@ -699,21 +738,21 @@ export const updateConfiguration = async (formData, setIsLoading) => {
 
 
 //tinymce editor
-export const editor_photo_upload_handler = async (blobInfo, success, failure, progress) => {
-    const token = localStorage.getItem('token');
-    const formData = new FormData();
-    const compressedFile = await resizeImageFn(blobInfo.blob());
-    formData.append('image', compressedFile);
-    const res = await axios.post(
-        `${AppUrl}api/tinymce/upload`,
-        formData,
-        getDefaultHeader(token)
-    );
+// export const editor_photo_upload_handler = async (blobInfo, success, failure, progress) => {
+//     const token = localStorage.getItem('token');
+//     const formData = new FormData();
+//     const compressedFile = await resizeImageFn(blobInfo.blob());
+//     formData.append('image', compressedFile);
+//     const res = await axios.post(
+//         `${AppUrl}api/tinymce/upload`,
+//         formData,
+//         getDefaultHeader(token)
+//     );
 
-    console.log('res.data', res.data)
-    success(res.data.location)
-    return res.data.location;
-};
+//     console.log('res.data', res.data)
+//     success(res.data.location)
+//     return res.data.location;
+// };
 
 export const registerUser = async (url, formData, setIsLoading) => {
     let registrationResponse;
@@ -781,3 +820,50 @@ export const logout = async (setIsLoading) => {
     setIsLoading(false)
     console.log('User logout response: ', logoutResponse)
 }
+
+export const uploadFile = async (file, key, token = "", fileType = 'NA') => {
+    const fileInfo = new FormData();
+    console.log('file key', file, key)
+    fileInfo.append("key", key);
+    fileInfo.append("fileType", fileType);//s3 object tag
+    console.log('pre uploading file ', `${AppUrl}uploads`)
+    const headers = {
+        'content-type': 'multipart/form-data'
+    }
+    const uploadConfig = await axios.post(`${AppUrl}api/uploads`, 
+        {
+            key,
+            fileType
+        }
+        // fileInfo, headers
+
+    );
+    // const uploadConfig = await axios({
+    //   url: `${AppUrl}api/uploads`,
+    //   method: "POST",
+    //   headers: {
+    //     Authorization: "Bearer " + token,
+    //   },
+    //   data: fileInfo,
+    // });
+    console.log("Get pre-signed url response: ", uploadConfig);
+    try {
+        let form = new FormData();
+        Object.keys(uploadConfig.data.presignedUrl.fields).forEach((key) => {
+            form.append(key, uploadConfig.data.presignedUrl.fields[key]);
+        });
+
+        form.append("file", file);
+
+        const response = await axios.post(
+            uploadConfig.data.presignedUrl.url,
+            form,
+        );
+
+        console.log("Upload file response: ", response);
+    } catch (err) {
+        console.log("Upload file error: ", err);
+    }
+    return uploadConfig;
+};
+

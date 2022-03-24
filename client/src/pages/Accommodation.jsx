@@ -35,19 +35,14 @@ const StyledBookLinkContainer = styled.div`
 padding: 10px; width: 100%; border: none; background: #e2e2e2; display:flex; justify-content:center;
 `
 
-const Accommodation = ({ match, accommodationDates, handleAccommodationDates, handleAccommodation }) => {
+const Accommodation = ({ match, accommodationDates, handleAccommodationDates, handleAccommodation,handleSelectedBeds,selectedBeds }) => {
     const accommodationId = match.params.accommodationId
-    const bedCount = match.params.bedCount
 
     const [accommodation, setAccommodation] = useState({})
     const [dateError, setDateError] = useState('')
-    const [selectedBeds, setSelectedBeds] = useState(null)
 
     useEffect(() => {
         getAccommodationDetails()
-        if (bedCount) {
-            setSelectedBeds(bedCount)
-        }
     }, [])
 
     const getAccommodationDetails = async () => {
@@ -75,10 +70,6 @@ const Accommodation = ({ match, accommodationDates, handleAccommodationDates, ha
 
         // setFromDate(checkinDate);
         // setToDate(checkoutDate);
-    }
-
-    const handleSelectedBeds = (value) => {
-        setSelectedBeds(value)
     }
 
     console.log('accommodationDates', accommodationDates)
@@ -111,7 +102,7 @@ const Accommodation = ({ match, accommodationDates, handleAccommodationDates, ha
                                     const isAvailable =
                                         isAccommodationAvailable(bed.accommodation_bookings, formattedDate)
                                         ||
-                                        moment(formattedDate).isBefore(moment().subtract(1, 'days'))//disable dates before today
+                                        moment(formattedDate).isBefore(moment().subtract(1, 'days'),'day')//disable dates before today
 
                                     if (isAvailable) { availableBeds.push(bed) }
 
@@ -120,7 +111,7 @@ const Accommodation = ({ match, accommodationDates, handleAccommodationDates, ha
                             } else {
                                 return isAccommodationAvailable(accommodation.accommodation_bookings, formattedDate)
                                     ||
-                                    moment(formattedDate).isBefore(moment().subtract(1, 'days'))//disable dates before today
+                                    moment(formattedDate).isBefore(moment().subtract(1, 'days'),'day')//disable dates before today
                             }
                         }}
                     />
@@ -133,7 +124,7 @@ const Accommodation = ({ match, accommodationDates, handleAccommodationDates, ha
                         style={{ minWidth: 300 }}
 
                     >
-                        {accommodation.beds.map((bed, i) => <Option key={bed.id} value={i + 1}>{`${i + 1} (${accommodation.price * (i + 1)})$`}</Option>)}
+                        {accommodation.beds.map((bed, i) => <Option key={bed.id} value={i + 1}>{`${i + 1} bed${i+1 > 1 ? 's' : ''} ${accommodation.price * (i + 1)}$`}</Option>)}
                     </Select>}
                     {/* <button style={{ padding: 10, width: '100%', border: 'none', background: '#e2e2e2', cursor: 'pointer' }} onClick={bookAccommodation} >Book</button> */}
                     <StyledBookLinkContainer>

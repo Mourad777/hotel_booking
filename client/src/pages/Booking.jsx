@@ -16,7 +16,7 @@ import moment from 'moment';
 const { RangePicker } = DatePicker;
 
 export default function Booking({ selectedBeds, handleAccommodationDates, handleSelectedBeds, selectedAccommodation, selectedAccommodationDates }) {
-    
+
     const [formValues,setFormValues] = useState({})
 
     const handleForm = (event) => {
@@ -96,6 +96,7 @@ export default function Booking({ selectedBeds, handleAccommodationDates, handle
                     <Button onClick={submitReservation}>Reserve</Button>
                 </Form.Item>
             </Form>
+ 
         </div>
     )
 }

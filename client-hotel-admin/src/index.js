@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 import { Router, Switch, Route, Redirect } from "react-router-dom";
-import { getWindowSizeInteger } from "./utility/utility";
+// import { getWindowSizeInteger } from "./utility/utility";
 import _ from "lodash";
 import Loader from "./components/Loader/Loader";
 import 'semantic-ui-css/semantic.min.css';
@@ -19,13 +19,14 @@ const Login = React.lazy(() => import("./pages/login/Login"));
 // const Message = React.lazy(() => import("./pages/messages/Message"));
 // const Settings = React.lazy(() => import("./pages/settings/Settings"));
 // const Subscribers = React.lazy(() => import("./pages/guests/Guests"));
+const CreateAccommodation = React.lazy(() => import('./pages/accommodations/CreateAccommodation'));
 const Accommodation = React.lazy(() => import("./pages/accommodations/Accommodation"));
 const Accommodations = React.lazy(() => import("./pages/accommodations/Accommodations"));
 const Bookings = React.lazy(() => import("./pages/accommodationBookings/AccommodationBookings"));
 
 const App = () => {
 
-  const [winSize, setWinSize] = useState(getWindowSizeInteger(window.innerWidth));
+  // const [winSize, setWinSize] = useState(getWindowSizeInteger(window.innerWidth));
 
   const [isLoggedIn, setIsLoggedIn] = useState(true);
 
@@ -38,13 +39,13 @@ const App = () => {
       handleLogin(true)
     }
 
-    window.addEventListener("resize", _.throttle(getWindowSize, 200), { passive: true });
+    // window.addEventListener("resize", _.throttle(getWindowSize, 200), { passive: true });
   }, []);
 
-  const getWindowSize = () => {
-    const windowSizeWidthInt = getWindowSizeInteger(window.innerWidth);
-    setWinSize(windowSizeWidthInt);
-  };
+  // const getWindowSize = () => {
+  //   const windowSizeWidthInt = getWindowSizeInteger(window.innerWidth);
+  //   setWinSize(windowSizeWidthInt);
+  // };
 
   return (
     <Router history={history}>
@@ -52,14 +53,15 @@ const App = () => {
         <Switch>
           <AdminLayout onLogin={handleLogin} isLoggedIn={isLoggedIn}>
             <Route exact path="/register">
-              <RegisterUser onLogin={handleLogin} winSize={winSize} />
+              <RegisterUser onLogin={handleLogin} />
             </Route>
             <Route exact path="/login">
-              <Login onLogin={handleLogin} winSize={winSize} />
+              <Login onLogin={handleLogin} />
             </Route>
-            <PrivateRoute isLoggedIn={isLoggedIn} winSize={winSize} path="/" component={Accommodations} />
-            <PrivateRoute isLoggedIn={isLoggedIn} winSize={winSize} path="/accommodation/:id" component={Accommodation} />
-            <PrivateRoute isLoggedIn={isLoggedIn} winSize={winSize} path="/bookings" component={Bookings} />
+            <PrivateRoute isLoggedIn={isLoggedIn} path="/" component={Accommodations} />
+            <PrivateRoute isLoggedIn={isLoggedIn} path="/accommodation/:id" component={Accommodation} />
+            <PrivateRoute isLoggedIn={isLoggedIn} path="/bookings" component={Bookings} />
+            <PrivateRoute isLoggedIn={isLoggedIn} path="/create-accommodation" component={CreateAccommodation} />
             {/* <PrivateRoute isLoggedIn={isLoggedIn} path="/create-room" component={CreateRoom} />
             <PrivateRoute isLoggedIn={isLoggedIn} path="/edit-post/:id" isEditing component={CreateRoom} />
             <PrivateRoute isLoggedIn={isLoggedIn} path="/messages" component={Messages} />

@@ -86,7 +86,7 @@ const Home = (props) => {
                             onChange={getAccommodations}
                             disabledDate={current => {
                                 const currentWithoutTime = current.format('YYYY-MM-DD');
-                                return moment(currentWithoutTime).isBefore(moment().subtract(1, 'days')); //disable all dates before today
+                                return moment(currentWithoutTime).isBefore(moment().subtract(1, 'days'),'day'); //disable all dates before today
                             }}
                         />
                         <p> {dateError}</p>

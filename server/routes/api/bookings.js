@@ -45,11 +45,16 @@ router.post("/", async (req, res, next) => {
 
 
   console.log('creating a booking', req.body)
+  //need either user id or email to locate a user
+  if (!req.body.userId && !req.body.email) {
+    return res.json({ error: 'Need to provide either a user id or e-mail' })
+  }
+
   try {
 
     const { email, firstName, lastName, bookingStart, bookingEnd, accommodationId, bedCount } = req.body;
     // console.log('example time: ', moment(new Date(bookingStart)).format('YYYY-MM-DD'))
-     
+
     const accommodation = await Accommodation.findOne({
       where: { id: accommodationId }, include: [
         { model: AccommodationBooking, order: ["createdAt", "DESC"] },
@@ -60,28 +65,41 @@ router.post("/", async (req, res, next) => {
         },
       ],
     });
-    console.log('accommodation',accommodation)
-    if(!accommodation) {
+    console.log('accommodation', accommodation)
+    if (!accommodation) {
       return res.json({ message: 'No accommodation found with the provided Id' })
     }
- 
-    const user = await User.findOne({ where: { email:email.trim().toLowerCase() } });
-    let userId;  
-    if (!user) {
-      console.log('no user found')
-      const newUser = await User.create({
-        email:email.trim().toLowerCase(),
-        firstName,
-        lastName,
-        password: 'abc',
-        isAdmin: false,
-      })
-      userId = newUser.id;
+
+    let userId;
+    if (req.body.userId) {
+      userId = req.body.userId
+
     } else {
-      console.log('found user',user)
-      userId = user.id
+
+      const user = await User.findOne({ where: { email: email.trim().toLowerCase() } });
+
+      if (!user) {
+        console.log('no user found')
+        
+        const newUser = await User.create({
+          email: email.trim().toLowerCase(),
+          firstName,
+          lastName,
+          password: 'abc',
+          isAdmin: false,
+        })
+        userId = newUser.id;
+      } else {
+        console.log('found user', user)
+        userId = user.id
+
+      }
+
     }
 
+ 
+
+    
     //if accommodation is a dorm than check to see if there is enough beds available
 
     let booking;

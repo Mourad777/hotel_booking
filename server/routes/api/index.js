@@ -8,6 +8,10 @@ router.use("/auth", require("./auth"));
 
 router.use("/users", require("./users"));
 
+router.use("/images", require("./images"));
+
+router.use("/amenities", require("./amenities"));
+
 router.use("/uploads", require("./uploadFile"));
 
 router.use((req, res, next) => {

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { useHistory, useParams } from 'react-router';
-import { createBooking, getAccommodation, getUsers } from '../../utility/api';
+import { getUsers } from '../../utility/api/users';
+import { getAccommodation } from '../../utility/api/accommodations';
+import { createBooking } from '../../utility/api/bookings';
 import Loader from '../../components/Loader/Loader';
 import SemanticDatepicker from 'react-semantic-ui-datepickers';
 import TextField from '@mui/material/TextField';
@@ -59,14 +61,14 @@ const Accommodation = () => {
     if (isLoading) return <div style={{ position: 'fixed', zIndex: 5, top: '50%', left: '50%', transform: 'translateX(-50%)' }}><Loader /></div>;
 
     const bedOptions = accommodation.beds.map((bed, i) => ({ key: `bed[${bed.id}]`, text: i + 1, value: i + 1 }));
-    console.log('bedOptions',bedOptions)
+    console.log('bedOptions', bedOptions)
 
     return (
         <div style={{ margin: 'auto', maxWidth: 800 }}>
 
             {isLoading && <div style={{ position: 'fixed', zIndex: 5, top: '50%', left: '50%', transform: 'translateX(-50%)' }}><Loader /></div>}
 
-            <h1 style={{textAlign:'center'}}>{accommodation.title}</h1>
+            <h1 style={{ textAlign: 'center' }}>{accommodation.title}</h1>
             <div style={{ display: 'flex', justifyContent: 'center' }}>
                 <img src={accommodation.image} />
             </div>

@@ -20,36 +20,20 @@ const Accommodation = db.define("accommodations", {
   },
   capacity: {
     type: Sequelize.INTEGER,
-    allowNull: false,
-  },
-  isPetsAllowed: {
-    type: Sequelize.BOOLEAN,
-    allowNull: false,
-  },
-  isWifi: {
-    type: Sequelize.BOOLEAN,
-    allowNull: false,
-  },
-  isRefrigerator: {
-    type: Sequelize.BOOLEAN,
-    allowNull: false,
-  },
-  image: {
-    type: Sequelize.STRING,
     allowNull: true,
   },
   bedCount:{
     type: Sequelize.INTEGER,
     allowNull: true,
-  }
-  // roomId: {
-  //   type: Sequelize.INTEGER,
-  //   allowNull: true,
-  // },
-  // bedNumber: {
-  //   type: Sequelize.INTEGER,
-  //   allowNull: true,
-  // },
+  },
+  imagesOrder: {
+    type: Sequelize.ARRAY(Sequelize.INTEGER),
+    allowNull: true,
+  },
+  isDraft: {
+    type: Sequelize.BOOLEAN,
+    allowNull: false,
+  },
 });
 
 module.exports = Accommodation;

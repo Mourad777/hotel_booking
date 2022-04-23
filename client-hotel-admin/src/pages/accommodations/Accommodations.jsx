@@ -1,7 +1,7 @@
 import React, { useState, useEffect, Fragment } from 'react'
 import { StyledThumbnailPreview } from '../../StyledComponents';
 import { useHistory } from 'react-router';
-import { getAccommodations } from '../../utility/api';
+import {getAccommodations} from '../../utility/api/accommodations'
 import Loader from '../../components/Loader/Loader';
 
 
@@ -53,7 +53,7 @@ const Accommodations = ({ winSize }) => {
                                 </div> */}
                             <tr style={{ height: 100 }}>
                                 <td style={{ fontSize: '1.2em', textAlign: 'left' }}>
-                                    <img style={{ width: 200,cursor:'pointer' }} onClick={()=>history.push(`/accommodation/${accommodation.id}`)} src={accommodation.image} />
+                                    <img style={{ width: 200,cursor:'pointer' }} onClick={()=>history.push(`/accommodation/${accommodation.id}`)} src={((accommodation.images||[])[0]||{}).url} />
                                 </td>
                                 <td style={{ fontSize: '1.2em', textAlign: 'left' }}>{accommodation.title}</td>
                                 <td style={{ fontSize: '1.2em', textAlign: 'center' }}>{accommodation.accommodation_bookings.length}</td>

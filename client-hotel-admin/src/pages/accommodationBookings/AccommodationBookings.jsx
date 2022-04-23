@@ -1,7 +1,7 @@
 import React, { useState, useEffect, Fragment } from 'react'
 import { StyledThumbnailPreview } from '../../StyledComponents';
 import { useHistory } from 'react-router';
-import { getBookings } from '../../utility/api';
+import { getBookings } from '../../utility/api/bookings';
 import Loader from '../../components/Loader/Loader';
 import { Select } from 'semantic-ui-react'
 import moment from 'moment';

@@ -140,6 +140,7 @@ export default function Layout({ children, isLoggedIn,onLogin }) {
     return (
         <div className={classes.root}>
             <CssBaseline />
+
             <AppBar
                 position="fixed"
                 className={clsx(classes.appBar, {
@@ -161,6 +162,7 @@ export default function Layout({ children, isLoggedIn,onLogin }) {
                     </Typography>
                 </Toolbar>
             </AppBar>
+
             <Drawer
                 className={classes.drawer}
                 variant="persistent"

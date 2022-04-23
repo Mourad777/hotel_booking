@@ -33,7 +33,15 @@ const Tour = db.define("tour", {
   timeSlots: {
     type: Sequelize.ARRAY(Sequelize.INTEGER),
     allowNull: false,
-  }
+  },
+  imagesOrder: {
+    type: Sequelize.ARRAY(Sequelize.INTEGER),
+    allowNull: true,
+  },
+  isDraft: {
+    type: Sequelize.BOOLEAN,
+    allowNull: false,
+  },
 });
 
 module.exports = Tour;

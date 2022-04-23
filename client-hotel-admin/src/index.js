@@ -61,7 +61,7 @@ const App = () => {
             <PrivateRoute isLoggedIn={isLoggedIn} path="/" component={Accommodations} />
             <PrivateRoute isLoggedIn={isLoggedIn} path="/accommodation/:id" component={Accommodation} />
             <PrivateRoute isLoggedIn={isLoggedIn} path="/bookings" component={Bookings} />
-            <PrivateRoute isLoggedIn={isLoggedIn} path="/create-accommodation" component={CreateAccommodation} />
+            <PrivateRoute isLoggedIn={isLoggedIn} path="/create-accommodation/:id?" component={CreateAccommodation} />
             {/* <PrivateRoute isLoggedIn={isLoggedIn} path="/create-room" component={CreateRoom} />
             <PrivateRoute isLoggedIn={isLoggedIn} path="/edit-post/:id" isEditing component={CreateRoom} />
             <PrivateRoute isLoggedIn={isLoggedIn} path="/messages" component={Messages} />

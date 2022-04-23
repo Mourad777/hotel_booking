@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const { AccommodationBooking, User, Accommodation, Bed } = require("../../db/models");
+const { AccommodationBooking, Image, Accommodation, Bed, Amenity } = require("../../db/models");
 const moment = require('moment');
 
 function isEmpty(obj) {
@@ -13,6 +13,8 @@ router.get("/:accommodationId", async (req, res, next) => {
         const accommodation = await Accommodation.findOne({
             where: { id: accommodationId }, include: [
                 { model: AccommodationBooking, order: ["createdAt", "DESC"] },
+                { model: Image, order: ["createdAt", "DESC"] },
+                { model: Amenity, order: ["createdAt", "DESC"] },
                 {
                     model: Bed, order: ["createdAt", "DESC"], include: [
                         { model: AccommodationBooking, order: ["createdAt", "DESC"] },
@@ -32,10 +34,12 @@ router.get("/:checkin/:checkout", async (req, res, next) => {
 
     try {
 
-        if(checkinDate === 'all' && checkoutDate === 'all') {
+        if (checkinDate === 'all' && checkoutDate === 'all') {
             const accommodations = await Accommodation.findAll({
                 include: [
                     { model: AccommodationBooking, order: ["createdAt", "DESC"] },
+                    { model: Image, order: ["createdAt", "DESC"] },
+                    { model: Amenity, order: ["createdAt", "DESC"] },
                     {
                         model: Bed, order: ["createdAt", "DESC"], include: [
                             { model: AccommodationBooking, order: ["createdAt", "DESC"] },
@@ -47,12 +51,14 @@ router.get("/:checkin/:checkout", async (req, res, next) => {
                 // rowMode: "array"
             });
 
-           return res.json(accommodations)
+            return res.json(accommodations)
         }
 
         const accommodations = await Accommodation.findAll({
             include: [
                 { model: AccommodationBooking, order: ["createdAt", "DESC"] },
+                { model: Image, order: ["createdAt", "DESC"] },
+                { model: Amenity, order: ["createdAt", "DESC"] },
                 {
                     model: Bed, order: ["createdAt", "DESC"], include: [
                         { model: AccommodationBooking, order: ["createdAt", "DESC"] },
@@ -186,8 +192,41 @@ router.get("/:checkin/:checkout", async (req, res, next) => {
     }
 });
 
-router.post("/create", async (req, res, next) => {
+router.post("/", async (req, res, next) => {
 
+    console.log('req.body', req.body)
+
+    const newAccommodation = await Accommodation.create(req.body);
+
+    const { images, amenities, beds: bedCount } = req.body
+
+    const imagesToAdd = []
+
+    if(images.length > 0) {
+        await Promise.all(images.map(async image => {
+           const newImage = await Image.create({ url:image.src })
+           imagesToAdd.push(newImage.id)
+        }))
+    }
+
+    if(imagesToAdd.length > 0 ) {
+        await newAccommodation.addImages(imagesToAdd)
+    }
+
+    await newAccommodation.addAmenities(amenities)
+
+    if (req.body.type === 'Dorm') {
+
+        const emptyArrayBedCount = Array.from({ length: bedCount });
+
+        await Promise.all(emptyArrayBedCount.map(async element => {
+            await Bed.create({ isBunkbed: false, accommodationId: newAccommodation.id })
+        }))
+
+        // for (let i = 0; i < bedCount; i++) {
+        //     await Bed.create({ isBunkBed: false, accommodationId: newAccommodation.id })
+        // }
+    }
 
     try {
 

@@ -1,9 +1,9 @@
 import React, { Fragment, useCallback, useEffect, useState } from 'react'
 import { Form, Select, Checkbox, Button } from 'semantic-ui-react'
 import { uploadFile } from '../../utility/api/files'
-import { createAccommodation } from '../../utility/api/accommodations'
+import { createAccommodation, updateAccommodation, getAccommodation } from '../../utility/api/accommodations'
 import { createImage } from '../../utility/api/images'
-import { getKey } from '../../utility/utility';
+import { getKey, orderPhotos } from '../../utility/utility';
 import SortableGallery from '../../components/gallery/Gallery'
 import arrayMove from "array-move";
 import Dropzone from '../../components/dropzone';
@@ -21,7 +21,7 @@ const accommodationTypes = ['Apartment', 'Studio', 'House', 'Villa', 'Condo', 'D
 
 const getAmenitiesIds = (amenities, amenitiesCheckedState) => {
 
-    return amenities.filter((amenity,i)=>amenitiesCheckedState[i] === true).map(selectedAmenity=>selectedAmenity.id)
+    return amenities.filter((amenity, i) => amenitiesCheckedState[i] === true).map(selectedAmenity => selectedAmenity.id)
 
 }
 
@@ -33,15 +33,27 @@ export default function CreateAccommodation({ match }) {
     if (!accommodationId) newId = cuid();
     const [selectedAccommodation, setSelectedAccommodation] = useState(null);
     const [amenities, setAmenities] = useState([]);
-    const [formValues, setFormValues] = useState(null);
+    const [formValues, setFormValues] = useState({});
     const [images, setImages] = useState([]);
     const [isLoading, setIsLoading] = useState([]);
     const [amenitiesCheckedState, setAmenitiesCheckedState] = useState([])
 
     const getInitialData = async () => {
-        await getAmenities(setAmenities,setAmenitiesCheckedState, setIsLoading)
-    }
 
+        const amenitiesList = await getAmenities(setAmenitiesCheckedState, setIsLoading);
+        setAmenities(amenitiesList)
+        if (accommodationId) { //if there is and accommodatin id that means we are editing a previously created accommodation and need to populate the form
+            const { images, type, beds, imagesOrder, amenities, ...rest } = await getAccommodation(accommodationId, setIsLoading);
+            const amenitiesValues = amenitiesList.map(amenity => amenities.findIndex(chosenAmenity => chosenAmenity.name === amenity.name) > -1)
+            setAmenitiesCheckedState(amenitiesValues)
+            setImages(orderPhotos(images, imagesOrder))
+            setSelectedAccommodation(type)
+            console.log('rest: ', rest)
+            setFormValues({ ...rest, beds: beds.length })
+            // console.log('got accommodation: ', accommodation)
+        }
+    }
+    console.log('form values: ', formValues)
     useEffect(() => {
         getInitialData()
     }, []);
@@ -71,7 +83,7 @@ export default function CreateAccommodation({ match }) {
                 // add the image into the state. Since FileReader reading process is asynchronous, its better to get the latest snapshot state (i.e., prevState) and update it. 
                 setImages(prevState => [
                     ...prevState,
-                    { id: imageData.newImage.id, src: imageUrl, title: '', index: i }
+                    { id: imageData.newImage.id, url: imageUrl, title: '', index: i }
                 ]);
             };
             // Read the file as Data URL (since we accept only images)
@@ -88,16 +100,20 @@ export default function CreateAccommodation({ match }) {
         const values = {
             accommodationId: accommodationId || newId,
             ...formValues,
-            amenities:getAmenitiesIds(amenities,amenitiesCheckedState),
+            amenities: getAmenitiesIds(amenities, amenitiesCheckedState),
             isDraft: false,
-            type:selectedAccommodation,
-            images,
+            type: selectedAccommodation,
+            images: images.map(image => image.id),
         }
-        await createAccommodation(values, setIsLoading)
+        if (accommodationId) {
+            await updateAccommodation(accommodationId, values, setIsLoading)
+        } else {
+            await createAccommodation(values, setIsLoading)
+        }
     }
 
     const handleAmenities = (position) => {
-        console.log('position: ',position)
+        console.log('position: ', position)
         const updatedCheckedState = amenitiesCheckedState.map((item, index) =>
             index === position ? !item : item
         );
@@ -118,19 +134,19 @@ export default function CreateAccommodation({ match }) {
             <Form onSubmit={submitAccommodation}>
                 <Form.Field>
                     <label>Title</label>
-                    <input onChange={handleForm} name="title" placeholder='Title' />
+                    <input onChange={handleForm} value={formValues.title} name="title" placeholder='Title' />
                 </Form.Field>
                 <Form.Field>
                     <label>Description</label>
-                    <textarea onChange={handleForm} name="description" placeholder='Description' />
+                    <textarea onChange={handleForm} value={formValues.description} name="description" placeholder='Description' />
                 </Form.Field>
                 <Form.Field>
                     <label>Capacity</label>
-                    <input onChange={handleForm} type="number" name="capacity" placeholder='Capacity' />
+                    <input onChange={handleForm} value={formValues.capacity} type="number" name="capacity" placeholder='Capacity' />
                 </Form.Field>
                 <Form.Field>
                     <label>Number of beds</label>
-                    <input disabled={selectedAccommodation !== 'Dorm'} onChange={handleForm} type="number" name="beds" placeholder='Number of beds' />
+                    <input disabled={selectedAccommodation !== 'Dorm'} value={formValues.beds} onChange={handleForm} type="number" name="beds" placeholder='Number of beds' />
                 </Form.Field>
 
                 <h4>Amenities</h4>
@@ -157,7 +173,7 @@ export default function CreateAccommodation({ match }) {
                     onChange={(event, data) => setSelectedAccommodation(data.value)} />
                 <Form.Field>
                     <label>{selectedAccommodation === "Dorm" ? "Price per bed" : 'Price'}</label>
-                    <input onChange={handleForm} name="price" type="number" placeholder={selectedAccommodation === "Dorm" ? "Price per bed" : 'Price'} />
+                    <input onChange={handleForm} name="price" value={formValues.price} type="number" placeholder={selectedAccommodation === "Dorm" ? "Price per bed" : 'Price'} />
                 </Form.Field>
                 <Button type='submit'>Submit</Button>
             </Form>

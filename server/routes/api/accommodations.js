@@ -11,7 +11,8 @@ router.get("/:accommodationId", async (req, res, next) => {
 
     try {
         const accommodation = await Accommodation.findOne({
-            where: { id: accommodationId }, include: [
+            where: { id: accommodationId },
+            include: [
                 { model: AccommodationBooking, order: ["createdAt", "DESC"] },
                 { model: Image, order: ["createdAt", "DESC"] },
                 { model: Amenity, order: ["createdAt", "DESC"] },
@@ -193,24 +194,12 @@ router.get("/:checkin/:checkout", async (req, res, next) => {
 });
 
 router.post("/", async (req, res, next) => {
+    const { images: imageIds, amenities, beds: bedCount } = req.body
 
-    console.log('req.body', req.body)
+    const newAccommodation = await Accommodation.create({ ...req.body, imagesOrder: imageIds });
 
-    const newAccommodation = await Accommodation.create(req.body);
-
-    const { images, amenities, beds: bedCount } = req.body
-
-    const imagesToAdd = []
-
-    if(images.length > 0) {
-        await Promise.all(images.map(async image => {
-           const newImage = await Image.create({ url:image.src })
-           imagesToAdd.push(newImage.id)
-        }))
-    }
-
-    if(imagesToAdd.length > 0 ) {
-        await newAccommodation.addImages(imagesToAdd)
+    if (imageIds.length > 0) {
+        await newAccommodation.addImages(imageIds)
     }
 
     await newAccommodation.addAmenities(amenities)
@@ -222,10 +211,6 @@ router.post("/", async (req, res, next) => {
         await Promise.all(emptyArrayBedCount.map(async element => {
             await Bed.create({ isBunkbed: false, accommodationId: newAccommodation.id })
         }))
-
-        // for (let i = 0; i < bedCount; i++) {
-        //     await Bed.create({ isBunkBed: false, accommodationId: newAccommodation.id })
-        // }
     }
 
     try {
@@ -235,8 +220,48 @@ router.post("/", async (req, res, next) => {
     }
 });
 
-router.put("/update", async (req, res, next) => {
+router.put("/update/:id", async (req, res, next) => {
+    const { title, description, capacity, price, type, images: newImages, amenities: newAmenities } = req.body;
+    const accommodationId = req.params.id;
+    const accommodation = await Accommodation.findOne({
+        where: { id: accommodationId },
+        include: [
+            { model: AccommodationBooking, order: ["createdAt", "DESC"] },
+            { model: Image, order: ["createdAt", "DESC"] },
+            { model: Amenity, order: ["createdAt", "DESC"] },
+            {
+                model: Bed, order: ["createdAt", "DESC"], include: [
+                    { model: AccommodationBooking, order: ["createdAt", "DESC"] },
+                ],
+            },
+        ],
+        raw: false,
+    });
+    console.log('accommodation to update: ', accommodation)
 
+    console.log('values: ', req.body)
+
+    const currentAmenities = accommodation.amenities;
+    const currentImages = accommodation.images;
+
+    accommodation.title = title;
+    accommodation.description = description;
+    accommodation.capacity = capacity;
+    accommodation.price = price;
+    accommodation.type = type;
+    accommodation.imagesOrder = newImages;
+
+
+    //any way to update associations as a single command?
+    await accommodation.removeImages(currentImages)
+    await accommodation.addImages(newImages)
+
+    await accommodation.removeAmenities(currentAmenities)
+    await accommodation.addAmenities(newAmenities)
+
+
+    // accommodation.amenities
+    await accommodation.save();
 
     try {
 

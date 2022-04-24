@@ -1,7 +1,7 @@
 import axios from "axios";
 import { AppUrl, getDefaultHeader } from "../utility";
 
-export const getAmenities = async (setAmenities,setCheckedState, setIsLoading) => {
+export const getAmenities = async (setCheckedState, setIsLoading) => {
     const token = localStorage.getItem('token');
     let res = {};
     setIsLoading(true)
@@ -14,7 +14,8 @@ export const getAmenities = async (setAmenities,setCheckedState, setIsLoading) =
     }
     console.log('Fetch amenities response', res)
     const amenities = res.data || [];
-    setAmenities(amenities);
+
     setCheckedState(new Array(amenities.length).fill(false))
     setIsLoading(false)
+    return amenities;
 }

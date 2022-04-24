@@ -5,7 +5,7 @@ import arrayMove from "array-move";
 const SortableItem = SortableElement(({ item }) => (
     <div className="item">
         <div className="inner-item">
-            <img className="gallery-image" src={item.src} />
+            <img className="gallery-image" src={item.url} />
         </div>
     </div>
 ));

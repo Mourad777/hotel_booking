@@ -18,7 +18,7 @@ export const getAccommodations = async (setAccommodations, setIsLoading) => {
     setIsLoading(false)
 }
 
-export const getAccommodation = async (setAccommodation, accommodationId, setIsLoading) => {
+export const getAccommodation = async (accommodationId, setIsLoading) => {
     const token = localStorage.getItem('token');
     let res = {};
     setIsLoading(true)
@@ -30,9 +30,9 @@ export const getAccommodation = async (setAccommodation, accommodationId, setIsL
         setIsLoading(false)
     }
     console.log('Fetch accommodation response', res)
-    const accommodation = res.data || [];
-    setAccommodation(accommodation);
     setIsLoading(false)
+    return res.data || [];
+
 }
 
 export const createAccommodation = async (values, setIsLoading) => {
@@ -42,6 +42,27 @@ export const createAccommodation = async (values, setIsLoading) => {
     try {
 
         const response = await axios.post('http://localhost:3001/api/accommodations', values);
+
+        console.log('response', response)
+
+        return response.data
+
+    } catch (e) {
+        console.log('Create accommodation error', e)
+        setIsLoading(false)
+    }
+    console.log('Create accommodation response', res)
+    setIsLoading(false)
+    return res.data
+}
+
+export const updateAccommodation = async (accommodationId, values, setIsLoading) => {
+    // const token = localStorage.getItem('token');
+    let res = {};
+    setIsLoading(true)
+    try {
+
+        const response = await axios.put(`http://localhost:3001/api/accommodations/update/${accommodationId}`, values);
 
         console.log('response', response)
 

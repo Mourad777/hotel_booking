@@ -30,7 +30,8 @@ const Accommodation = () => {
     // const handleDatesChange = (event, data) => setDates(data.value);
 
     const getInitialData = async () => {
-        await getAccommodation(setAccommodation, accommodationId, setIsLoading)
+        const accommodation = await getAccommodation(accommodationId, setIsLoading);
+        setAccommodation(accommodation)
         await getUsers(setUsers, setIsLoading)
     }
 
@@ -60,7 +61,7 @@ const Accommodation = () => {
 
     if (isLoading) return <div style={{ position: 'fixed', zIndex: 5, top: '50%', left: '50%', transform: 'translateX(-50%)' }}><Loader /></div>;
 
-    const bedOptions = accommodation.beds.map((bed, i) => ({ key: `bed[${bed.id}]`, text: i + 1, value: i + 1 }));
+    const bedOptions = (accommodation.beds||[]).map((bed, i) => ({ key: `bed[${bed.id}]`, text: i + 1, value: i + 1 }));
     console.log('bedOptions', bedOptions)
 
     return (

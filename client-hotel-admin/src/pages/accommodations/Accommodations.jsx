@@ -5,7 +5,7 @@ import {getAccommodations} from '../../utility/api/accommodations'
 import Loader from '../../components/Loader/Loader';
 
 
-const Accommodations = ({ winSize }) => {
+const Accommodations = ({  }) => {
 
     const history = useHistory();
     const [accommodations, setAccommodations] = useState([]);

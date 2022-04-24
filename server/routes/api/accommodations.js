@@ -241,6 +241,70 @@ router.put("/update/:id", async (req, res, next) => {
 
     console.log('values: ', req.body)
 
+
+
+    const currentBeds = accommodation.beds;
+    const currentAccommodationType = accommodation.type;
+    const newAccommodationType = req.body.type;
+    const currentNumberOfBeds = accommodation.beds.length;
+    const newNumberOfBeds = req.body.beds;
+
+    //if previous accommodation type was dorm and now is not dorm, delete all associated beds and cascade the bookings
+    if (currentAccommodationType === 'Dorm' && newAccommodationType !== 'Dorm') {
+        await Bed.destroy({
+            where: {
+                accommodationId
+            },
+
+        })
+
+    }
+    //if previous accommodation type was not dorm and now is dorm, create beds
+    if (currentAccommodationType !== 'Dorm' && newAccommodationType === 'Dorm') {
+        const bedsToCreate = newNumberOfBeds - currentNumberOfBeds
+        const emptyArrayBedCount = Array.from({ length: bedsToCreate });
+
+        await Promise.all(emptyArrayBedCount.map(async element => {
+            await Bed.create({ isBunkbed: false, accommodationId })
+        }))
+
+    }
+
+
+    //if previous accommodation type was dorm and is still dorm but number of beds increased create beds
+    if (currentAccommodationType === 'Dorm' && newAccommodationType === 'Dorm' && (currentNumberOfBeds < newNumberOfBeds)) {
+
+        const bedsToCreate = newNumberOfBeds - currentNumberOfBeds
+
+        console.log('beds increased by', bedsToCreate)
+
+        const emptyArrayBedCount = Array.from({ length: bedsToCreate });
+
+        await Promise.all(emptyArrayBedCount.map(async element => {
+            await Bed.create({ isBunkbed: false, accommodationId })
+        }))
+    }
+    //if previous accommodation type was dorm and is still dorm but number of beds decreased delete beds
+    if (currentAccommodationType === 'Dorm' && newAccommodationType === 'Dorm' && (currentNumberOfBeds > newNumberOfBeds)) {
+        const bedsToDeleteCount = currentNumberOfBeds - newNumberOfBeds;
+        console.log('beds decreased by', bedsToDeleteCount)
+        const bedsToDelete = await Bed.destroy({
+            limit: bedsToDeleteCount,
+            where: {
+                accommodationId
+            },
+            order: [['createdAt', 'DESC']]
+
+        })
+
+        console.log('bedsToDelete',bedsToDelete)
+
+
+
+        // await Bed.destroy(bedsToDelete)
+
+    }
+
     const currentAmenities = accommodation.amenities;
     const currentImages = accommodation.images;
 
@@ -258,6 +322,7 @@ router.put("/update/:id", async (req, res, next) => {
 
     await accommodation.removeAmenities(currentAmenities)
     await accommodation.addAmenities(newAmenities)
+
 
 
     // accommodation.amenities

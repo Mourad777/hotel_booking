@@ -19,6 +19,7 @@ const Login = React.lazy(() => import("./pages/login/Login"));
 // const Message = React.lazy(() => import("./pages/messages/Message"));
 // const Settings = React.lazy(() => import("./pages/settings/Settings"));
 // const Subscribers = React.lazy(() => import("./pages/guests/Guests"));
+const CreateBooking = React.lazy(() => import('./pages/accommodationBookings/CreateBooking'));
 const CreateAccommodation = React.lazy(() => import('./pages/accommodations/CreateAccommodation'));
 const Accommodation = React.lazy(() => import("./pages/accommodations/Accommodation"));
 const Accommodations = React.lazy(() => import("./pages/accommodations/Accommodations"));
@@ -58,10 +59,12 @@ const App = () => {
             <Route exact path="/login">
               <Login onLogin={handleLogin} />
             </Route>
-            <PrivateRoute isLoggedIn={isLoggedIn} path="/" component={Accommodations} />
+            <PrivateRoute isLoggedIn={isLoggedIn} path="/accommodations" component={Accommodations} />
             <PrivateRoute isLoggedIn={isLoggedIn} path="/accommodation/:id" component={Accommodation} />
             <PrivateRoute isLoggedIn={isLoggedIn} path="/bookings" component={Bookings} />
             <PrivateRoute isLoggedIn={isLoggedIn} path="/create-accommodation/:id?" component={CreateAccommodation} />
+            <PrivateRoute isLoggedIn={isLoggedIn} path="/create-reservation" component={CreateBooking} />
+            <PrivateRoute isLoggedIn={isLoggedIn} path="/create-reservation/:id" component={CreateBooking} />
             {/* <PrivateRoute isLoggedIn={isLoggedIn} path="/create-room" component={CreateRoom} />
             <PrivateRoute isLoggedIn={isLoggedIn} path="/edit-post/:id" isEditing component={CreateRoom} />
             <PrivateRoute isLoggedIn={isLoggedIn} path="/messages" component={Messages} />

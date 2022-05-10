@@ -27,8 +27,13 @@ Accommodation.belongsToMany(Amenity, {
 });
 
 Accommodation.hasMany(Bed);
-Bed.hasMany(AccommodationBooking);
-User.hasMany(AccommodationBooking);
+Bed.hasMany(AccommodationBooking,
+    {
+        onDelete:'cascade'
+    });
+User.hasMany(AccommodationBooking,{
+    onDelete:'cascade'
+});
 // Amenity.hasMany(Accommodation);
 Accommodation.belongsToMany(Image, {
     through: 'accommodations_images',

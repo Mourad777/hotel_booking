@@ -17,7 +17,7 @@ const { RangePicker } = DatePicker;
 
 export default function Booking({ selectedBeds, handleAccommodationDates, handleSelectedBeds, selectedAccommodation, selectedAccommodationDates }) {
 
-    const [formValues,setFormValues] = useState({})
+    const [formValues, setFormValues] = useState({})
 
     const handleForm = (event) => {
         const name = event.target.name;
@@ -28,7 +28,8 @@ export default function Booking({ selectedBeds, handleAccommodationDates, handle
     const submitReservation = async (values) => {
         console.log('values: ', values);
 
-        const response = await axios.post('http://localhost:3001/api/bookings', {...formValues,
+        const response = await axios.post('http://localhost:3001/api/bookings', {
+            ...formValues,
             bookingStart: moment.utc(selectedAccommodationDates[0]).format('YYYY-MM-DD HH:mm z'),
             bookingEnd: moment.utc(selectedAccommodationDates[1]).format('YYYY-MM-DD HH:mm z'),
             accommodationId: selectedAccommodation.id,
@@ -46,7 +47,7 @@ export default function Booking({ selectedBeds, handleAccommodationDates, handle
     return (
         <div style={{ maxWidth: 700, margin: 'auto', padding: 30 }}>
             <h1 style={{ textAlign: 'center' }}>Booking</h1>
-            <img style={{ height: 400, width: 500 }} src={selectedAccommodation.image} />
+            {selectedAccommodation.images.length > 0 && <img style={{ height: 400, width: 500 }} src={selectedAccommodation.images[0].url} />}
             <Form
                 labelCol={{
                     span: 4,
@@ -57,7 +58,7 @@ export default function Booking({ selectedBeds, handleAccommodationDates, handle
                 layout="horizontal"
                 size="large"
             >
-                <Form.Item label="First name"> 
+                <Form.Item label="First name">
                     <Input value={formValues.firstName} name="firstName" onChange={handleForm} />
                 </Form.Item>
                 <Form.Item label="Last name">
@@ -96,7 +97,7 @@ export default function Booking({ selectedBeds, handleAccommodationDates, handle
                     <Button onClick={submitReservation}>Reserve</Button>
                 </Form.Item>
             </Form>
- 
+
         </div>
     )
 }

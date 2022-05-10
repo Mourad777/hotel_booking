@@ -1,11 +1,11 @@
 import React, { useState, useEffect, Fragment } from 'react'
 import { StyledThumbnailPreview } from '../../StyledComponents';
 import { useHistory } from 'react-router';
-import {getAccommodations} from '../../utility/api/accommodations'
+import { getAccommodations } from '../../utility/api/accommodations'
 import Loader from '../../components/Loader/Loader';
 
 
-const Accommodations = ({  }) => {
+const Accommodations = ({ }) => {
 
     const history = useHistory();
     const [accommodations, setAccommodations] = useState([]);
@@ -37,10 +37,11 @@ const Accommodations = ({  }) => {
                 <tbody>
                     <tr>
                         <th style={{ fontSize: '1.2em', textAlign: 'left' }}></th>
+                        <th style={{ fontSize: '1.2em', textAlign: 'left' }}></th>
                         <th style={{ fontSize: '1.2em', textAlign: 'left' }}>Title</th>
                         <th style={{ fontSize: '1.2em' }}>Bookings</th>
                     </tr>
-                    {accommodations.map(accommodation => (
+                    {accommodations.map((accommodation, i) => (
                         <Fragment key={accommodation.id}>
                             {/* <span style={titleStyle}>{p.title}</span>
                                 <p style={{ margin: '5px 0', fontSize: '1.3em' }}>{`Posted on ${new Date(p.created_at).toLocaleDateString()} ${!!p.author ? 'by ' + p.author : ''}`}</p>
@@ -52,10 +53,11 @@ const Accommodations = ({  }) => {
                                     <StyledRedButton maxWidth onClick={() => handleDeletePost(p.id)}> <Icon name='trash alternate outline' size='large' /></StyledRedButton>
                                 </div> */}
                             <tr style={{ height: 100 }}>
+                                <td style={{ fontSize: '1.2em', textAlign: 'left',cursor:'pointer' }} onClick={() => history.push(`/create-accommodation/${accommodation.id}`)}>{i + 1}</td>
                                 <td style={{ fontSize: '1.2em', textAlign: 'left' }}>
-                                    <img style={{ width: 200,cursor:'pointer' }} onClick={()=>history.push(`/accommodation/${accommodation.id}`)} src={((accommodation.images||[])[0]||{}).url} />
+                                    <img style={{ width: 200, cursor: 'pointer' }} onClick={() => history.push(`/create-accommodation/${accommodation.id}`)} src={((accommodation.images || [])[0] || {}).url} />
                                 </td>
-                                <td style={{ fontSize: '1.2em', textAlign: 'left' }}>{accommodation.title}</td>
+                                <td style={{ fontSize: '1.2em', textAlign: 'left',cursor:'pointer' }} onClick={() => history.push(`/create-accommodation/${accommodation.id}`)}>{accommodation.title}</td>
                                 <td style={{ fontSize: '1.2em', textAlign: 'center' }}>{accommodation.accommodation_bookings.length}</td>
                             </tr>
                         </Fragment>

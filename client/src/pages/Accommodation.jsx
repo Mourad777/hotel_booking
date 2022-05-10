@@ -35,10 +35,10 @@ const StyledBookLinkContainer = styled.div`
 padding: 10px; width: 100%; border: none; background: #e2e2e2; display:flex; justify-content:center;
 `
 
-const Accommodation = ({ match, accommodationDates, handleAccommodationDates, handleAccommodation,handleSelectedBeds,selectedBeds }) => {
+const Accommodation = ({ match, accommodationDates, handleAccommodationDates, handleAccommodation, handleSelectedBeds, selectedBeds }) => {
     const accommodationId = match.params.accommodationId
 
-    const [accommodation, setAccommodation] = useState({})
+    const [accommodation, setAccommodation] = useState({images:[]})
     const [dateError, setDateError] = useState('')
 
     useEffect(() => {
@@ -79,7 +79,9 @@ const Accommodation = ({ match, accommodationDates, handleAccommodationDates, ha
             <div style={{ display: 'flex', margin: 'auto', justifyContent: 'center', flexDirection: 'column', maxWidth: 500 }}>
                 <h1 style={{ textAlign: 'center' }}>{accommodation.title}</h1>
                 <p style={{ fontFamily: 'sans-serif', fontSize: '1.2em', color: 'rgb(200,200,200)' }}>{accommodation.type}</p>
-                <img style={{ height: 400, width: 500 }} src={accommodation.image} />
+                <div style={{ height: 400 }}>
+                    {(accommodation.images.length > 0) && <img style={{ width: 500 }} src={accommodation.images[0].url} />}
+                </div>
                 <div style={{ margin: '10px 0' }}>
                     <p style={{ fontSize: '1.1em', color: 'rgb(150,150,150)' }}>{accommodation.description}</p>
                 </div>
@@ -102,7 +104,7 @@ const Accommodation = ({ match, accommodationDates, handleAccommodationDates, ha
                                     const isAvailable =
                                         isAccommodationAvailable(bed.accommodation_bookings, formattedDate)
                                         ||
-                                        moment(formattedDate).isBefore(moment().subtract(1, 'days'),'day')//disable dates before today
+                                        moment(formattedDate).isBefore(moment().subtract(1, 'days'), 'day')//disable dates before today
 
                                     if (isAvailable) { availableBeds.push(bed) }
 
@@ -111,7 +113,7 @@ const Accommodation = ({ match, accommodationDates, handleAccommodationDates, ha
                             } else {
                                 return isAccommodationAvailable(accommodation.accommodation_bookings, formattedDate)
                                     ||
-                                    moment(formattedDate).isBefore(moment().subtract(1, 'days'),'day')//disable dates before today
+                                    moment(formattedDate).isBefore(moment().subtract(1, 'days'), 'day')//disable dates before today
                             }
                         }}
                     />
@@ -124,7 +126,7 @@ const Accommodation = ({ match, accommodationDates, handleAccommodationDates, ha
                         style={{ minWidth: 300 }}
 
                     >
-                        {accommodation.beds.map((bed, i) => <Option key={bed.id} value={i + 1}>{`${i + 1} bed${i+1 > 1 ? 's' : ''} ${accommodation.price * (i + 1)}$`}</Option>)}
+                        {accommodation.beds.map((bed, i) => <Option key={bed.id} value={i + 1}>{`${i + 1} bed${i + 1 > 1 ? 's' : ''} ${accommodation.price * (i + 1)}$`}</Option>)}
                     </Select>}
                     {/* <button style={{ padding: 10, width: '100%', border: 'none', background: '#e2e2e2', cursor: 'pointer' }} onClick={bookAccommodation} >Book</button> */}
                     <StyledBookLinkContainer>

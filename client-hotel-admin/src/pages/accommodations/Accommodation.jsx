@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useHistory, useParams } from 'react-router';
 import { getUsers } from '../../utility/api/users';
 import { getAccommodation } from '../../utility/api/accommodations';
-import { createBooking } from '../../utility/api/bookings';
+import { createBooking } from '../../utility/api/accommodation-bookings';
 import Loader from '../../components/Loader/Loader';
 import SemanticDatepicker from 'react-semantic-ui-datepickers';
 import TextField from '@mui/material/TextField';
@@ -19,7 +19,7 @@ const Accommodation = () => {
 
     const { id: accommodationId } = useParams();
     const history = useHistory();
-    const [accommodation, setAccommodation] = useState([]);
+    const [accommodation, setAccommodation] = useState({ images: [] });
     const [users, setUsers] = useState([]);
     const [isLoading, setIsLoading] = useState([]);
     // const [dates, setDates] = useState([]);
@@ -61,7 +61,7 @@ const Accommodation = () => {
 
     if (isLoading) return <div style={{ position: 'fixed', zIndex: 5, top: '50%', left: '50%', transform: 'translateX(-50%)' }}><Loader /></div>;
 
-    const bedOptions = (accommodation.beds||[]).map((bed, i) => ({ key: `bed[${bed.id}]`, text: i + 1, value: i + 1 }));
+    const bedOptions = (accommodation.beds || []).map((bed, i) => ({ key: `bed[${bed.id}]`, text: i + 1, value: i + 1 }));
     console.log('bedOptions', bedOptions)
 
     return (
@@ -71,7 +71,7 @@ const Accommodation = () => {
 
             <h1 style={{ textAlign: 'center' }}>{accommodation.title}</h1>
             <div style={{ display: 'flex', justifyContent: 'center' }}>
-                <img src={accommodation.image} />
+                {(accommodation.images.length > 0) && <img src={accommodation.images[0].url} />}
             </div>
             <h3 style={{ textAlign: 'center' }}>Create a booking</h3>
             <div style={{ display: 'flex', justifyContent: 'center' }}>

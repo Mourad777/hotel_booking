@@ -10,7 +10,7 @@ import { useState } from 'react';
 function App() {
 
   const [selectedAccommodationDates, setSelectedAccommodationDates] = useState({})
-  const [selectedAccommodation, setSelectedAccommodation] = useState({})
+  const [selectedAccommodation, setSelectedAccommodation] = useState({images:[]})
   const [selectedBeds, setSelectedBeds] = useState(1)
 
   const handleAccommodationDates = (value) => {

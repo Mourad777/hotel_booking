@@ -3,20 +3,42 @@ const { AccommodationBooking, User, Accommodation, Bed } = require("../../db/mod
 const moment = require('moment');
 
 
-const { isAccommodationAvailableAtDate } = require('../../utils')
+const { isAccommodationAvailableAtDate } = require('../../utils');
+const { Op } = require("sequelize");
 
 
-router.get("/:accommodationId", async (req, res, next) => {
-  const accommodation = req.params.accommodationId;
-  console.log('accommodation id', accommodation)
+// router.get("/:accommodationId", async (req, res, next) => {
+//   const accommodation = req.params.accommodationId;
+//   console.log('accommodation id', accommodation)
+//   try {
+//     const bookings = await AccommodationBooking.findAll({
+//       where: {
+//         accommodationId: accommodation
+//       },
+//       include: [
+//         { model: User, order: ["createdAt", "DESC"] },
+//         { model: Accommodation, order: ["createdAt", "DESC"] },
+//       ],
+//     });
+
+//     res.json(bookings);
+//   } catch (error) {
+//     next(error);
+//   }
+// });
+
+router.get("/:bookingId", async (req, res, next) => {
+  const bookingId = req.params.bookingId;
+
   try {
-    const bookings = await AccommodationBooking.findAll({
-      where: {
-        accommodationId: accommodation
-      },
-      include: [
+    const bookings = await AccommodationBooking.findOne({
+      where: { id: bookingId }, include: [
         { model: User, order: ["createdAt", "DESC"] },
-        { model: Accommodation, order: ["createdAt", "DESC"] },
+        {
+          model: Accommodation, order: ["createdAt", "DESC"], include: [
+            { model: Bed, order: ["createdAt", "DESC"] },
+          ],
+        },
       ],
     });
 
@@ -52,7 +74,7 @@ router.post("/", async (req, res, next) => {
 
   try {
 
-    const { email, firstName, lastName, bookingStart, bookingEnd, accommodationId, bedCount } = req.body;
+    const { email = '', firstName, lastName, bookingStart, bookingEnd, accommodationId, bedCount } = req.body;
     // console.log('example time: ', moment(new Date(bookingStart)).format('YYYY-MM-DD'))
 
     const accommodation = await Accommodation.findOne({
@@ -71,35 +93,33 @@ router.post("/", async (req, res, next) => {
     }
 
     let userId;
-    if (req.body.userId) {
-      userId = req.body.userId
 
-    } else {
-
-      const user = await User.findOne({ where: { email: email.trim().toLowerCase() } });
-
-      if (!user) {
-        console.log('no user found')
-        
-        const newUser = await User.create({
-          email: email.trim().toLowerCase(),
-          firstName,
-          lastName,
-          password: 'abc',
-          isAdmin: false,
-        })
-        userId = newUser.id;
-      } else {
-        console.log('found user', user)
-        userId = user.id
-
+    const user = await User.findOne({
+      where: {
+        [Op.or]: [{ id: req.body.userId || null }, { email: email.trim().toLowerCase() }]
+        // email: email.trim().toLowerCase() 
       }
+    });
+
+    if (!user) {
+      console.log('no user found')
+
+      const newUser = await User.create({
+        email: email.trim().toLowerCase(),
+        firstName,
+        lastName,
+        password: 'abc',
+        isAdmin: false,
+      })
+      userId = newUser.id;
+    } else {
+      console.log('found user', user)
+      userId = user.id
 
     }
 
- 
 
-    
+
     //if accommodation is a dorm than check to see if there is enough beds available
 
     let booking;
@@ -187,10 +207,16 @@ router.post("/", async (req, res, next) => {
 });
 
 
-router.put("/update", async (req, res, next) => {
+router.put("/:id", async (req, res, next) => {
+  const { email = '', firstName, lastName, bookingStart, bookingEnd, accommodationId, bedCount } = req.body
+  const bookingId = req.params.id;
+
 
   try {
-
+    const booking = await AccommodationBooking.findByPk(bookingId);
+    booking.bookingStart = bookingStart
+    booking.bookingEnd = bookingEnd
+    await booking.save()
   } catch (error) {
     next(error);
   }

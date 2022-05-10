@@ -261,7 +261,7 @@ router.put("/update/:id", async (req, res, next) => {
     }
     //if previous accommodation type was not dorm and now is dorm, create beds
     if (currentAccommodationType !== 'Dorm' && newAccommodationType === 'Dorm') {
-        const bedsToCreate = newNumberOfBeds - currentNumberOfBeds
+        const bedsToCreate = newNumberOfBeds - currentNumberOfBeds;
         const emptyArrayBedCount = Array.from({ length: bedsToCreate });
 
         await Promise.all(emptyArrayBedCount.map(async element => {

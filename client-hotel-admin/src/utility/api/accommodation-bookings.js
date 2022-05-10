@@ -18,6 +18,23 @@ export const getBookings = async (setBookings, setIsLoading) => {
     setIsLoading(false)
 }
 
+export const getBooking = async (reservationId, setIsLoading) => {
+    const token = localStorage.getItem('token');
+    let res = {};
+    setIsLoading(true)
+    try {
+        res = await axios.get(`${AppUrl}api/bookings/${reservationId}`, getDefaultHeader(token));
+
+    } catch (e) {
+        console.log('Fetch booking error', e)
+        setIsLoading(false)
+    }
+    console.log('Fetch booking response', res)
+    setIsLoading(false)
+    return res.data || [];
+
+}
+
 export const createBooking = async (values, setIsLoading) => {
     const token = localStorage.getItem('token');
     let res = {};

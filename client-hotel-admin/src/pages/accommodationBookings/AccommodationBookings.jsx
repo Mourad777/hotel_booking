@@ -1,26 +1,36 @@
 import React, { useState, useEffect, Fragment } from 'react'
 import { StyledThumbnailPreview } from '../../StyledComponents';
 import { useHistory } from 'react-router';
-import { getBookings } from '../../utility/api/bookings';
+import { getBookings } from '../../utility/api/accommodation-bookings';
 import Loader from '../../components/Loader/Loader';
 import { Select } from 'semantic-ui-react'
 import moment from 'moment';
+import { getUsers } from '../../utility/api/users';
+import { getAccommodations } from '../../utility/api/accommodations';
 
 
 const Posts = ({ winSize }) => {
 
     const history = useHistory();
-    const [bookings, setBookings] = useState(null);
+    const [bookings, setBookings] = useState([]);
     const [selectedBed, setSelectedBed] = useState(null);
     const [isLoading, setIsLoading] = useState([]);
+    const [accommodations, setAccommodations] = useState([]);
+    const [users, setUsers] = useState([]);
+    const [selectedAccommodation, setSelectedAccommodation] = useState(null);
+    const [selectedUser, setSelectedUser] = useState(null);
 
     const getInitialData = async () => {
-        await getBookings(setBookings, setIsLoading)
+        await getBookings(setBookings, setIsLoading);
+        await getUsers(setUsers, setIsLoading);
+        await getAccommodations(setAccommodations, setIsLoading);
     }
 
     useEffect(() => {
-        getInitialData()
+        getInitialData();
     }, []);
+
+    console.log('selectedAccommodation',selectedAccommodation)
 
     if (isLoading) {
         return <div style={{ position: 'fixed', zIndex: 5, top: '50%', left: '50%', transform: 'translateX(-50%)' }}><Loader /></div>
@@ -28,9 +38,18 @@ const Posts = ({ winSize }) => {
         return (
             <div style={{ margin: 'auto', maxWidth: 800 }}>
                 <h1>Bookings</h1>
-                <h4>Select an accommodation</h4>
-                <Select placeholder='Select your country' options={[
-                    { key: 'af', value: 'af', text: 'Afghanistan' }]} />
+                <div style={{ display: 'flex',justifyContent:'space-around', marginBottom:20 }}>
+                    <div>
+                        <h4>Select an accommodation</h4>
+                        <Select onChange={(event, data) => setSelectedAccommodation(data.value)}  placeholder='Select an accommodation' options={accommodations.map(accommodation=>({ key: `accommodation[${accommodation.id}]`, value: accommodation.id, text: accommodation.title }))} />
+                    </div>
+                    <div>
+                        <h4>Select a person</h4>
+                        <Select onChange={(event, data) => setSelectedUser(data.value)}  placeholder='Select a person' options={
+                            users.map(user=>({ key: `accommodation[${user.id}]`, value: user.id, text: user.firstName + ' ' + user.lastName + ' ' + user.email }))
+                        } />
+                    </div>
+                </div>
                 <table style={{ margin: 'auto', width: '100%' }}>
                     <tbody>
                         <tr>
@@ -41,19 +60,21 @@ const Posts = ({ winSize }) => {
                             <th style={{ fontSize: '1.2em' }}>Guest</th>
                             <th style={{ fontSize: '1.2em' }}>Guest E-mail</th>
                         </tr>
-                        {bookings.map(booking => (
+                        {bookings.map((booking, i) => (
                             <Fragment key={booking.id}>
                                 <tr style={{ height: 100 }}>
-                                <td style={{ fontSize: '1.2em' }}></td>
-                                    <td style={{ fontSize: '1.2em', textAlign: 'left' }}>
-                                        <img onClick={()=>history.push(`/accommodation/${booking.accommodation.id}`)} style={{ width: 200, cursor:'pointer' }} src={booking.accommodation.image} /></td>
+                                    <td style={{ fontSize: '1.2em' }}><span>{i + 1}</span></td>
+                                    <td onClick={() => history.push(`/create-reservation/${booking.id}`)} style={{ cursor: 'pointer', fontSize: '1.2em', textAlign: 'left' }}>
+                                        <img style={{ width: 200, cursor: 'pointer' }} src={booking.accommodation.image} /></td>
                                     <td style={{ fontSize: '1.2em', textAlign: 'center' }}>{moment.utc(booking.bookingStart).format('YYYY-MM-DD')}</td>
                                     <td style={{ fontSize: '1.2em', textAlign: 'center' }}>{moment.utc(booking.bookingEnd).format('YYYY-MM-DD')}</td>
                                     <td style={{ fontSize: '1.2em', textAlign: 'center' }}>{booking.user.firstName + ' ' + booking.user.lastName}</td>
                                     <td style={{ fontSize: '1.2em', textAlign: 'center' }}>{booking.user.email}</td>
                                 </tr>
                             </Fragment>
-                        ))}
+                        ))
+                        .filter(booking=>booking.accommodationId === selectedAccommodation)
+                        }
                     </tbody>
                 </table>
             </div >

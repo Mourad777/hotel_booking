@@ -14,6 +14,6 @@ export const getUsers = async (setUsers, setIsLoading) => {
     }
     console.log('Fetch users response', res)
     const users = res.data || [];
-    setUsers(users.map(user => ({ key: user.id, value: user.id, text: user.firstName + ' ' + `(${user.email})` })));
+    setUsers(users);
     setIsLoading(false)
 }

@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const { AccommodationBooking, User, Accommodation, Bed } = require("../../db/models");
+const { AccommodationBooking, User, Accommodation, Bed, Image } = require("../../db/models");
 const moment = require('moment');
 
 
@@ -53,7 +53,9 @@ router.get("/", async (req, res, next) => {
     const bookings = await AccommodationBooking.findAll({
       include: [
         { model: User, order: ["createdAt", "DESC"] },
-        { model: Accommodation, order: ["createdAt", "DESC"] },
+        { model: Accommodation, order: ["createdAt", "DESC"], include: [
+          { model: Image, order: ["createdAt", "DESC"] },
+        ], },
       ],
     });
 

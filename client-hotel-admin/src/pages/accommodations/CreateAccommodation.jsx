@@ -17,6 +17,18 @@ import { getAmenities } from '../../utility/api/amenities'
 const accommodationTypes = ['Apartment', 'Studio', 'House', 'Villa', 'Condo', 'Dorm', 'Private Room']
 // const amenities = ['Wifi', 'Pets', 'Lockers', 'Children allowed', 'Breakfast', 'Laundry', 'Dorm', 'Luggage storage', 'Bar', 'Meals', 'Common Area', 'Terrace', 'Smoking Area'];
 
+const isObjectEmpty = (obj) => {
+    return obj
+        && Object.keys(obj).length === 0
+        && Object.getPrototypeOf(obj) === Object.prototype
+}
+
+const validateAccommodationForm = (values) => {
+    const errors = {}
+    if (!values.title) errors.title = 'Please provide a title';
+    if ((values.beds < 2) && values.selectedAccommodation === 'Dorm') errors.beds = 'Select at least 2 beds';
+    return errors;
+}
 
 
 const getAmenitiesIds = (amenities, amenitiesCheckedState) => {
@@ -34,6 +46,7 @@ export default function CreateAccommodation({ match }) {
     const [selectedAccommodation, setSelectedAccommodation] = useState(null);
     const [amenities, setAmenities] = useState([]);
     const [formValues, setFormValues] = useState({});
+    const [formErrors, setFormErrors] = useState({});
     const [images, setImages] = useState([]);
     const [isLoading, setIsLoading] = useState([]);
     const [amenitiesCheckedState, setAmenitiesCheckedState] = useState([])
@@ -54,6 +67,7 @@ export default function CreateAccommodation({ match }) {
         }
     }
     console.log('form values: ', formValues)
+    console.log('selected accommodation ', selectedAccommodation)
     useEffect(() => {
         getInitialData()
     }, []);
@@ -95,6 +109,14 @@ export default function CreateAccommodation({ match }) {
     console.log('images:', images)
 
     const submitAccommodation = async (event) => {
+
+        const validationErrors = validateAccommodationForm({ ...formValues, selectedAccommodation });
+        console.log('!isObjectEmpty(validationErrors)', !isObjectEmpty(validationErrors), validationErrors)
+        if (!isObjectEmpty(validationErrors)) {
+            setFormErrors(validationErrors)
+            return;
+        }
+
         event.preventDefault();
         console.log('creating accommodation: ', formValues)
         const values = {
@@ -135,6 +157,7 @@ export default function CreateAccommodation({ match }) {
                 <Form.Field>
                     <label>Title</label>
                     <input onChange={handleForm} value={formValues.title} name="title" placeholder='Title' />
+                    <label style={{ color: 'red' }}>{formErrors.title}</label>
                 </Form.Field>
                 <Form.Field>
                     <label>Description</label>
@@ -147,6 +170,7 @@ export default function CreateAccommodation({ match }) {
                 <Form.Field>
                     <label>Number of beds</label>
                     <input disabled={selectedAccommodation !== 'Dorm'} value={formValues.beds} onChange={handleForm} type="number" name="beds" placeholder='Number of beds' />
+                    <label style={{ color: 'red' }}>{formErrors.beds}</label>
                 </Form.Field>
 
                 <h4>Amenities</h4>

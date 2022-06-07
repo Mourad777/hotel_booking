@@ -6,6 +6,10 @@ const Configuration = db.define("configuration", {
     type: Sequelize.BOOLEAN,
     allowNull: false,
   },
+  mainHeaderImage: {
+    type: Sequelize.STRING,
+    allowNull: true,
+  },
 });
 
 module.exports = Configuration;

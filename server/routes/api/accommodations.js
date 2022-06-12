@@ -94,14 +94,25 @@ router.get("/:checkin/:checkout", async (req, res, next) => {
         accommodations.forEach(accommodation => {
 
 
-
+            console.log('accommodation.beds.length',accommodation.beds.length)
             accommodation.beds.forEach(bed => {
                 let isBedAvailable = true;
 
                 if (bed.accommodation_bookings.length === 0) {
                     //if the bed has no booking we already know it is available for any date
                     availableBeds.push(bed)
-                    return
+                    if(
+                        availableAccommodations.findIndex(acc=>acc.id === accommodation.id) > -1
+                    ) {
+                        console.log('already includes')
+                        return
+                    } else {
+                        console.log('pushing accommodation: ',accommodation)
+                        availableAccommodations.push(accommodation)
+                        console.log('check 1 ',accommodation.id)
+                        return
+                    }
+
                 }
 
                 bed.accommodation_bookings.forEach(booking => {
@@ -113,13 +124,18 @@ router.get("/:checkin/:checkout", async (req, res, next) => {
 
                     if (isDatesOccupied) {
                         isBedAvailable = false;
+                        console.log('check 2 ')
+
                         return
                     }
                 })
 
                 if (isBedAvailable) {
                     availableBeds.push(bed)
+                    console.log('check 3 ')
+
                 }
+                console.log('isBedAvailable',isBedAvailable)
 
             })
 
@@ -128,8 +144,18 @@ router.get("/:checkin/:checkout", async (req, res, next) => {
             if (accommodation.accommodation_bookings.length === 0) {
                 //if the accommodation has no booking we already know it is available for any date
 
-                availableAccommodations.push(accommodation)
-                return
+                if(
+                    availableAccommodations.findIndex(acc=>acc.id === accommodation.id) > -1
+                ) {
+                    console.log('already includes')
+                    return
+                } else {
+                    console.log('pushing accommodation: ',accommodation)
+                    availableAccommodations.push(accommodation)
+                    console.log('check 1 ',accommodation.id)
+                    return
+                }
+                
             }
 
             accommodation.accommodation_bookings.forEach(booking => {
@@ -145,16 +171,30 @@ router.get("/:checkin/:checkout", async (req, res, next) => {
                 }
             })
 
-            if (isAccommodationAvailable) {
+            if(
+                availableAccommodations.findIndex(acc=>acc.id === accommodation.id) > -1
+            ) {
+                console.log('already includes')
+                return
+            } else {
+                console.log('pushing accommodation: ',accommodation)
                 availableAccommodations.push(accommodation)
+                console.log('check 1 ',accommodation.id)
+                return
             }
 
+
         });
+
+        console.log('**************************************************availableBeds',availableBeds)
 
         //get only data values from accommodations array
         const rawAvailableAccommodations = availableAccommodations.map(accommodation => accommodation.dataValues)
         const rawAvailableAccommodationsWithBeds = rawAvailableAccommodations.map(accommodation => {
-            return { ...accommodation, beds: accommodation.beds.filter(bed => availableBeds.findIndex(availableBed => availableBed.accommodationId === bed.accommodationId) > -1) }
+            return { ...accommodation, beds: availableBeds.filter(bed => accommodation.beds.findIndex(availableBed => {
+                console.log('availableBed.accommodationId',availableBed.accommodationId,'bed.accommodationId',bed.accommodationId)
+               return  availableBed.accommodationId === bed.accommodationId
+            }) > -1) }
         })
         console.log('rawAvailableAccommodations', rawAvailableAccommodations);
         console.log('rawAvailableAccommodationsWithBeds', rawAvailableAccommodationsWithBeds)

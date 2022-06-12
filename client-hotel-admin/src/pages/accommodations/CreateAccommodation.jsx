@@ -2,7 +2,7 @@ import React, { Fragment, useCallback, useEffect, useState } from 'react'
 import { Form, Select, Checkbox, Button } from 'semantic-ui-react'
 import { uploadFile } from '../../utility/api/files'
 import { createAccommodation, updateAccommodation, getAccommodation } from '../../utility/api/accommodations'
-import { createImage } from '../../utility/api/images'
+import { createImage, deleteImage } from '../../utility/api/images'
 import { getKey, orderPhotos } from '../../utility/utility';
 import SortableGallery from '../../components/gallery/Gallery'
 import arrayMove from "array-move";
@@ -26,6 +26,9 @@ const isObjectEmpty = (obj) => {
 const validateAccommodationForm = (values) => {
     const errors = {}
     if (!values.title) errors.title = 'Please provide a title';
+    console.log('price: ',values.price)
+    console.log('isNaN(values.price)',isNaN(values.price))
+    if (isNaN(values.price) || !values.price) errors.price = 'Please provide a price';
     if ((values.beds < 2) && values.selectedAccommodation === 'Dorm') errors.beds = 'Select at least 2 beds';
     return errors;
 }
@@ -56,7 +59,7 @@ export default function CreateAccommodation({ match }) {
         const amenitiesList = await getAmenities(setAmenitiesCheckedState, setIsLoading);
         setAmenities(amenitiesList)
         if (accommodationId) { //if there is and accommodatin id that means we are editing a previously created accommodation and need to populate the form
-            const { images, type, beds, imagesOrder, amenities, ...rest } = await getAccommodation(accommodationId, setIsLoading);
+            const { images, type, beds=[], imagesOrder, amenities, ...rest } = await getAccommodation(accommodationId, setIsLoading);
             const amenitiesValues = amenitiesList.map(amenity => amenities.findIndex(chosenAmenity => chosenAmenity.name === amenity.name) > -1)
             setAmenitiesCheckedState(amenitiesValues)
             setImages(orderPhotos(images, imagesOrder))
@@ -64,6 +67,8 @@ export default function CreateAccommodation({ match }) {
             console.log('rest: ', rest)
             setFormValues({ ...rest, beds: beds.length })
             // console.log('got accommodation: ', accommodation)
+        } else {
+            setFormValues({ }) // necessary in case we have previous state from a preloaded form that we were editing so that the values don't carry over but instead start fresh
         }
     }
     console.log('form values: ', formValues)
@@ -84,12 +89,9 @@ export default function CreateAccommodation({ match }) {
 
             const key = getKey(file, awsPath)
             //upload file to aws
-            const fileInfo = await uploadFile(file, key);
-            console.log('file info')
+            await uploadFile(file, key);
             //create image document in postgres which has the url info and the associated accommodation id
-            const imageUrl = fileInfo.data.presignedUrl.url + '/' + key
-            const imageData = await createImage({ url: imageUrl, accommodationId, isThumbnail: false }, setIsLoading)
-            console.log('new image', imageData)
+            const imageData = await createImage({ url: key, accommodationId, isThumbnail: false }, setIsLoading)
             // Initialize FileReader browser API
             const reader = new FileReader();
             // onload callback gets called after the reader reads the file data
@@ -97,7 +99,7 @@ export default function CreateAccommodation({ match }) {
                 // add the image into the state. Since FileReader reading process is asynchronous, its better to get the latest snapshot state (i.e., prevState) and update it. 
                 setImages(prevState => [
                     ...prevState,
-                    { id: imageData.newImage.id, url: imageUrl, title: '', index: i }
+                    { id: imageData.newImage.id, url: key, title: '', index: i }
                 ]);
             };
             // Read the file as Data URL (since we accept only images)
@@ -117,6 +119,7 @@ export default function CreateAccommodation({ match }) {
             return;
         }
 
+
         event.preventDefault();
         console.log('creating accommodation: ', formValues)
         const values = {
@@ -134,6 +137,25 @@ export default function CreateAccommodation({ match }) {
         }
     }
 
+    const handleImageDeletion = async (id,index) => {
+        // await deleteImage(id,setIsLoading);
+        // console.log('index to cut out',index)
+        // console.log('before splicing',images);
+        // images.splice(index, 1);
+        // console.log('after splicing',images);
+
+
+
+        setImages((previousImages) =>{
+            console.log('previousImages',previousImages)
+            const newList = previousImages.slice(0, index).concat(previousImages.slice(index + 1, previousImages.length))
+            // previousImages.splice(index, 1);
+            console.log('new list',newList)
+            return newList;
+        })
+
+    }
+    console.log('********* images: ',images)
     const handleAmenities = (position) => {
         console.log('position: ', position)
         const updatedCheckedState = amenitiesCheckedState.map((item, index) =>
@@ -198,13 +220,14 @@ export default function CreateAccommodation({ match }) {
                 <Form.Field>
                     <label>{selectedAccommodation === "Dorm" ? "Price per bed" : 'Price'}</label>
                     <input onChange={handleForm} name="price" value={formValues.price} type="number" placeholder={selectedAccommodation === "Dorm" ? "Price per bed" : 'Price'} />
+                    <label style={{ color: 'red' }}>{formErrors.price}</label>
                 </Form.Field>
                 <Button type='submit'>Submit</Button>
             </Form>
 
             <Dropzone onDrop={onDrop} accept={"image/*"} />
 
-            <SortableGallery items={images} setItems={setImages} />
+            <SortableGallery onImageDelete={handleImageDeletion} items={images} setItems={setImages} />
 
 
         </Fragment>

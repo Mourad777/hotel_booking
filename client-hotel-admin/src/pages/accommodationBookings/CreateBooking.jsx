@@ -190,23 +190,6 @@ const Accommodation = () => {
                         return { key: i, value: i + 1, text: i + 1 + ' beds' }
                     })} />
             <button onClick={submitReservation}>Submit Reservation</button>
-            {/* <Select placeholder='Select a user' value={selectedUser} onChange={(event, data) => setSelectedUser(data.value)} options={users} />
-            <Select disabled={bedOptions.length === 0} placeholder='Select number of beds' options={bedOptions} value={selectedBeds} onChange={(event, data) => setSelectedBeds(data.value)} />
-            <Form onSubmit={submitBooking}>
-                <Form.Field>
-                    <label>First Name</label>
-                    <input name="firstName" placeholder='First Name' />
-                </Form.Field>
-                <Form.Field>
-                    <label>Last Name</label>
-                    <input name="lastName" placeholder='Last Name' />
-                </Form.Field>
-                <Form.Field>
-                    <label>E-mail</label>
-                    <input name="email" placeholder='E-mail' />
-                </Form.Field>
-                <Button type='submit'>Submit Booking</Button>
-            </Form> */}
 
 
         </div >

@@ -1,6 +1,8 @@
 const router = require("express").Router();
 const { AccommodationBooking, Image, Accommodation, Bed, Amenity } = require("../../db/models");
 const moment = require('moment');
+const { Op } = require("sequelize");
+const { deleteFiles } = require("../../utils");
 
 function isEmpty(obj) {
     return Object.keys(obj).length === 0;
@@ -221,6 +223,7 @@ router.post("/", async (req, res, next) => {
 });
 
 router.put("/update/:id", async (req, res, next) => {
+    console.log('updating accommodation************************************************************************')
     const { title, description, capacity, price, type, images: newImages, amenities: newAmenities } = req.body;
     const accommodationId = req.params.id;
     const accommodation = await Accommodation.findOne({
@@ -315,7 +318,27 @@ router.put("/update/:id", async (req, res, next) => {
     accommodation.type = type;
     accommodation.imagesOrder = newImages;
 
+    //find out if images have been deleted
+    const currentImagesIds = currentImages.map(image=>image.id);
+    console.log('currentImagesIds',currentImagesIds)
+    console.log('newImages',newImages)
+    const deletedImages = currentImagesIds.filter(imageId=>!newImages.includes(imageId));
+    console.log('deletedImages',deletedImages)
 
+    const imagesToDelete = await Image.findAll({
+        where: {
+          id: {
+            [Op.in]: deletedImages
+          },
+        }
+      });
+
+    console.log('imagesToDelete',imagesToDelete)
+    const urlsToDelete = imagesToDelete.map(image=>image.url)
+    console.log('urls to delete',urlsToDelete)
+
+    await deleteFiles(urlsToDelete)
+    
     //any way to update associations as a single command?
     await accommodation.removeImages(currentImages)
     await accommodation.addImages(newImages)

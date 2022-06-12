@@ -21,5 +21,21 @@ const s3 = new AWS.S3({
     region: "ca-central-1",
   });
 
+  const deleteFiles = async (files = []) => {
+    const bucket = process.env.AWS_BUCKET;
+    if (files.length === 0) return;
+    const deleteParams = {
+      Bucket: bucket,
+      Delete: { Objects: [] },
+    };
+  
+    files.forEach((Key) => {
+      deleteParams.Delete.Objects.push({ Key });
+    });
+    const objectsDeleteResponse = await s3.deleteObjects(deleteParams).promise();
+    console.log('objectsDeleteResponse',objectsDeleteResponse)
+  };
+
 exports.isAccommodationAvailableAtDate = isAccommodationAvailableAtDate;
 exports.s3 = s3;
+exports.deleteFiles = deleteFiles;

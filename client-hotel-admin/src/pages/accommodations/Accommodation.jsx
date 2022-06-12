@@ -13,7 +13,7 @@ import Box from '@mui/material/Box';
 import moment from 'moment';
 import 'react-semantic-ui-datepickers/dist/react-semantic-ui-datepickers.css';
 import { Button, Checkbox, Form, Select } from 'semantic-ui-react';
-import { isAccommodationAvailable } from '../../utility/utility';
+import { AWSURL, isAccommodationAvailable } from '../../utility/utility';
 
 const Accommodation = () => {
 
@@ -71,7 +71,7 @@ const Accommodation = () => {
 
             <h1 style={{ textAlign: 'center' }}>{accommodation.title}</h1>
             <div style={{ display: 'flex', justifyContent: 'center' }}>
-                {(accommodation.images.length > 0) && <img src={accommodation.images[0].url} />}
+                {(accommodation.images.length > 0) && <img src={AWSURL + accommodation.images[0].url} />}
             </div>
             <h3 style={{ textAlign: 'center' }}>Create a booking</h3>
             <div style={{ display: 'flex', justifyContent: 'center' }}>

@@ -3,6 +3,7 @@ import { StyledThumbnailPreview } from '../../StyledComponents';
 import { useHistory } from 'react-router';
 import { getAccommodations } from '../../utility/api/accommodations'
 import Loader from '../../components/Loader/Loader';
+import { AWSURL } from '../../utility/utility';
 
 
 const Accommodations = ({ }) => {
@@ -53,11 +54,11 @@ const Accommodations = ({ }) => {
                                     <StyledRedButton maxWidth onClick={() => handleDeletePost(p.id)}> <Icon name='trash alternate outline' size='large' /></StyledRedButton>
                                 </div> */}
                             <tr style={{ height: 100 }}>
-                                <td style={{ fontSize: '1.2em', textAlign: 'left',cursor:'pointer' }} onClick={() => history.push(`/create-accommodation/${accommodation.id}`)}>{i + 1}</td>
+                                <td style={{ fontSize: '1.2em', textAlign: 'left', cursor: 'pointer' }} onClick={() => history.push(`/create-accommodation/${accommodation.id}`)}>{i + 1}</td>
                                 <td style={{ fontSize: '1.2em', textAlign: 'left' }}>
-                                    <img style={{ width: 200, cursor: 'pointer' }} onClick={() => history.push(`/create-accommodation/${accommodation.id}`)} src={((accommodation.images || [])[0] || {}).url} />
+                                    <img style={{ width: 200, cursor: 'pointer' }} onClick={() => history.push(`/create-accommodation/${accommodation.id}`)} src={AWSURL + ((accommodation.images || [])[0] || {}).url} />
                                 </td>
-                                <td style={{ fontSize: '1.2em', textAlign: 'left',cursor:'pointer' }} onClick={() => history.push(`/create-accommodation/${accommodation.id}`)}>{accommodation.title}</td>
+                                <td style={{ fontSize: '1.2em', textAlign: 'left', cursor: 'pointer' }} onClick={() => history.push(`/create-accommodation/${accommodation.id}`)}>{accommodation.title}</td>
                                 <td style={{ fontSize: '1.2em', textAlign: 'center' }}>{accommodation.accommodation_bookings.length}</td>
                             </tr>
                         </Fragment>

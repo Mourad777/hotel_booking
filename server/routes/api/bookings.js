@@ -160,7 +160,7 @@ router.post("/", async (req, res, next) => {
         booking = await AccommodationBooking.create({
           userId,
           transactionId: 'abc123',
-          bedId: bedIdsAvailable[i],
+          bedId: bedIdsAvailable[i], // review this
           ...req.body,
         });
         bookings.push(booking)
@@ -185,6 +185,7 @@ router.post("/", async (req, res, next) => {
         return res.json({ message: 'the accommodation is not available on these dates' })
       }
 
+      console.log('creating booking for accommodation without bed req.body:::',req.body)
       booking = await AccommodationBooking.create({
         // userId,
         // bookingStart,
@@ -193,7 +194,7 @@ router.post("/", async (req, res, next) => {
         transactionId: 'abc123',
         // adults: null,
         // children: null,
-        // accommodationId,
+        // accommodationId:accommodation.id,
         // message,
         userId,
         ...req.body

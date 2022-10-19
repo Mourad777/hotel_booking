@@ -10,8 +10,6 @@ const Image = require("./image");
 
 // associations
 
-Accommodation.hasMany(AccommodationBooking);
-
 // Accommodation.hasMany(Amenity);
 
 Amenity.belongsToMany(Accommodation, {
@@ -26,29 +24,45 @@ Accommodation.belongsToMany(Amenity, {
     otherKey: 'amenity_id'
 });
 
-Accommodation.hasMany(Bed);
+Accommodation.hasMany(Bed,
+    {
+        onDelete: 'cascade'
+    });
+
 Bed.hasMany(AccommodationBooking,
     {
-        onDelete:'cascade'
+        onDelete: 'cascade'
     });
-User.hasMany(AccommodationBooking,{
-    onDelete:'cascade'
+
+Accommodation.hasMany(AccommodationBooking,
+    {
+        onDelete: 'cascade'
+    });
+
+User.hasMany(AccommodationBooking, {
+    onDelete: 'cascade'
 });
 // Amenity.hasMany(Accommodation);
 Accommodation.belongsToMany(Image, {
     through: 'accommodations_images',
     foreignKey: 'accommodation_id',
-    otherKey: 'image_id'
+    otherKey: 'image_id',
+    onDelete: 'cascade'
 });
 
 AccommodationBooking.belongsTo(User);
 AccommodationBooking.belongsTo(Accommodation);
 AccommodationBooking.belongsTo(Bed);
-Bed.belongsTo(Accommodation);
+Bed.belongsTo(Accommodation,
+    {
+        onDelete: 'cascade'
+    }
+);
 Image.belongsToMany(Accommodation, {
     through: 'accommodations_images',
     foreignKey: 'image_id',
-    otherKey: 'accommodation_id'
+    otherKey: 'accommodation_id',
+    onDelete: 'cascade',
 });
 Image.belongsToMany(Tour, {
     through: 'tours_images',

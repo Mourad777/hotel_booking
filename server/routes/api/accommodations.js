@@ -32,6 +32,8 @@ router.get("/:accommodationId", async (req, res, next) => {
 });
 
 router.get("/:checkin/:checkout", async (req, res, next) => {
+
+    console.log('***************************************66')
     const checkinDate = req.params.checkin;
     const checkoutDate = req.params.checkout;
 
@@ -94,22 +96,22 @@ router.get("/:checkin/:checkout", async (req, res, next) => {
         accommodations.forEach(accommodation => {
 
 
-            console.log('accommodation.beds.length',accommodation.beds.length)
+            console.log('accommodation.beds.length', accommodation.beds.length)
             accommodation.beds.forEach(bed => {
                 let isBedAvailable = true;
 
                 if (bed.accommodation_bookings.length === 0) {
                     //if the bed has no booking we already know it is available for any date
                     availableBeds.push(bed)
-                    if(
-                        availableAccommodations.findIndex(acc=>acc.id === accommodation.id) > -1
+                    if (
+                        availableAccommodations.findIndex(acc => acc.id === accommodation.id) > -1
                     ) {
                         console.log('already includes')
                         return
                     } else {
-                        console.log('pushing accommodation: ',accommodation)
+                        console.log('pushing accommodation: ', accommodation)
                         availableAccommodations.push(accommodation)
-                        console.log('check 1 ',accommodation.id)
+                        console.log('check 1 ', accommodation.id)
                         return
                     }
 
@@ -135,7 +137,7 @@ router.get("/:checkin/:checkout", async (req, res, next) => {
                     console.log('check 3 ')
 
                 }
-                console.log('isBedAvailable',isBedAvailable)
+                console.log('isBedAvailable', isBedAvailable)
 
             })
 
@@ -144,18 +146,18 @@ router.get("/:checkin/:checkout", async (req, res, next) => {
             if (accommodation.accommodation_bookings.length === 0) {
                 //if the accommodation has no booking we already know it is available for any date
 
-                if(
-                    availableAccommodations.findIndex(acc=>acc.id === accommodation.id) > -1
+                if (
+                    availableAccommodations.findIndex(acc => acc.id === accommodation.id) > -1
                 ) {
                     console.log('already includes')
                     return
                 } else {
-                    console.log('pushing accommodation: ',accommodation)
+                    console.log('pushing accommodation: ', accommodation)
                     availableAccommodations.push(accommodation)
-                    console.log('check 1 ',accommodation.id)
+                    console.log('check 1 ', accommodation.id)
                     return
                 }
-                
+
             }
 
             accommodation.accommodation_bookings.forEach(booking => {
@@ -171,69 +173,61 @@ router.get("/:checkin/:checkout", async (req, res, next) => {
                 }
             })
 
-            if(
-                availableAccommodations.findIndex(acc=>acc.id === accommodation.id) > -1
+            if (
+                availableAccommodations.findIndex(acc => acc.id === accommodation.id) > -1
             ) {
                 console.log('already includes')
                 return
             } else {
-                console.log('pushing accommodation: ',accommodation)
+                console.log('pushing accommodation: ', accommodation)
                 availableAccommodations.push(accommodation)
-                console.log('check 1 ',accommodation.id)
+                console.log('check 1 ', accommodation.id)
                 return
             }
 
 
         });
 
-        console.log('**************************************************availableBeds',availableBeds)
 
         //get only data values from accommodations array
         const rawAvailableAccommodations = availableAccommodations.map(accommodation => accommodation.dataValues)
         const rawAvailableAccommodationsWithBeds = rawAvailableAccommodations.map(accommodation => {
-            return { ...accommodation, beds: availableBeds.filter(bed => accommodation.beds.findIndex(availableBed => {
-                console.log('availableBed.accommodationId',availableBed.accommodationId,'bed.accommodationId',bed.accommodationId)
-               return  availableBed.accommodationId === bed.accommodationId
-            }) > -1) }
+            return {
+                ...accommodation, beds: availableBeds.filter(bed => accommodation.beds.findIndex(availableBed => {
+                    console.log('availableBed.accommodationId', availableBed.accommodationId, 'bed.accommodationId', bed.accommodationId)
+                    return availableBed.accommodationId === bed.accommodationId
+                }) > -1)
+            }
         })
         console.log('rawAvailableAccommodations', rawAvailableAccommodations);
         console.log('rawAvailableAccommodationsWithBeds', rawAvailableAccommodationsWithBeds)
         //since the available accomodations will include beds in dorm rooms and a bed is considered an accommodation, need to make sure that the 
         //list of accomodations doesn't included the same room twice but rather group the beds of the same room inside a nested array
 
-        // const dormRooms = []
-
-
-        // const sortedAvailableAccommodations = rawAvailableAccommodations.map(accommodation => {
-        //     if (accommodation.roomId) {
-        //         const roomIndex = dormRooms.findIndex(room => room.roomId === accommodation.roomId)
-        //         const isRoomInList = roomIndex > -1
-        //         if (isRoomInList) {
-        //             dormRooms.push({ ...dormRooms[roomIndex], beds: [...dormRooms[roomIndex].beds, accommodation] })
-        //             dormRooms.splice(roomIndex, 1);
-        //         } else {
-        //             //remove certain properties from accomodation object if its a dorm, as those properties are
-        //             //already in the nested bed object, the user will book a bed and not the whole dorm room
-        //             const accommodationClone = (({ bedNumber, bookings, capacity, ...o }) => o)(accommodation)
-        //             dormRooms.push({ ...accommodationClone, beds: [accommodation] })
-        //         }
-        //         return null;
-        //     } else {
-        //         return {
-        //             ...accommodation,
-
-        //         }
-        //     }
-        // })
-
-        // const accommodationsWithDorms = [...sortedAvailableAccommodations, ...dormRooms];
-        // console.log('accommodationsWithDorms', accommodationsWithDorms)
         res.json(rawAvailableAccommodationsWithBeds)
         // res.json(accommodationsWithDorms.filter(accommodation => accommodation));
     } catch (error) {
         next(error);
     }
 });
+
+router.get("/", async (req, res, next) => {
+    const accommodations = await Accommodation.findAll({
+        limit: 3, include: [
+            { model: AccommodationBooking, order: ["createdAt", "DESC"] },
+            { model: Image, order: ["createdAt", "DESC"] },
+            { model: Amenity, order: ["createdAt", "DESC"] },
+            {
+                model: Bed, order: ["createdAt", "DESC"], include: [
+                    { model: AccommodationBooking, order: ["createdAt", "DESC"] },
+                ],
+            },
+        ],
+    });
+
+    console.log('returning: ', accommodations)
+    return res.json(accommodations);
+})
 
 router.post("/", async (req, res, next) => {
     const { images: imageIds, amenities, beds: bedCount } = req.body
@@ -340,7 +334,7 @@ router.put("/update/:id", async (req, res, next) => {
 
         })
 
-        console.log('bedsToDelete',bedsToDelete)
+        console.log('bedsToDelete', bedsToDelete)
 
 
 
@@ -359,26 +353,26 @@ router.put("/update/:id", async (req, res, next) => {
     accommodation.imagesOrder = newImages;
 
     //find out if images have been deleted
-    const currentImagesIds = currentImages.map(image=>image.id);
-    console.log('currentImagesIds',currentImagesIds)
-    console.log('newImages',newImages)
-    const deletedImages = currentImagesIds.filter(imageId=>!newImages.includes(imageId));
-    console.log('deletedImages',deletedImages)
+    const currentImagesIds = currentImages.map(image => image.id);
+    console.log('currentImagesIds', currentImagesIds)
+    console.log('newImages', newImages)
+    const deletedImages = currentImagesIds.filter(imageId => !newImages.includes(imageId));
+    console.log('deletedImages', deletedImages)
 
     const imagesToDelete = await Image.findAll({
         where: {
-          id: {
-            [Op.in]: deletedImages
-          },
+            id: {
+                [Op.in]: deletedImages
+            },
         }
-      });
+    });
 
-    console.log('imagesToDelete',imagesToDelete)
-    const urlsToDelete = imagesToDelete.map(image=>image.url)
-    console.log('urls to delete',urlsToDelete)
+    console.log('imagesToDelete', imagesToDelete)
+    const urlsToDelete = imagesToDelete.map(image => image.url)
+    console.log('urls to delete', urlsToDelete)
 
     await deleteFiles(urlsToDelete)
-    
+
     //any way to update associations as a single command?
     await accommodation.removeImages(currentImages)
     await accommodation.addImages(newImages)
@@ -398,9 +392,18 @@ router.put("/update/:id", async (req, res, next) => {
     }
 });
 
-router.delete("/delete", async (req, res, next) => {
+router.delete("/delete/:accommodationId", async (req, res, next) => {
+    const accommodationId = req.params.accommodationId;
+    console.log('accommodationId', accommodationId)
 
+    const deleteResult = await Accommodation.destroy({
+        where: {
+            id: accommodationId
+        },
 
+    })
+
+    console.log('Accommodation delete result: ', deleteResult)
     try {
 
     } catch (error) {

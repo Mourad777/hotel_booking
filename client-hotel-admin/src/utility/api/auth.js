@@ -1,5 +1,6 @@
 import axios from "axios";
-import { AppUrl, getDefaultHeader } from "../utility";
+import { getDefaultHeader } from "../utility";
+const { REACT_APP_API_URL } = process.env;
 
 export const registerUser = async (url, formData, setIsLoading) => {
     let registrationResponse;
@@ -50,7 +51,7 @@ export const login = async (url, formData, setIsLoading) => {
 }
 
 export const logout = async (setIsLoading) => {
-    const url = `${AppUrl}api/logout`;
+    const url = `${REACT_APP_API_URL}/logout`;
     const token = localStorage.getItem('token');
     let logoutResponse;
     setIsLoading(true);

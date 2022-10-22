@@ -1,12 +1,12 @@
 import axios from "axios";
-import { AppUrl } from "../utility";
+const { REACT_APP_API_URL } = process.env;
 
 export const getMessages = async (setMessages, setIsLoading) => {
     const token = localStorage.getItem('token');
     setIsLoading(true)
     let res = {};
     try {
-        res = await axios.get(`${AppUrl}api/messages`, getDefaultHeader(token));
+        res = await axios.get(`${REACT_APP_API_URL}/messages`, getDefaultHeader(token));
     } catch (e) {
         console.log('Messages response error: ', e);
         setIsLoading(false)
@@ -22,7 +22,7 @@ export const getMessage = async (messageId, setMessage, setIsLoading) => {
     setIsLoading(true)
     let res;
     try {
-        res = await axios.get(`${AppUrl}api/message/${messageId}`);
+        res = await axios.get(`${REACT_APP_API_URL}/message/${messageId}`);
     } catch (e) {
         console.log('Message response error: ', e);
         setIsLoading(false)

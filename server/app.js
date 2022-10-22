@@ -2,11 +2,14 @@ const express = require("express");
 const session = require("express-session");
 const http = require("http");
 const cors = require('cors')
-const { Client } = require('pg');
 
 
 const app = express();
-app.use(cors());
+
+app.use(cors({
+    origin: 'https://hotel-booking-admin.netlify.app',
+    methods: ['GET','POST','DELETE','UPDATE','PUT','PATCH']
+}));
 
 const port = process.env.PORT || "3001"
 app.set("port", port);

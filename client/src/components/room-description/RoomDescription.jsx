@@ -7,7 +7,7 @@ font-size: 18px;
 
 export const StyledRoomDescriptionContainer = styled.div`
 height:300px;
-background:#e2e2e2;
+background:#fbfbfb;
 width:100%;
 padding:20px;
 `

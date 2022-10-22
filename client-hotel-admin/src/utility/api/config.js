@@ -1,8 +1,9 @@
 import axios from "axios";
-import { AppUrl, getDefaultHeader } from "../utility";
+import { getDefaultHeader } from "../utility";
+const { REACT_APP_API_URL } = process.env;
 
 export const getConfiguration = async (setIsLoading) => {
-    const url = `${AppUrl}api/configurations`;
+    const url = `${REACT_APP_API_URL}/configurations`;
     let configResponse = {};
     setIsLoading(true);
     try {
@@ -19,7 +20,7 @@ export const getConfiguration = async (setIsLoading) => {
 
 export const updateConfiguration = async (formData, setIsLoading) => {
     const token = localStorage.getItem('token');
-    const url = `${AppUrl}api/configurations/update`;
+    const url = `${REACT_APP_API_URL}/configurations/update`;
     let configResponse;
     setIsLoading(true);
     try {

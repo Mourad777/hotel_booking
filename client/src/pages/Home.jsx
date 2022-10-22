@@ -2,12 +2,52 @@ import React, { Fragment, useEffect, useState } from 'react';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
 import axios from 'axios'
-import { DatePicker, Space, Menu, Dropdown, Select } from 'antd'
+import { DatePicker, Space, Menu, Dropdown, Col } from 'antd'
 import { DownOutlined } from '@ant-design/icons';
 import { StyledRoomListItem } from '../components/room-list-item/RoomListItem';
 import { StyledRoomThumbnail, StyledRoomThumbnailContainer } from '../components/room-thumbnail/RoomThumbnail';
 import { StyledRoomDescription, StyledRoomDescriptionContainer } from '../components/room-description/RoomDescription';
-const { Option } = Select;
+import styled from 'styled-components';
+const { REACT_APP_AWS_URL } = process.env;
+
+const { REACT_APP_API_URL } = process.env;
+
+const StyledLink = styled(Link)`
+color: #626262;
+text-decoration: none;
+margin: 1rem;
+position: relative;
+border:1px solid #e2e2e2;
+border-radius:10%;
+padding: 10px;
+`;
+
+const Grid = styled.div`
+position:absolute;
+top:70%;
+left:50%;
+transform:translate(-50%,-50%);
+`;
+
+const Row = styled.div`
+display:flex;
+`;
+
+const Column = styled.div`
+flex:${props => props.size};
+background:white;
+width:300px;
+height:450px;
+padding:20px;
+margin:10px;
+`
+
+const CardImage = styled.img`
+width:255px;
+src:${props => props.src};
+`
+
+
 
 const { RangePicker } = DatePicker;
 
@@ -20,34 +60,33 @@ const validateDates = (checkin, checkout) => {
 }
 
 const Header = ({ children }) => (
-    <div style={{ height: 700, background: 'blue', width: '100%', position: 'relative' }}>
-        {/* <img  /> */}
+    <div style={{ height: '100vh', background: 'blue', width: '100%', position: 'relative' }}>
         {children}
     </div>
 )
 
 const Home = (props) => {
-    console.log('props');
     const { handleAccommodationDates, accommodationDates, handleAccommodation } = props;
-    // const [fromMomentDate, setFromMomentDate] = useState('')
-    // const [toMomentDate, setToMomentDate] = useState('')
-    const [adults, setAdults] = useState('')
-    const [children, setChildren] = useState('')
     const [accommodations, setAccommodations] = useState([])
     const [dateError, setDateError] = useState('')
 
     const getAccommodations = async (value) => {
-        if (!value || (value[0] === value[1])) return;
-
         const fromDate = moment(value[0]);
         const toDate = moment(value[1]);
-        handleAccommodationDates(value);
         const checkinDateFormatted = moment(fromDate).format('YYYY-MM-DD HH:mm z');
         const checkoutDateFormatted = moment(toDate).format('YYYY-MM-DD HH:mm z');
-        console.log('checkinDateFormatted', checkinDateFormatted, 'checkoutDateFormatted', checkoutDateFormatted)
-        const res = await axios.get(`http://localhost:3001/api/accommodations/${checkinDateFormatted}/${checkoutDateFormatted}`);
-        console.log('res accommodations', res)
-        setAccommodations(res.data)
+        if (!value || (value[0] === value[1])) {
+            const res = await axios.get(`${REACT_APP_API_URL}/accommodations`);
+            console.log('res accommodations', res)
+            setAccommodations(res.data)
+        } else {
+            console.log('checkinDateFormatted', checkinDateFormatted, 'checkoutDateFormatted', checkoutDateFormatted)
+            const res = await axios.get(`${REACT_APP_API_URL}/accommodations/${checkinDateFormatted}/${checkoutDateFormatted}`);
+            console.log('res accommodations', res)
+            setAccommodations(res.data)
+        }
+
+        handleAccommodationDates(value);
 
     }
 
@@ -57,27 +96,19 @@ const Home = (props) => {
     }
 
     useEffect(() => {
-        if (accommodationDates) {
-            getAccommodations(accommodationDates)
-            // const checkinDateFormatted = moment(fromDate).format('YYYY-MM-DD HH:mm z');
-            // const checkoutDateFormatted = moment(toDate).format('YYYY-MM-DD HH:mm z');
-            // const res = await axios.get(`http://localhost:3001/api/accommodations/${checkinDateFormatted}/${checkoutDateFormatted}`);
-            // setAccommodations(res.data)
-            // console.log('res accommodations', res)
-        }
-
+        getAccommodations(accommodationDates)
     }, [])
 
     return (
         <Fragment>
             <Header >
                 <div style={{
-                    height: 700,
+                    height: '100vh',
                     background: `url('/images/pexels-cottonbro-5599611.jpg') bottom center no-repeat`,
                     backgroundSize: 'cover'
                 }}
                 />
-                <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)' }}>
+                <div style={{ position: 'absolute', top: '20%', left: '50%', transform: 'translate(-50%,-50%)' }}>
 
                     <Space direction="vertical" size={12}>
                         <RangePicker
@@ -86,7 +117,7 @@ const Home = (props) => {
                             onChange={getAccommodations}
                             disabledDate={current => {
                                 const currentWithoutTime = current.format('YYYY-MM-DD');
-                                return moment(currentWithoutTime).isBefore(moment().subtract(1, 'days'),'day'); //disable all dates before today
+                                return moment(currentWithoutTime).isBefore(moment().subtract(1, 'days'), 'day'); //disable all dates before today
                             }}
                         />
                         <p> {dateError}</p>
@@ -94,12 +125,20 @@ const Home = (props) => {
                 </div>
             </Header>
             {/* <Rooms rooms={rooms} /> */}
+
+            {accommodations.length > 0 && <Grid>
+                <Row>
+                    {accommodations.map((accommodation) => {<Column size={1}><CardImage src={REACT_APP_AWS_URL + accommodation.images[0].url} /></Column>})}
+                </Row>
+            </Grid>}
+
+
             {accommodations.map(accommodation => {
 
                 return (
                     <StyledRoomListItem key={`accommodation[${accommodation.id}]`}>
                         <StyledRoomThumbnailContainer>
-                            <StyledRoomThumbnail src={accommodation.image} />
+                            <StyledRoomThumbnail src={REACT_APP_AWS_URL + accommodation.images[0].url} />
                         </StyledRoomThumbnailContainer>
                         <StyledRoomDescriptionContainer>
                             <div>
@@ -125,12 +164,12 @@ const Home = (props) => {
                                         </a>
                                     </Dropdown>
                                 )}
-                                <Link to={`/accommodation/${accommodation.id}`}>
+                                <StyledLink to={`/accommodation/${accommodation.id}`}>
                                     Details
-                                </Link>
-                                {!accommodation.roomId && <Link onClick={() => handleAccommodation(accommodation)} to={`/booking`}>
+                                </StyledLink>
+                                {!accommodation.roomId && <StyledLink onClick={() => handleAccommodation(accommodation)} to={`/booking`}>
                                     Book
-                                </Link>}
+                                </StyledLink>}
                             </div>
                         </StyledRoomDescriptionContainer>
 

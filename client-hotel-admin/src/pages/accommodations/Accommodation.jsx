@@ -4,7 +4,6 @@ import { getUsers } from '../../utility/api/users';
 import { getAccommodation } from '../../utility/api/accommodations';
 import { createBooking } from '../../utility/api/accommodation-bookings';
 import Loader from '../../components/Loader/Loader';
-import SemanticDatepicker from 'react-semantic-ui-datepickers';
 import TextField from '@mui/material/TextField';
 import StaticDateRangePicker from '@mui/lab/StaticDateRangePicker';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
@@ -12,8 +11,9 @@ import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import Box from '@mui/material/Box';
 import moment from 'moment';
 import 'react-semantic-ui-datepickers/dist/react-semantic-ui-datepickers.css';
-import { Button, Checkbox, Form, Select } from 'semantic-ui-react';
-import { AWSURL, isAccommodationAvailable } from '../../utility/utility';
+import { Button,  Form, Select } from 'semantic-ui-react';
+import { isAccommodationAvailable } from '../../utility/utility';
+const { REACT_APP_AWS_URL } = process.env;
 
 const Accommodation = () => {
 
@@ -71,7 +71,7 @@ const Accommodation = () => {
 
             <h1 style={{ textAlign: 'center' }}>{accommodation.title}</h1>
             <div style={{ display: 'flex', justifyContent: 'center' }}>
-                {(accommodation.images.length > 0) && <img src={AWSURL + accommodation.images[0].url} />}
+                {(accommodation.images.length > 0) && <img src={REACT_APP_AWS_URL + accommodation.images[0].url} />}
             </div>
             <h3 style={{ textAlign: 'center' }}>Create a booking</h3>
             <div style={{ display: 'flex', justifyContent: 'center' }}>

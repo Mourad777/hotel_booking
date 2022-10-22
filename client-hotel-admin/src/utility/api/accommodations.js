@@ -1,12 +1,13 @@
 import axios from "axios";
-import { AppUrl, getDefaultHeader } from "../utility";
+import { getDefaultHeader } from "../utility";
+const { REACT_APP_API_URL } = process.env;
 
 export const getAccommodations = async (setAccommodations, setIsLoading) => {
     const token = localStorage.getItem('token');
     let res = {};
     setIsLoading(true)
     try {
-        res = await axios.get(`${AppUrl}api/accommodations/all/all`, getDefaultHeader(token));
+        res = await axios.get(`${REACT_APP_API_URL}/accommodations/all/all`, getDefaultHeader(token));
 
     } catch (e) {
         console.log('Fetch accommodations error', e)
@@ -23,7 +24,7 @@ export const getAccommodation = async (accommodationId, setIsLoading) => {
     let res = {};
     setIsLoading(true)
     try {
-        res = await axios.get(`${AppUrl}api/accommodations/${accommodationId}`, getDefaultHeader(token));
+        res = await axios.get(`${REACT_APP_API_URL}/accommodations/${accommodationId}`, getDefaultHeader(token));
 
     } catch (e) {
         console.log('Fetch accommodation error', e)
@@ -41,7 +42,7 @@ export const createAccommodation = async (values, setIsLoading) => {
     setIsLoading(true)
     try {
 
-        const response = await axios.post('http://localhost:3001/api/accommodations', values);
+        const response = await axios.post(`${REACT_APP_API_URL}/accommodations`, values);
 
         console.log('response', response)
 
@@ -62,7 +63,7 @@ export const updateAccommodation = async (accommodationId, values, setIsLoading)
     setIsLoading(true)
     try {
 
-        const response = await axios.put(`http://localhost:3001/api/accommodations/update/${accommodationId}`, values);
+        const response = await axios.put(`${REACT_APP_API_URL}/accommodations/update/${accommodationId}`, values);
 
         console.log('response', response)
 
@@ -82,7 +83,7 @@ export const deleteAccommodation = async (id, setIsLoading) => {
     let res;
     setIsLoading(true)
     try {
-        res = await axios.delete(`${AppUrl}api/accommodations/delete/${id}`, getDefaultHeader(token));
+        res = await axios.delete(`${REACT_APP_API_URL}/accommodations/delete/${id}`);
 
     } catch (e) {
         console.log('Fetch accommodations error', e)

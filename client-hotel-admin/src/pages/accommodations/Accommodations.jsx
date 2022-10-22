@@ -1,10 +1,8 @@
 import React, { useState, useEffect, Fragment } from 'react'
-import { StyledThumbnailPreview } from '../../StyledComponents';
 import { useHistory } from 'react-router';
-import { getAccommodations } from '../../utility/api/accommodations'
+import { getAccommodations, deleteAccommodation } from '../../utility/api/accommodations'
 import Loader from '../../components/Loader/Loader';
-import { AWSURL } from '../../utility/utility';
-
+const { REACT_APP_AWS_URL } = process.env;
 
 const Accommodations = ({ }) => {
 
@@ -20,12 +18,11 @@ const Accommodations = ({ }) => {
         getInitialData()
     }, []);
 
-    // const handleDeleteBooking = async (id) => {
-    //     await deleteBooking(id, setIsLoading)
-    // }
+    const handleDeleteAccommodation = async (accommodationId) => {
+        await deleteAccommodation(accommodationId, setIsLoading)
+    }
 
-    const labelStyle = { fontSize: '1.4em', display: 'block' };
-    const titleStyle = { fontSize: '1.9em', display: 'block', fontStyle: 'bold' };
+
     if (isLoading) return <div style={{ position: 'fixed', zIndex: 5, top: '50%', left: '50%', transform: 'translateX(-50%)' }}><Loader /></div>;
 
     return (
@@ -56,10 +53,11 @@ const Accommodations = ({ }) => {
                             <tr style={{ height: 100 }}>
                                 <td style={{ fontSize: '1.2em', textAlign: 'left', cursor: 'pointer' }} onClick={() => history.push(`/create-accommodation/${accommodation.id}`)}>{i + 1}</td>
                                 <td style={{ fontSize: '1.2em', textAlign: 'left' }}>
-                                    <img style={{ width: 200, cursor: 'pointer' }} onClick={() => history.push(`/create-accommodation/${accommodation.id}`)} src={AWSURL + ((accommodation.images || [])[0] || {}).url} />
+                                    <img style={{ width: 200, cursor: 'pointer' }} onClick={() => history.push(`/create-accommodation/${accommodation.id}`)} src={REACT_APP_AWS_URL + ((accommodation.images || [])[0] || {}).url} />
                                 </td>
                                 <td style={{ fontSize: '1.2em', textAlign: 'left', cursor: 'pointer' }} onClick={() => history.push(`/create-accommodation/${accommodation.id}`)}>{accommodation.title}</td>
                                 <td style={{ fontSize: '1.2em', textAlign: 'center' }}>{accommodation.accommodation_bookings.length}</td>
+                                <td style={{ fontSize: '1.2em', textAlign: 'center' }}><button onClick={()=>handleDeleteAccommodation(accommodation.id)}>Delete</button></td>
                             </tr>
                         </Fragment>
                     ))}

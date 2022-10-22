@@ -12,14 +12,6 @@ export const getKey = (file, path) => {
 
 export const AppUrl = 'http://localhost:3001/';
 
-export const AWSURL = 'https://s3.ca-central-1.amazonaws.com/hotel-cms-bucket/';
-// export let AppUrl = 'https://stormy-forest-71570.herokuapp.com/';
-// if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
-//     // AppUrl = 'http://localhost:8000/';
-//     AppUrl = 'https://stormy-forest-71570.herokuapp.com/';
-// }
-
-
 export const isAccommodationAvailable = (bookings, currentDate) => {
     if (!bookings) return false;
     return (bookings.findIndex(booking => moment(currentDate).isBetween(moment(booking.bookingStart), moment(booking.bookingEnd), 'day')

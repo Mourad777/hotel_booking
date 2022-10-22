@@ -1,12 +1,13 @@
 import axios from "axios";
-import { AppUrl, getDefaultHeader } from "../utility";
+import { getDefaultHeader } from "../utility";
+const { REACT_APP_API_URL } = process.env;
 
 export const getBookings = async (setBookings, setIsLoading) => {
     const token = localStorage.getItem('token');
     let res = {};
     setIsLoading(true)
     try {
-        res = await axios.get(`${AppUrl}api/bookings`, getDefaultHeader(token));
+        res = await axios.get(`${REACT_APP_API_URL}/bookings`, getDefaultHeader(token));
 
     } catch (e) {
         console.log('Fetch bookings error', e)
@@ -23,7 +24,7 @@ export const getBooking = async (reservationId, setIsLoading) => {
     let res = {};
     setIsLoading(true)
     try {
-        res = await axios.get(`${AppUrl}api/bookings/${reservationId}`, getDefaultHeader(token));
+        res = await axios.get(`${REACT_APP_API_URL}/bookings/${reservationId}`, getDefaultHeader(token));
 
     } catch (e) {
         console.log('Fetch booking error', e)
@@ -41,7 +42,7 @@ export const createBooking = async (values, setIsLoading) => {
     setIsLoading(true)
     try {
 
-        const response = await axios.post('http://localhost:3001/api/bookings', values);
+        const response = await axios.post(`${REACT_APP_API_URL}/bookings`, values);
 
         console.log('response', response)
 

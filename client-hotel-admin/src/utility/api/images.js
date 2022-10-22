@@ -1,5 +1,6 @@
 import axios from "axios";
 import { AppUrl, getDefaultHeader } from "../utility";
+const { REACT_APP_API_URL } = process.env;
 
 export const createImage = async (values, setIsLoading) => {
     // const token = localStorage.getItem('token');
@@ -7,7 +8,7 @@ export const createImage = async (values, setIsLoading) => {
     setIsLoading(true)
     try {
 
-        const response = await axios.post(`${AppUrl}api/images`, values);
+        const response = await axios.post(`${REACT_APP_API_URL}/images`, values);
 
         console.log('response', response)
 
@@ -29,7 +30,7 @@ export const deleteImage = async (id, setIsLoading) => {
     setIsLoading(true)
     try {
 
-        const response = await axios.delete(`${AppUrl}api/images/delete/${id}`);
+        const response = await axios.delete(`${REACT_APP_API_URL}/images/delete/${id}`);
 
         console.log('response', response)
 

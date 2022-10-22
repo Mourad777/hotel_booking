@@ -1,16 +1,17 @@
 import axios from "axios";
-import { AppUrl } from "../utility";
+
+const { REACT_APP_API_URL } = process.env;
 
 export const uploadFile = async (file, key, token = "", fileType = 'NA') => {
     const fileInfo = new FormData();
     console.log('file key', file, key)
     fileInfo.append("key", key);
     fileInfo.append("fileType", fileType);//s3 object tag
-    console.log('pre uploading file ', `${AppUrl}uploads`)
+
     const headers = {
         'content-type': 'multipart/form-data'
     }
-    const uploadConfig = await axios.post(`${AppUrl}api/uploads`, { key, fileType });
+    const uploadConfig = await axios.post(`${REACT_APP_API_URL}/uploads`, { key, fileType });
     console.log("Get pre-signed url response: ", uploadConfig);
     try {
         let form = new FormData();

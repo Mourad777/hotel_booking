@@ -1,12 +1,13 @@
 import React from "react";
 import { SortableContainer, SortableElement } from "react-sortable-hoc";
 import arrayMove from "array-move";
-import { AWSURL } from "../../utility/utility";
+const { REACT_APP_AWS_URL } = process.env;
+
 
 const SortableItem = SortableElement(({ item, onImageDelete }) => (
     <div className="item">
         <div className="inner-item">
-            <img className="gallery-image" src={AWSURL + item.url} />
+            <img className="gallery-image" src={REACT_APP_AWS_URL + item.url} />
 
         </div>
         <button onClick={() => onImageDelete(item.id)} style={{ cursor: 'pointer', padding: 10, color: 'red', border: 'red 1px solid', background: 'rgba(219, 112, 147,0.1)' }}>Delete</button>

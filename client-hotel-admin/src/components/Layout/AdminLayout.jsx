@@ -28,7 +28,7 @@ import PostAddIcon from '@material-ui/icons/PostAdd';
 import ChromeReaderModeIcon from '@material-ui/icons/ChromeReaderMode';
 import DynamicFeedIcon from '@material-ui/icons/DynamicFeed';
 import { useHistory } from 'react-router';
-import { logout } from '../../utility/api';
+import { logout } from '../../utility/api/auth';
 import { Fragment } from 'react';
 
 const drawerWidth = 240;

@@ -3,7 +3,7 @@ import { StyledFormTextInput, StyledSubmitButton, } from '../../StyledComponents
 import { AppUrl } from '../../utility/utility';
 import Loader from '../../components/Loader/Loader';
 import { useHistory } from 'react-router';
-import { login } from '../../utility/api';
+import { login } from '../../utility/api/auth';
 
 const Login = ({ onLogin }) => {
     const history = useHistory();
@@ -28,7 +28,7 @@ const Login = ({ onLogin }) => {
             const formData = new FormData();
             formData.append('email', email || '');
             formData.append('password', password || '');
-            const url = `${AppUrl}api/login`;
+            const url = `${AppUrl}/login`;
             await login(url, formData, setIsLoading);
             onLogin(true);
             history.push('/posts');

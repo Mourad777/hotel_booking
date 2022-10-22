@@ -7,7 +7,7 @@ import { Select } from 'semantic-ui-react'
 import moment from 'moment';
 import { getUsers } from '../../utility/api/users';
 import { getAccommodations } from '../../utility/api/accommodations';
-import { AWSURL } from '../../utility/utility';
+const { REACT_APP_AWS_URL } = process.env;
 
 
 const Posts = ({ winSize }) => {
@@ -81,19 +81,21 @@ const Posts = ({ winSize }) => {
                         {bookings
                             .filter(booking => (!!selectedUser && booking.userId === selectedUser) || !selectedUser)
                             .filter(booking => (!!selectedAccommodation && booking.accommodationId === selectedAccommodation) || !selectedAccommodation)
-                            .map((booking, i) => (
+                            .map((booking, i) => {
+                                console.log('booking',booking)
+                                return(
                                 <Fragment key={booking.id}>
                                     <tr style={{ height: 100 }}>
                                         <td style={{ fontSize: '1.2em' }}><span>{i + 1}</span></td>
                                         <td onClick={() => history.push(`/create-reservation/${booking.id}`)} style={{ cursor: 'pointer', fontSize: '1.2em', textAlign: 'left' }}>
-                                            <div style={{ display: 'flex', flexDirection: 'column' }}><img style={{ width: 200, cursor: 'pointer' }} src={AWSURL + booking.accommodation.images[0].url} /><span>{booking.accommodation.title}</span></div></td>
+                                            <div style={{ display: 'flex', flexDirection: 'column' }}><img style={{ width: 200, cursor: 'pointer' }} src={REACT_APP_AWS_URL + (booking.accommodation.images[0]||{}).url} /><span>{booking.accommodation.title}</span></div></td>
                                         <td style={{ fontSize: '1.2em', textAlign: 'center' }}>{moment.utc(booking.bookingStart).format('YYYY-MM-DD')}</td>
                                         <td style={{ fontSize: '1.2em', textAlign: 'center' }}>{moment.utc(booking.bookingEnd).format('YYYY-MM-DD')}</td>
                                         <td style={{ fontSize: '1.2em', textAlign: 'center' }}>{booking.user.firstName + ' ' + booking.user.lastName}</td>
                                         <td style={{ fontSize: '1.2em', textAlign: 'center' }}>{booking.user.email}</td>
                                     </tr>
                                 </Fragment>
-                            ))
+                            )})
                         }
                     </tbody>
                 </table>

@@ -4,7 +4,6 @@ import { getUsers } from '../../utility/api/users';
 import { getAccommodations } from '../../utility/api/accommodations';
 import { getBooking } from '../../utility/api/accommodation-bookings';
 import Loader from '../../components/Loader/Loader';
-import SemanticDatepicker from 'react-semantic-ui-datepickers';
 import TextField from '@mui/material/TextField';
 import StaticDateRangePicker from '@mui/lab/StaticDateRangePicker';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
@@ -12,14 +11,15 @@ import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import Box from '@mui/material/Box';
 import moment from 'moment';
 import 'react-semantic-ui-datepickers/dist/react-semantic-ui-datepickers.css';
-import { Button, Checkbox, Form, Select } from 'semantic-ui-react';
+import { Select } from 'semantic-ui-react';
 import { isAccommodationAvailable } from '../../utility/utility';
 import axios from 'axios';
+
+const { REACT_APP_API_URL } = process.env;
 
 const Accommodation = () => {
 
     const { id: reservationId } = useParams();
-    const history = useHistory();
     const [booking, setBooking] = useState({
         user: {},
         accommodation: { beds: [] }
@@ -37,7 +37,6 @@ const Accommodation = () => {
     const [selectedUser, setSelectedUser] = useState(null);
 
     console.log('dates: ', dates)
-    // const handleDatesChange = (event, data) => setDates(data.value);
 
     const getInitialData = async () => {
         if (reservationId) {
@@ -49,34 +48,13 @@ const Accommodation = () => {
         await getUsers(setUsers, setIsLoading);
         await getAccommodations(setAccommodations, setIsLoading);
 
-        // await getUsers(setUsers, setIsLoading)
     }
-
-    // const submitBooking = async (event) => {
-    //     event.preventDefault();
-    //     const { target } = event;
-    //     console.log('FormData', Object.fromEntries(new FormData(target)));
-    //     console.log('target.email.value', target.email.value);
-    //     const formValues = Object.fromEntries(new FormData(target));
-
-    //     const values = {
-    //         ...formValues,
-    //         userId: selectedUser,
-    //         bookingStart: moment.utc(dates[0]).format('YYYY-MM-DD HH:mm z'),
-    //         bookingEnd: moment.utc(dates[1]).format('YYYY-MM-DD HH:mm z'),
-    //         accommodationId,
-    //         bedCount: selectedBeds,
-    //     }
-    //     const newBooking = await createBooking(values, setIsLoading)
-
-
-    // }
 
     const submitReservation = async (values) => {
         console.log('values: ', values);
 
         if (reservationId) {
-            const response = await axios.put(`http://localhost:3001/api/bookings/${reservationId}`, {
+            const response = await axios.put(`${REACT_APP_API_URL}/bookings/${reservationId}`, {
                 bookingStart: moment.utc(dates[0]).format('YYYY-MM-DD HH:mm z'),
                 bookingEnd: moment.utc(dates[1]).format('YYYY-MM-DD HH:mm z'),
                 accommodationId: selectedAccommodation,
@@ -86,7 +64,7 @@ const Accommodation = () => {
 
             console.log('response', response)
         } else {
-            const response = await axios.post('http://localhost:3001/api/bookings', {
+            const response = await axios.post(`${REACT_APP_API_URL}/bookings`, {
                 bookingStart: moment.utc(dates[0]).format('YYYY-MM-DD HH:mm z'),
                 bookingEnd: moment.utc(dates[1]).format('YYYY-MM-DD HH:mm z'),
                 accommodationId: selectedAccommodation,

@@ -159,8 +159,8 @@ const CreatePost = ({ isEditing }) => {
         formData.append('country', country || '');
         formData.append('is_published', isPublished ? 1 : 0);
         formData.append('is_comments_enabled', isCommentsEnabled ? 1 : 0);
-        let url = `${AppUrl}api/posts/save`;
-        if (isEditing) url = `${AppUrl}api/posts/update/${params.id}`;
+        let url = `${AppUrl}/posts/save`;
+        if (isEditing) url = `${AppUrl}/posts/update/${params.id}`;
         await updatePostForm(url, formData, setIsLoading)
         history.push('/posts');
     }

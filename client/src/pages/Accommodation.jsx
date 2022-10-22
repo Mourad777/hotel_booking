@@ -6,8 +6,11 @@ import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { Option } from 'antd/lib/mentions';
 import { isAccommodationAvailable } from '../utility/utils';
+const { REACT_APP_AWS_URL } = process.env;
 
 const { RangePicker } = DatePicker;
+
+const { REACT_APP_API_URL } = process.env;
 
 const validateDates = (checkin, checkout) => {
     let error;
@@ -46,7 +49,7 @@ const Accommodation = ({ match, accommodationDates, handleAccommodationDates, ha
     }, [])
 
     const getAccommodationDetails = async () => {
-        const res = await axios.get(`http://localhost:3001/api/accommodations/${accommodationId}`);
+        const res = await axios.get(`${REACT_APP_API_URL}/accommodations/${accommodationId}`);
         setAccommodation(res.data);
         console.log('get accommodation response', res)
     }
@@ -80,7 +83,7 @@ const Accommodation = ({ match, accommodationDates, handleAccommodationDates, ha
                 <h1 style={{ textAlign: 'center' }}>{accommodation.title}</h1>
                 <p style={{ fontFamily: 'sans-serif', fontSize: '1.2em', color: 'rgb(200,200,200)' }}>{accommodation.type}</p>
                 <div style={{ height: 400 }}>
-                    {(accommodation.images.length > 0) && <img style={{ width: 500 }} src={accommodation.images[0].url} />}
+                    {(accommodation.images.length > 0) && <img style={{ width: 500 }} src={REACT_APP_AWS_URL + accommodation.images[0].url} />}
                 </div>
                 <div style={{ margin: '10px 0' }}>
                     <p style={{ fontSize: '1.1em', color: 'rgb(150,150,150)' }}>{accommodation.description}</p>

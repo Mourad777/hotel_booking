@@ -3,10 +3,9 @@ import { StyledFormTextInput, StyledSubmitButton, } from '../../StyledComponents
 import { AppUrl } from '../../utility/utility';
 import Loader from '../../components/Loader/Loader';
 import { useHistory } from 'react-router';
-import { registerUser } from '../../utility/api';
 import axios from 'axios';
 
-const RegisterUser = ({ onLogin }) => {
+const Register = ({ onLogin }) => {
     const history = useHistory();
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
@@ -47,7 +46,7 @@ const RegisterUser = ({ onLogin }) => {
             formData.append('email', email || '');
             console.log('email', email)
             formData.append('password', password || '');
-            const url = `${AppUrl}api/auth/register`;
+            const url = `${AppUrl}/auth/register`;
             const response = await axios.post(url, {
                 firstName,
                 lastName,
@@ -103,4 +102,4 @@ const RegisterUser = ({ onLogin }) => {
     )
 }
 
-export default RegisterUser
+export default Register

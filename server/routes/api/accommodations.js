@@ -33,7 +33,6 @@ router.get("/:accommodationId", async (req, res, next) => {
 
 router.get("/:checkin/:checkout", async (req, res, next) => {
 
-    console.log('***************************************66')
     const checkinDate = req.params.checkin;
     const checkoutDate = req.params.checkout;
 
@@ -51,9 +50,6 @@ router.get("/:checkin/:checkout", async (req, res, next) => {
                         ],
                     },
                 ],
-                // raw: true,
-                // nest: true,
-                // rowMode: "array"
             });
 
             return res.json(accommodations)
@@ -70,19 +66,8 @@ router.get("/:checkin/:checkout", async (req, res, next) => {
                     ],
                 },
             ],
-            // raw: true,
-            // nest: true,
-            // rowMode: "array"
+
         });
-
-        console.log('returning accoms', accommodations)
-
-        // res.json(accommodations)
-
-
-
-
-        console.log('query:', accommodations);
 
         const momentCheckinDate = moment(checkinDate);
         const momentCheckoutDate = moment(checkoutDate);
@@ -91,18 +76,37 @@ router.get("/:checkin/:checkout", async (req, res, next) => {
         console.log('momentCheckoutDate', momentCheckoutDate);
 
         const availableAccommodations = [];
-        const availableBeds = [];
 
         accommodations.forEach(accommodation => {
+            // if (accommodation.accommodation_bookings.length === 0) {
+            //     //if the accommodation has no booking we already know it is available for any date
 
+            //     if (
+            //         availableAccommodations.findIndex(acc => acc.id === accommodation.id) > -1
+            //     ) {
+            //         console.log('already includes')
+            //         return
+            //     } else {
+            //         console.log('pushing accommodation: ', accommodation)
+            //         availableAccommodations.push(accommodation)
+            //         console.log('check 1 ', accommodation.id)
+            //         return
+            //     }
 
-            console.log('accommodation.beds.length', accommodation.beds.length)
-            accommodation.beds.forEach(bed => {
-                let isBedAvailable = true;
+            // }
+            if (accommodation.accommodation_bookings.length === 0) {
+                availableAccommodations.push(accommodation)
+                return
+            }
 
-                if (bed.accommodation_bookings.length === 0) {
-                    //if the bed has no booking we already know it is available for any date
-                    availableBeds.push(bed)
+            accommodation.accommodation_bookings.forEach(booking => {
+
+                const momentBookingStart = moment(booking.bookingStart);
+                const momentBookingEnd = moment(booking.bookingEnd);
+                const isDatesOccupied = (momentCheckinDate.isBetween(momentBookingStart, momentBookingEnd)) ||
+                    (momentCheckoutDate.isBetween(momentBookingStart, momentBookingEnd))
+                console.log('isDatesOccupied', isDatesOccupied)
+                if (!isDatesOccupied) {
                     if (
                         availableAccommodations.findIndex(acc => acc.id === accommodation.id) > -1
                     ) {
@@ -114,98 +118,17 @@ router.get("/:checkin/:checkout", async (req, res, next) => {
                         console.log('check 1 ', accommodation.id)
                         return
                     }
-
-                }
-
-                bed.accommodation_bookings.forEach(booking => {
-
-                    const momentBookingStart = moment(booking.bookingStart);
-                    const momentBookingEnd = moment(booking.bookingEnd);
-                    const isDatesOccupied = (momentCheckinDate.isBetween(momentBookingStart, momentBookingEnd)) ||
-                        (momentCheckoutDate.isBetween(momentBookingStart, momentBookingEnd))
-
-                    if (isDatesOccupied) {
-                        isBedAvailable = false;
-                        console.log('check 2 ')
-
-                        return
-                    }
-                })
-
-                if (isBedAvailable) {
-                    availableBeds.push(bed)
-                    console.log('check 3 ')
-
-                }
-                console.log('isBedAvailable', isBedAvailable)
-
-            })
-
-            let isAccommodationAvailable = true;
-
-            if (accommodation.accommodation_bookings.length === 0) {
-                //if the accommodation has no booking we already know it is available for any date
-
-                if (
-                    availableAccommodations.findIndex(acc => acc.id === accommodation.id) > -1
-                ) {
-                    console.log('already includes')
-                    return
-                } else {
-                    console.log('pushing accommodation: ', accommodation)
-                    availableAccommodations.push(accommodation)
-                    console.log('check 1 ', accommodation.id)
-                    return
-                }
-
-            }
-
-            accommodation.accommodation_bookings.forEach(booking => {
-
-                const momentBookingStart = moment(booking.bookingStart);
-                const momentBookingEnd = moment(booking.bookingEnd);
-                const isDatesOccupied = (momentCheckinDate.isBetween(momentBookingStart, momentBookingEnd)) ||
-                    (momentCheckoutDate.isBetween(momentBookingStart, momentBookingEnd))
-
-                if (isDatesOccupied) {
-                    isAccommodationAvailable = false;
-                    return
                 }
             })
 
-            if (
-                availableAccommodations.findIndex(acc => acc.id === accommodation.id) > -1
-            ) {
-                console.log('already includes')
-                return
-            } else {
-                console.log('pushing accommodation: ', accommodation)
-                availableAccommodations.push(accommodation)
-                console.log('check 1 ', accommodation.id)
-                return
-            }
+
 
 
         });
 
-
-        //get only data values from accommodations array
         const rawAvailableAccommodations = availableAccommodations.map(accommodation => accommodation.dataValues)
-        const rawAvailableAccommodationsWithBeds = rawAvailableAccommodations.map(accommodation => {
-            return {
-                ...accommodation, beds: availableBeds.filter(bed => accommodation.beds.findIndex(availableBed => {
-                    console.log('availableBed.accommodationId', availableBed.accommodationId, 'bed.accommodationId', bed.accommodationId)
-                    return availableBed.accommodationId === bed.accommodationId
-                }) > -1)
-            }
-        })
         console.log('rawAvailableAccommodations', rawAvailableAccommodations);
-        console.log('rawAvailableAccommodationsWithBeds', rawAvailableAccommodationsWithBeds)
-        //since the available accomodations will include beds in dorm rooms and a bed is considered an accommodation, need to make sure that the 
-        //list of accomodations doesn't included the same room twice but rather group the beds of the same room inside a nested array
-
-        res.json(rawAvailableAccommodationsWithBeds)
-        // res.json(accommodationsWithDorms.filter(accommodation => accommodation));
+        res.json(rawAvailableAccommodations)
     } catch (error) {
         next(error);
     }

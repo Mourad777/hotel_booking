@@ -56,3 +56,18 @@ export const createBooking = async (values, setIsLoading) => {
     setIsLoading(false)
     return res.data
 }
+
+export const deleteBooking = async (id, setIsLoading) => {
+    const token = localStorage.getItem('token');
+    let res;
+    setIsLoading(true)
+    try {
+        res = await axios.delete(`${REACT_APP_API_URL}/bookings/delete/${id}`);
+
+    } catch (e) {
+        console.log('Fetch bookings error', e)
+        setIsLoading(false)
+    }
+    setIsLoading(false)
+    console.log('Fetch bookings response', res)
+}

@@ -225,9 +225,19 @@ router.put("/:id", async (req, res, next) => {
   }
 });
 
-router.delete("/delete", async (req, res, next) => {
+router.delete("/delete/:bookingId", async (req, res, next) => {
 
   try {
+    const bookingId = req.params.bookingId;
+
+    const deleteResult = await AccommodationBooking.destroy({
+        where: {
+            id: bookingId
+        },
+
+    })
+
+    console.log('Booking delete result: ', deleteResult)
 
   } catch (error) {
     next(error);

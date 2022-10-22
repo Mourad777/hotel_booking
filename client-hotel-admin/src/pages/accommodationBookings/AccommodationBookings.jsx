@@ -7,6 +7,7 @@ import { Select } from 'semantic-ui-react'
 import moment from 'moment';
 import { getUsers } from '../../utility/api/users';
 import { getAccommodations } from '../../utility/api/accommodations';
+import { deleteBooking } from '../../utility/api/accommodation-bookings';
 const { REACT_APP_AWS_URL } = process.env;
 
 
@@ -30,6 +31,10 @@ const Posts = ({ winSize }) => {
     useEffect(() => {
         getInitialData();
     }, []);
+
+    const handleDeleteBooking = async (bookingId) => {
+        await deleteBooking(bookingId, setIsLoading)
+    }
 
     const handleClearFilters = () => {
         setSelectedAccommodation(null);
@@ -93,6 +98,7 @@ const Posts = ({ winSize }) => {
                                         <td style={{ fontSize: '1.2em', textAlign: 'center' }}>{moment.utc(booking.bookingEnd).format('YYYY-MM-DD')}</td>
                                         <td style={{ fontSize: '1.2em', textAlign: 'center' }}>{booking.user.firstName + ' ' + booking.user.lastName}</td>
                                         <td style={{ fontSize: '1.2em', textAlign: 'center' }}>{booking.user.email}</td>
+                                        <td style={{ fontSize: '1.2em', textAlign: 'center' }}><button onClick={()=>handleDeleteBooking(booking.id)}>Delete</button></td>
                                     </tr>
                                 </Fragment>
                             )})

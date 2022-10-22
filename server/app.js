@@ -7,7 +7,7 @@ const cors = require('cors')
 const app = express();
 
 app.use(cors({
-    origin: 'https://hotel-booking-admin.netlify.app',
+    origin: process.env.NODE_ENV ==='production' ? ['https://hotel-booking-admin.netlify.app','https://hotel-booking-client.netlify.app'] : '*',
     methods: ['GET','POST','DELETE','UPDATE','PUT','PATCH']
 }));
 

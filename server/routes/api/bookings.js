@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const { AccommodationBooking, User, Accommodation, Bed, Image } = require("../../db/models");
+const { AccommodationBooking, User, Accommodation, Image } = require("../../db/models");
 const moment = require('moment');
 
 
@@ -15,7 +15,6 @@ router.get("/:bookingId", async (req, res, next) => {
         { model: User, order: ["createdAt", "DESC"] },
         {
           model: Accommodation, order: ["createdAt", "DESC"], include: [
-            { model: Bed, order: ["createdAt", "DESC"] },
           ],
         },
       ],
@@ -58,11 +57,6 @@ router.post("/", async (req, res, next) => {
     const accommodation = await Accommodation.findOne({
       where: { id: accommodationId }, include: [
         { model: AccommodationBooking, order: ["createdAt", "DESC"] },
-        {
-          model: Bed, order: ["createdAt", "DESC"], include: [
-            { model: AccommodationBooking, order: ["createdAt", "DESC"] },
-          ],
-        },
       ],
     });
     if (!accommodation) {

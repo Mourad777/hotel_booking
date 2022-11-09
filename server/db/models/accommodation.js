@@ -22,10 +22,6 @@ const Accommodation = db.define("accommodations", {
     type: Sequelize.INTEGER,
     allowNull: true,
   },
-  bedCount:{
-    type: Sequelize.INTEGER,
-    allowNull: true,
-  },
   imagesOrder: {
     type: Sequelize.ARRAY(Sequelize.INTEGER),
     allowNull: true,

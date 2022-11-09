@@ -22,7 +22,6 @@ const validateAccommodationForm = (values) => {
     const errors = {}
     if (!values.title) errors.title = 'Please provide a title';
     if (isNaN(values.price) || !values.price) errors.price = 'Please provide a price';
-    if ((values.beds < 2) && values.selectedAccommodation === 'Dorm') errors.beds = 'Select at least 2 beds';
     return errors;
 }
 
@@ -50,14 +49,14 @@ export default function CreateAccommodation({ match }) {
         const amenitiesList = await getAmenities(setAmenitiesCheckedState, setIsLoading);
         setAmenities(amenitiesList)
         if (accommodationId) { //if there is and accommodatin id that means we are editing a previously created accommodation and need to populate the form
-            const { images, type, beds=[], imagesOrder, amenities, ...rest } = await getAccommodation(accommodationId, setIsLoading);
+            const { images, type, imagesOrder, amenities, ...rest } = await getAccommodation(accommodationId, setIsLoading);
             const amenitiesValues = amenitiesList.map(amenity => amenities.findIndex(chosenAmenity => chosenAmenity.name === amenity.name) > -1)
             setAmenitiesCheckedState(amenitiesValues)
             setImages(orderPhotos(images, imagesOrder))
             setSelectedAccommodation(type)
-            setFormValues({ ...rest, beds: beds.length })
+            setFormValues({ ...rest })
         } else {
-            setFormValues({ }) // necessary in case we have previous state from a preloaded form that we were editing so that the values don't carry over but instead start fresh
+            setFormValues({}) // necessary in case we have previous state from a preloaded form that we were editing so that the values don't carry over but instead start fresh
         }
     }
 
@@ -116,11 +115,11 @@ export default function CreateAccommodation({ match }) {
             await createAccommodation(values, setIsLoading)
         }
         history.push('/accommodations')
-        
+
     }
 
-    const handleImageDeletion = async (id,index) => {
-        setImages((previousImages) =>{
+    const handleImageDeletion = async (id, index) => {
+        setImages((previousImages) => {
             const newList = previousImages.slice(0, index).concat(previousImages.slice(index + 1, previousImages.length))
             return newList;
         })
@@ -180,8 +179,8 @@ export default function CreateAccommodation({ match }) {
                     value={selectedAccommodation}
                     onChange={(event, data) => setSelectedAccommodation(data.value)} />
                 <Form.Field>
-                    <label>{selectedAccommodation === "Dorm" ? "Price per bed" : 'Price'}</label>
-                    <input onChange={handleForm} name="price" value={formValues.price} type="number" placeholder={selectedAccommodation === "Dorm" ? "Price per bed" : 'Price'} />
+                    <label>{'Price'}</label>
+                    <input onChange={handleForm} name="price" value={formValues.price} type="number" placeholder="Price" />
                     <label style={{ color: 'red' }}>{formErrors.price}</label>
                 </Form.Field>
                 <Button type='submit'>Submit</Button>

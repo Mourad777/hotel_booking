@@ -2,11 +2,9 @@ import axios from "axios";
 const { REACT_APP_API_URL } = process.env;
 
 export const createImage = async (values, setIsLoading) => {
-    // const token = localStorage.getItem('token');
     let res = {};
     setIsLoading(true)
     try {
-
         const response = await axios.post(`${REACT_APP_API_URL}/images`, values);
 
         console.log('response', response)

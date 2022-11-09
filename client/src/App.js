@@ -3,7 +3,6 @@ import './App.css';
 import history from './utility/history';
 import Home from './pages/Home';
 import Accommodation from './pages/Accommodation';
-import Tour from './pages/Tour';
 import Booking from './pages/Booking';
 import { useState } from 'react';
 
@@ -38,7 +37,6 @@ function App() {
           accommodationDates={selectedAccommodationDates} />)
       }
       } />
-      <Route path="/tour/:tour" exact component={Tour} />
       <Route path="/booking" exact render={(props) => {
         return (<Booking
           {...props}

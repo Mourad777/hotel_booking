@@ -2,11 +2,10 @@ import React, { Fragment, useEffect, useState } from 'react';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
 import axios from 'axios'
-import { DatePicker, Space, Menu, Dropdown, Col } from 'antd'
-import { DownOutlined } from '@ant-design/icons';
+import { DatePicker, Space } from 'antd'
 import { StyledRoomListItem } from '../components/room-list-item/RoomListItem';
 import { StyledRoomThumbnail, StyledRoomThumbnailContainer } from '../components/room-thumbnail/RoomThumbnail';
-import { StyledRoomDescription, StyledRoomDescriptionContainer } from '../components/room-description/RoomDescription';
+import { StyledRoomDescriptionContainer } from '../components/room-description/RoomDescription';
 import styled from 'styled-components';
 const { REACT_APP_AWS_URL } = process.env;
 
@@ -47,8 +46,6 @@ width:255px;
 src:${props => props.src};
 `
 
-
-
 const { RangePicker } = DatePicker;
 
 const validateDates = (checkin, checkout) => {
@@ -80,17 +77,10 @@ const Home = (props) => {
             setAccommodations(res.data)
         } else {
             const res = await axios.get(`${REACT_APP_API_URL}/accommodations/${checkinDateFormatted}/${checkoutDateFormatted}`);
-            e.log('res accommodations', res)
+            console.log('res accommodations', res)
             setAccommodations(res.data)
         }
-
         handleAccommodationDates(value);
-
-    }
-
-
-    const handleDetails = () => {
-
     }
 
     useEffect(() => {
@@ -122,14 +112,12 @@ const Home = (props) => {
                     </Space>
                 </div>
             </Header>
-            {/* <Rooms rooms={rooms} /> */}
 
             {accommodations.length > 0 && <Grid>
                 <Row>
                     {accommodations.map((accommodation) => {<Column size={1}><CardImage src={REACT_APP_AWS_URL + accommodation.images[0].url} /></Column>})}
                 </Row>
             </Grid>}
-
 
             {accommodations.map(accommodation => {
 
@@ -140,28 +128,11 @@ const Home = (props) => {
                         </StyledRoomThumbnailContainer>
                         <StyledRoomDescriptionContainer>
                             <div>
-                                <h1 onClick={handleDetails}>{accommodation.title}</h1>
-                                <h3 onClick={handleDetails}>{accommodation.type}</h3>
-                                <p>Wifi: {accommodation.isWifi ? 'yes' : 'no'}</p>
-                                <p>Pets allowed: {accommodation.isPetsAllowed ? 'yes' : 'no'}</p>
+                                <h1>{accommodation.title}</h1>
+                                <h3>{accommodation.type}</h3>
                             </div>
 
                             <div>
-                                {accommodation.beds.length > 0 && (
-                                    <Dropdown overlay={
-                                        <Menu>
-                                            {accommodation.beds.map((bed, i) => (
-                                                <Menu.Item key={`bed[${bed.id}]`}>
-                                                    {`${i + 1} (${accommodation.price * (i + 1)}$)`}
-                                                </Menu.Item>
-                                            ))}
-                                        </Menu>
-                                    }>
-                                        <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
-                                            Select beds <DownOutlined />
-                                        </a>
-                                    </Dropdown>
-                                )}
                                 <StyledLink to={`/accommodation/${accommodation.id}`}>
                                     Details
                                 </StyledLink>
@@ -170,8 +141,6 @@ const Home = (props) => {
                                 </StyledLink>}
                             </div>
                         </StyledRoomDescriptionContainer>
-
-
                     </StyledRoomListItem>
                 )
             })}

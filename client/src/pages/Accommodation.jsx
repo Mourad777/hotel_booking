@@ -4,8 +4,8 @@ import { DatePicker, Select } from 'antd'
 import moment from 'moment';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { Option } from 'antd/lib/mentions';
 import { isAccommodationAvailable } from '../utility/utils';
+
 const { REACT_APP_AWS_URL } = process.env;
 
 const { RangePicker } = DatePicker;
@@ -27,18 +27,11 @@ const StyledLink = styled(Link)`
   };
 `;
 
-const StyledRangePicker = styled(DatePicker)`
-
-`;
-//.ant-picker-input > input {
-//  text-align:center;
-//}
-
 const StyledBookLinkContainer = styled.div`
 padding: 10px; width: 100%; border: none; background: #e2e2e2; display:flex; justify-content:center;
 `
 
-const Accommodation = ({ match, accommodationDates, handleAccommodationDates, handleAccommodation, handleSelectedBeds, selectedBeds }) => {
+const Accommodation = ({ match, accommodationDates, handleAccommodationDates, handleAccommodation }) => {
     const accommodationId = match.params.accommodationId
 
     const [accommodation, setAccommodation] = useState({images:[]})
@@ -78,42 +71,17 @@ const Accommodation = ({ match, accommodationDates, handleAccommodationDates, ha
                         style={{ width: '100%' }}
                         placeholder={["Check-in", "Check-out"]}
                         onChange={onDateSelect}
-                        disabled={!selectedBeds && accommodation.type === 'Dorm'}
                         disabledDate={current => {
-                            // return false;
                             const formattedDate = current.format('YYYY-MM-DD');
-                            if (accommodation.type === 'Dorm') {
-                                const availableBeds = [];
 
-                                accommodation.beds.forEach(bed => {
-                                    const isAvailable =
-                                        isAccommodationAvailable(bed.accommodation_bookings, formattedDate)
-                                        ||
-                                        moment(formattedDate).isBefore(moment().subtract(1, 'days'), 'day')//disable dates before today
-
-                                    if (isAvailable) { availableBeds.push(bed) }
-
-                                })
-                                return availableBeds.length > accommodation.beds.length - selectedBeds
-                            } else {
                                 return isAccommodationAvailable(accommodation.accommodation_bookings, formattedDate)
                                     ||
                                     moment(formattedDate).isBefore(moment().subtract(1, 'days'), 'day')//disable dates before today
-                            }
+                            
                         }}
                     />
                     <p> {dateError}</p>
 
-                    {(!!accommodation.id && accommodation.type === 'Dorm') && <Select
-                        placeholder="Select number of beds"
-                        onChange={handleSelectedBeds}
-                        value={selectedBeds}
-                        style={{ minWidth: 300 }}
-
-                    >
-                        {accommodation.beds.map((bed, i) => <Option key={bed.id} value={i + 1}>{`${i + 1} bed${i + 1 > 1 ? 's' : ''} ${accommodation.price * (i + 1)}$`}</Option>)}
-                    </Select>}
-                    {/* <button style={{ padding: 10, width: '100%', border: 'none', background: '#e2e2e2', cursor: 'pointer' }} onClick={bookAccommodation} >Book</button> */}
                     <StyledBookLinkContainer>
                         <StyledLink onClick={() => handleAccommodation(accommodation)} to={`/booking`}>
                             Book

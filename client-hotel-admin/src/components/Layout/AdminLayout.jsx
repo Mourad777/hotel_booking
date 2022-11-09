@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import clsx from 'clsx';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
@@ -13,7 +13,6 @@ import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import LockIcon from '@material-ui/icons/Lock';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import ListItem from '@material-ui/core/ListItem';
@@ -21,9 +20,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import LockOpenIcon from '@material-ui/icons/LockOpen';
 import AssignmentIndIcon from '@material-ui/icons/AssignmentInd';
-import MailIcon from '@material-ui/icons/Mail'
 import SubscriberIcon from '@material-ui/icons/People'
-import SettingsIcon from '@material-ui/icons/Settings'
 import PostAddIcon from '@material-ui/icons/PostAdd';
 import ChromeReaderModeIcon from '@material-ui/icons/ChromeReaderMode';
 import DynamicFeedIcon from '@material-ui/icons/DynamicFeed';
@@ -130,14 +127,6 @@ export default function Layout({ children, isLoggedIn,onLogin }) {
         setLocation(location.pathname)
     });
 
-    // useEffect(() => {
-    //     const path = history.location.pathname;
-    //     setLocation(path);
-    //     if (path === '/create-post' || path === '/posts'|| path === '/') {
-    //         setNestedOpen(true)
-    //     }
-    // }, []);
-
     return (
         <div className={classes.root}>
             <CssBaseline />
@@ -194,7 +183,6 @@ export default function Layout({ children, isLoggedIn,onLogin }) {
                                     {[
                                         { text: 'New accommodation', icon: PostAddIcon, url: '/create-accommodation' },
                                         { text: 'View accommodations', icon: DynamicFeedIcon, url: '/accommodations',altUrl:'/' },
-                                        // { text: 'Comments', icon: CommentIcon }
                                     ].map((item, index) => (
                                         <ListItem style={item.url === location || item.altUrl === location ? { background: 'rgb(240,240,240)' } : {}} onClick={() => history.push(item.url)} button key={item.text} className={classes.nested}>
                                             <ListItemIcon><item.icon /></ListItemIcon>
@@ -217,7 +205,6 @@ export default function Layout({ children, isLoggedIn,onLogin }) {
                                     {[
                                         { text: 'New reservation', icon: PostAddIcon, url: '/create-reservation' }, 
                                         { text: 'View reservations', icon: DynamicFeedIcon, url: '/bookings' },
-                                        // { text: 'Comments', icon: CommentIcon }
                                     ].map((item, index) => (
                                         <ListItem style={item.url === location || item.altUrl === location ? { background: 'rgb(240,240,240)' } : {}} onClick={() => history.push(item.url)} button key={item.text} className={classes.nested}>
                                             <ListItemIcon><item.icon /></ListItemIcon>
@@ -228,13 +215,9 @@ export default function Layout({ children, isLoggedIn,onLogin }) {
                             </Collapse>
 
                         </List> 
-                        {/* <Divider /> */}
                         <List>
                             {[
-                                // { text: 'Messages', icon: MailIcon, url: '/messages' },
                                 { text: 'Guests', icon: SubscriberIcon, url: '/guests' },
-                                // { text: 'Settings', icon: SettingsIcon, url: '/settings' },
-                                // { text: 'Logout', icon: LockIcon, url: '/login' },
                             ].map((item, index) => (
                                 <ListItem
                                     style={item.url === location ? { background: 'rgb(240,240,240)' } : {}}

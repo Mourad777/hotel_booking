@@ -15,7 +15,6 @@ const Posts = ({ winSize }) => {
 
     const history = useHistory();
     const [bookings, setBookings] = useState([]);
-    const [selectedBed, setSelectedBed] = useState(null);
     const [isLoading, setIsLoading] = useState([]);
     const [accommodations, setAccommodations] = useState([]);
     const [users, setUsers] = useState([]);

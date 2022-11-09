@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const { AccommodationBooking, Image, Accommodation, Bed, Amenity } = require("../../db/models");
+const { AccommodationBooking, Image, Accommodation, Amenity } = require("../../db/models");
 const moment = require('moment');
 const { Op } = require("sequelize");
 const { deleteFiles } = require("../../utils");
@@ -18,11 +18,6 @@ router.get("/:accommodationId", async (req, res, next) => {
                 { model: AccommodationBooking, order: ["createdAt", "DESC"] },
                 { model: Image, order: ["createdAt", "DESC"] },
                 { model: Amenity, order: ["createdAt", "DESC"] },
-                {
-                    model: Bed, order: ["createdAt", "DESC"], include: [
-                        { model: AccommodationBooking, order: ["createdAt", "DESC"] },
-                    ],
-                },
             ],
         });
         res.json(accommodation);
@@ -44,11 +39,6 @@ router.get("/:checkin/:checkout", async (req, res, next) => {
                     { model: AccommodationBooking, order: ["createdAt", "DESC"] },
                     { model: Image, order: ["createdAt", "DESC"] },
                     { model: Amenity, order: ["createdAt", "DESC"] },
-                    {
-                        model: Bed, order: ["createdAt", "DESC"], include: [
-                            { model: AccommodationBooking, order: ["createdAt", "DESC"] },
-                        ],
-                    },
                 ],
             });
 
@@ -60,11 +50,6 @@ router.get("/:checkin/:checkout", async (req, res, next) => {
                 { model: AccommodationBooking, order: ["createdAt", "DESC"] },
                 { model: Image, order: ["createdAt", "DESC"] },
                 { model: Amenity, order: ["createdAt", "DESC"] },
-                {
-                    model: Bed, order: ["createdAt", "DESC"], include: [
-                        { model: AccommodationBooking, order: ["createdAt", "DESC"] },
-                    ],
-                },
             ],
 
         });
@@ -116,11 +101,6 @@ router.get("/", async (req, res, next) => {
             { model: AccommodationBooking, order: ["createdAt", "DESC"] },
             { model: Image, order: ["createdAt", "DESC"] },
             { model: Amenity, order: ["createdAt", "DESC"] },
-            {
-                model: Bed, order: ["createdAt", "DESC"], include: [
-                    { model: AccommodationBooking, order: ["createdAt", "DESC"] },
-                ],
-            },
         ],
     });
 
@@ -128,7 +108,7 @@ router.get("/", async (req, res, next) => {
 })
 
 router.post("/", async (req, res, next) => {
-    const { images: imageIds, amenities, beds: bedCount } = req.body
+    const { images: imageIds, amenities } = req.body
 
 
 
@@ -141,14 +121,6 @@ router.post("/", async (req, res, next) => {
 
         await newAccommodation.addAmenities(amenities)
         res.json(newAccommodation);
-        // if (req.body.type === 'Dorm') {
-
-        //     const emptyArrayBedCount = Array.from({ length: bedCount });
-
-        //     await Promise.all(emptyArrayBedCount.map(async element => {
-        //         await Bed.create({ isBunkbed: false, accommodationId: newAccommodation.id })
-        //     }))
-        // }
     } catch (error) {
         next(error);
     }
@@ -164,47 +136,9 @@ router.put("/update/:id", async (req, res, next) => {
             { model: AccommodationBooking, order: ["createdAt", "DESC"] },
             { model: Image, order: ["createdAt", "DESC"] },
             { model: Amenity, order: ["createdAt", "DESC"] },
-            {
-                model: Bed, order: ["createdAt", "DESC"], include: [
-                    { model: AccommodationBooking, order: ["createdAt", "DESC"] },
-                ],
-            },
         ],
         raw: false,
     });
-
-    const currentAccommodationType = accommodation.type;
-    const newAccommodationType = req.body.type;
-    const currentNumberOfBeds = accommodation.beds.length;
-    const newNumberOfBeds = req.body.beds;
-
-    //if previous accommodation type was dorm and now is not dorm, delete all associated beds and cascade the bookings
-    if (currentAccommodationType === 'Dorm' && newAccommodationType !== 'Dorm') {
-        await Bed.destroy({
-            where: {
-                accommodationId
-            },
-
-        })
-
-    }
-    //if previous accommodation type was not dorm and now is dorm, create beds
-    if (currentAccommodationType !== 'Dorm' && newAccommodationType === 'Dorm') {
-        const bedsToCreate = newNumberOfBeds - currentNumberOfBeds;
-        const emptyArrayBedCount = Array.from({ length: bedsToCreate });
-
-        await Promise.all(emptyArrayBedCount.map(async element => {
-            await Bed.create({ isBunkbed: false, accommodationId })
-        }))
-
-    }
-
-
-    //if previous accommodation type was dorm and is still dorm but number of beds increased create beds
-    if (currentAccommodationType === 'Dorm' && newAccommodationType === 'Dorm' && (currentNumberOfBeds < newNumberOfBeds)) {
-
-
-    }
 
     const currentAmenities = accommodation.amenities;
     const currentImages = accommodation.images;
@@ -216,7 +150,6 @@ router.put("/update/:id", async (req, res, next) => {
     accommodation.type = type;
     accommodation.imagesOrder = newImages;
 
-    //find out if images have been deleted
     const currentImagesIds = currentImages.map(image => image.id);
     const deletedImages = currentImagesIds.filter(imageId => !newImages.includes(imageId));
 
@@ -231,17 +164,10 @@ router.put("/update/:id", async (req, res, next) => {
     const urlsToDelete = imagesToDelete.map(image => image.url)
 
     await deleteFiles(urlsToDelete)
-
-    //any way to update associations as a single command?
     await accommodation.removeImages(currentImages)
     await accommodation.addImages(newImages)
-
     await accommodation.removeAmenities(currentAmenities)
     await accommodation.addAmenities(newAmenities)
-
-
-
-    // accommodation.amenities
     await accommodation.save();
 
     try {

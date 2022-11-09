@@ -1,7 +1,6 @@
 const AccommodationBooking = require("./accommodationBooking");
 const User = require("./user");
 const Accommodation = require("./accommodation");
-const Bed = require('./bed');
 const Configuration = require("./configuration");
 const TourBooking = require("./tourBooking");
 const Tour = require("./tour");
@@ -24,15 +23,6 @@ Accommodation.belongsToMany(Amenity, {
     otherKey: 'amenity_id'
 });
 
-Accommodation.hasMany(Bed,
-    {
-        onDelete: 'cascade'
-    });
-
-Bed.hasMany(AccommodationBooking,
-    {
-        onDelete: 'cascade'
-    });
 
 Accommodation.hasMany(AccommodationBooking,
     {
@@ -52,12 +42,7 @@ Accommodation.belongsToMany(Image, {
 
 AccommodationBooking.belongsTo(User);
 AccommodationBooking.belongsTo(Accommodation);
-AccommodationBooking.belongsTo(Bed);
-Bed.belongsTo(Accommodation,
-    {
-        onDelete: 'cascade'
-    }
-);
+
 Image.belongsToMany(Accommodation, {
     through: 'accommodations_images',
     foreignKey: 'image_id',
@@ -81,7 +66,6 @@ TourBooking.belongsTo(User);
 module.exports = {
     AccommodationBooking,
     Accommodation,
-    Bed,
     Tour,
     TourBooking,
     User,

@@ -22,7 +22,7 @@ const Accommodation = () => {
     const { id: reservationId } = useParams();
     const [booking, setBooking] = useState({
         user: {},
-        accommodation: { beds: [] }
+        accommodation: {}
     });
 
     const [accommodations, setAccommodations] = useState([])

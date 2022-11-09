@@ -9,10 +9,10 @@ import {
 import axios from 'axios';
 import moment from 'moment';
 const { REACT_APP_AWS_URL } = process.env;
-
 const { RangePicker } = DatePicker;
 const { REACT_APP_API_URL } = process.env;
-export default function Booking({ selectedBeds, handleAccommodationDates, handleSelectedBeds, selectedAccommodation, selectedAccommodationDates }) {
+
+export default function Booking({ handleAccommodationDates, selectedAccommodation, selectedAccommodationDates }) {
 
     const [formValues, setFormValues] = useState({})
 
@@ -29,7 +29,6 @@ export default function Booking({ selectedBeds, handleAccommodationDates, handle
             bookingStart: moment.utc(selectedAccommodationDates[0]).format('YYYY-MM-DD HH:mm z'),
             bookingEnd: moment.utc(selectedAccommodationDates[1]).format('YYYY-MM-DD HH:mm z'),
             accommodationId: selectedAccommodation.id,
-            bedCount: selectedBeds,
         });
 
         console.log('response', response)
@@ -71,12 +70,12 @@ export default function Booking({ selectedBeds, handleAccommodationDates, handle
                     <Input value={formValues.email} name="email" onChange={handleForm} />
                 </Form.Item>
                 <Form.Item label="Credit card">
-                    <Input value={formValues.creditCard} name="creditCard" onChange={handleForm} />
+                    <Input disabled value={formValues.creditCard} name="creditCard" onChange={handleForm} />
                 </Form.Item>
                 <Form.Item labelAlign='horizontal' label="I agree to the terms and conditions" valuePropName="checked">
                     <Switch />
                 </Form.Item>
-                <p style={{ fontSize: '1.5em' }}>{`${selectedAccommodation.type === 'Dorm' ? selectedAccommodation.price * selectedBeds : selectedAccommodation.price}$ for `}</p>
+                <p style={{ fontSize: '1.5em' }}>{`${selectedAccommodation.price}$ per night`}</p>
                 <Form.Item>
                     <Button onClick={submitReservation}>Reserve</Button>
                 </Form.Item>

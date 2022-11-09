@@ -22,10 +22,8 @@ const Accommodation = () => {
     const [accommodation, setAccommodation] = useState({ images: [] });
     const [users, setUsers] = useState([]);
     const [isLoading, setIsLoading] = useState([]);
-    // const [dates, setDates] = useState([]);
 
     const [dates, setDates] = useState([null, null]);
-    const [selectedBeds, setSelectedBeds] = useState(1);
     const [selectedUser, setSelectedUser] = useState(null);
 
     const getInitialData = async () => {
@@ -57,8 +55,6 @@ const Accommodation = () => {
 
     if (isLoading) return <div style={{ position: 'fixed', zIndex: 5, top: '50%', left: '50%', transform: 'translateX(-50%)' }}><Loader /></div>;
 
-    const bedOptions = (accommodation.beds || []).map((bed, i) => ({ key: `bed[${bed.id}]`, text: i + 1, value: i + 1 }));
-
     return (
         <div style={{ margin: 'auto', maxWidth: 800 }}>
 
@@ -77,25 +73,10 @@ const Accommodation = () => {
                         disablePast
                         shouldDisableDate={date => {
                             const formattedDate = moment(date).format('YYYY-MM-DD');
+                            return isAccommodationAvailable(accommodation.accommodation_bookings, formattedDate)
+                                ||
+                                moment(formattedDate).isBefore(moment().subtract(1, 'days'), 'day')//disable dates before today
 
-                            if (accommodation.type === 'Dorm') {
-                                const availableBeds = [];
-
-                                accommodation.beds.forEach(bed => {
-                                    const isAvailable =
-                                        isAccommodationAvailable(bed.accommodation_bookings, formattedDate)
-                                        ||
-                                        moment(formattedDate).isBefore(moment().subtract(1, 'days'), 'day')//disable dates before today
-
-                                    if (isAvailable) { availableBeds.push(bed) }
-
-                                })
-                                return availableBeds.length > accommodation.beds.length - selectedBeds
-                            } else {
-                                return isAccommodationAvailable(accommodation.accommodation_bookings, formattedDate)
-                                    ||
-                                    moment(formattedDate).isBefore(moment().subtract(1, 'days'), 'day')//disable dates before today
-                            }
                         }}
                         onChange={(newValue) => setDates(newValue)}
                         renderInput={(startProps, endProps) => (

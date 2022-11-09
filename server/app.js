@@ -24,7 +24,6 @@ const { json, urlencoded } = express;
 app.use(json());
 app.use(urlencoded({ extended: false }));
 
-// app.use("/auth", require("./routes/auth"));
 app.use("/api", require("./routes/api"));
 
 const server = http.createServer(app);
@@ -35,6 +34,4 @@ sessionStore
   .then(() => {
     server.listen(port);
     console.log(`listening on port ${port}`)
-    // app.on("error", onError);
-    // app.on("listening", onListening);
   });

@@ -15,8 +15,4 @@ const db = new Sequelize(process.env.DB_NAME, process.env.DB_USERNAME, process.e
   })
 });
 
-console.log('process.env.DB_NAME', process.env.DB_NAME)
-
-
-
 module.exports = db;

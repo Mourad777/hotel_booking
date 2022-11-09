@@ -80,7 +80,7 @@ const Home = (props) => {
             setAccommodations(res.data)
         } else {
             const res = await axios.get(`${REACT_APP_API_URL}/accommodations/${checkinDateFormatted}/${checkoutDateFormatted}`);
-            console.log('res accommodations', res)
+            e.log('res accommodations', res)
             setAccommodations(res.data)
         }
 

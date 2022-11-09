@@ -72,28 +72,9 @@ router.get("/:checkin/:checkout", async (req, res, next) => {
         const momentCheckinDate = moment(checkinDate);
         const momentCheckoutDate = moment(checkoutDate);
 
-        console.log('momentCheckinDate', momentCheckinDate);
-        console.log('momentCheckoutDate', momentCheckoutDate);
-
         const availableAccommodations = [];
 
         accommodations.forEach(accommodation => {
-            // if (accommodation.accommodation_bookings.length === 0) {
-            //     //if the accommodation has no booking we already know it is available for any date
-
-            //     if (
-            //         availableAccommodations.findIndex(acc => acc.id === accommodation.id) > -1
-            //     ) {
-            //         console.log('already includes')
-            //         return
-            //     } else {
-            //         console.log('pushing accommodation: ', accommodation)
-            //         availableAccommodations.push(accommodation)
-            //         console.log('check 1 ', accommodation.id)
-            //         return
-            //     }
-
-            // }
             if (accommodation.accommodation_bookings.length === 0) {
                 availableAccommodations.push(accommodation)
                 return
@@ -105,17 +86,13 @@ router.get("/:checkin/:checkout", async (req, res, next) => {
                 const momentBookingEnd = moment(booking.bookingEnd);
                 const isDatesOccupied = (momentCheckinDate.isBetween(momentBookingStart, momentBookingEnd)) ||
                     (momentCheckoutDate.isBetween(momentBookingStart, momentBookingEnd))
-                console.log('isDatesOccupied', isDatesOccupied)
                 if (!isDatesOccupied) {
                     if (
                         availableAccommodations.findIndex(acc => acc.id === accommodation.id) > -1
                     ) {
-                        console.log('already includes')
                         return
                     } else {
-                        console.log('pushing accommodation: ', accommodation)
                         availableAccommodations.push(accommodation)
-                        console.log('check 1 ', accommodation.id)
                         return
                     }
                 }
@@ -127,7 +104,6 @@ router.get("/:checkin/:checkout", async (req, res, next) => {
         });
 
         const rawAvailableAccommodations = availableAccommodations.map(accommodation => accommodation.dataValues)
-        console.log('rawAvailableAccommodations', rawAvailableAccommodations);
         res.json(rawAvailableAccommodations)
     } catch (error) {
         next(error);
@@ -148,7 +124,6 @@ router.get("/", async (req, res, next) => {
         ],
     });
 
-    console.log('returning: ', accommodations)
     return res.json(accommodations);
 })
 
@@ -287,7 +262,6 @@ router.delete("/delete/:accommodationId", async (req, res, next) => {
 
         })
 
-        console.log('Accommodation delete result: ', deleteResult)
         res.send({deleteResult})
     } catch (error) {
         next(error);

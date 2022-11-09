@@ -12,10 +12,7 @@ router.post("/register", async (req, res, next) => {
 
         // expects {username, email, password} in req.body
         const { firstName, lastName, password, email } = req.body;
-        console.log('req.body',req.body)
         const existingUser = await User.findOne();
-
-        console.log('existing user: ', existingUser);
 
         let isAdmin = true;
         if (existingUser) {
@@ -44,8 +41,6 @@ router.post("/register", async (req, res, next) => {
                 .json({ error: "Password must be at least 6 characters" });
         }
 
-        console.log('creating')
-
         const user = await User.create({...req.body,isAdmin});
 
         const token = jwt.sign(
@@ -53,8 +48,6 @@ router.post("/register", async (req, res, next) => {
             process.env.SESSION_SECRET,
             { expiresIn: 86400 }
         );
-
-        console.log('token: ',token)
 
         res.json({
             ...user.dataValues,

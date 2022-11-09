@@ -29,10 +29,8 @@ const Accommodation = () => {
 
     const [users, setUsers] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
-    // const [dates, setDates] = useState([]);
 
     const [dates, setDates] = useState([null, null]);
-    const [selectedBeds, setSelectedBeds] = useState(1);
     const [selectedAccommodation, setSelectedAccommodation] = useState(null);
     const [selectedUser, setSelectedUser] = useState(null);
 
@@ -55,7 +53,6 @@ const Accommodation = () => {
                 bookingStart: moment.utc(dates[0]).format('YYYY-MM-DD HH:mm z'),
                 bookingEnd: moment.utc(dates[1]).format('YYYY-MM-DD HH:mm z'),
                 accommodationId: selectedAccommodation,
-                bedCount: selectedBeds,
                 userId: selectedUser,
             });
 
@@ -64,7 +61,6 @@ const Accommodation = () => {
                 bookingStart: moment.utc(dates[0]).format('YYYY-MM-DD HH:mm z'),
                 bookingEnd: moment.utc(dates[1]).format('YYYY-MM-DD HH:mm z'),
                 accommodationId: selectedAccommodation,
-                bedCount: selectedBeds,
                 userId: selectedUser,
             });
         }
@@ -73,10 +69,6 @@ const Accommodation = () => {
     useEffect(() => {
         getInitialData()
     }, []);
-
-    const handleSelectedBeds = (e, data) => {
-        setSelectedBeds(data.value)
-    }
 
     const handleSelectedAccommodation = (e, data) => {
         setSelectedAccommodation(data.value)
@@ -93,20 +85,16 @@ const Accommodation = () => {
 
             {isLoading && <div style={{ position: 'fixed', zIndex: 5, top: '50%', left: '50%', transform: 'translateX(-50%)' }}><Loader /></div>}
 
-            {/* <h1 style={{ textAlign: 'center' }}>{accommodation.title}</h1>
-            <div style={{ display: 'flex', justifyContent: 'center' }}> 
-                {(accommodation.images.length > 0) && <img src={accommodation.images[0].url} />}
-            </div> */}
             <h3 style={{ textAlign: 'center' }}>{reservationId ? 'Modify the booking' : 'Create a booking'}</h3>
-            <div style={{display:'flex',justifyContent:'space-around', margin:20}}>
-            <Select onChange={handleSelectedUser} value={selectedUser} placeholder='Select a user' options={
-                users.map((user, i) => {
-                    return { key: i, value: user.id, text: user.firstName + ' ' + user.lastName + ' ' + user.email }
-                })} />
-            <Select onChange={handleSelectedAccommodation} value={selectedAccommodation} placeholder='Select an accommodation' options={
-                accommodations.map((accommodation, i) => {
-                    return { key: i, value: accommodation.id, text: accommodation.title }
-                })} />
+            <div style={{ display: 'flex', justifyContent: 'space-around', margin: 20 }}>
+                <Select onChange={handleSelectedUser} value={selectedUser} placeholder='Select a user' options={
+                    users.map((user, i) => {
+                        return { key: i, value: user.id, text: user.firstName + ' ' + user.lastName + ' ' + user.email }
+                    })} />
+                <Select onChange={handleSelectedAccommodation} value={selectedAccommodation} placeholder='Select an accommodation' options={
+                    accommodations.map((accommodation, i) => {
+                        return { key: i, value: accommodation.id, text: accommodation.title }
+                    })} />
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'center' }}>
@@ -116,30 +104,11 @@ const Accommodation = () => {
                         value={[booking.bookingStart, booking.bookingEnd]}
                         disablePast
                         shouldDisableDate={date => {
-                            // console.log('date',date)
                             const formattedDate = moment(date).format('YYYY-MM-DD');
+                            return isAccommodationAvailable(booking.accommodation.accommodation_bookings, formattedDate)
+                                ||
+                                moment(formattedDate).isBefore(moment().subtract(1, 'days'), 'day')//disable dates before today
 
-                            // console.log('formattedDate', formattedDate)
-                            // return true
-                            if (booking.accommodation.type === 'Dorm') {
-                                const availableBeds = [];
-
-
-                                booking.accommodation.beds.forEach(bed => {
-                                    const isAvailable =
-                                        isAccommodationAvailable(bed.accommodation_bookings, formattedDate)
-                                        ||
-                                        moment(formattedDate).isBefore(moment().subtract(1, 'days'), 'day')//disable dates before today
-
-                                    if (isAvailable) { availableBeds.push(bed) }
-
-                                })
-                                return availableBeds.length > booking.accommodation.beds.length - selectedBeds
-                            } else {
-                                return isAccommodationAvailable(booking.accommodation.accommodation_bookings, formattedDate)
-                                    ||
-                                    moment(formattedDate).isBefore(moment().subtract(1, 'days'), 'day')//disable dates before today
-                            }
                         }}
                         onChange={(newValue) => setDates(newValue)}
                         renderInput={(startProps, endProps) => (
@@ -152,12 +121,9 @@ const Accommodation = () => {
                     />
                 </LocalizationProvider>
             </div>
-            <div style={{display:'flex',justifyContent:'center',margin:20}}>
-            <Button onClick={submitReservation}>Submit Reservation</Button>
-
+            <div style={{ display: 'flex', justifyContent: 'center', margin: 20 }}>
+                <Button onClick={submitReservation}>Submit Reservation</Button>
             </div>
-
-
         </div >
     )
 }

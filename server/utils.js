@@ -33,7 +33,6 @@ const s3 = new AWS.S3({
       deleteParams.Delete.Objects.push({ Key });
     });
     const objectsDeleteResponse = await s3.deleteObjects(deleteParams).promise();
-    console.log('objectsDeleteResponse',objectsDeleteResponse)
   };
 
 exports.isAccommodationAvailableAtDate = isAccommodationAvailableAtDate;

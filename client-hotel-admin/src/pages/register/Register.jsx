@@ -44,7 +44,6 @@ const Register = ({ onLogin }) => {
             formData.append('first_name', firstName || '');
             formData.append('last_name', lastName || '');
             formData.append('email', email || '');
-            console.log('email', email)
             formData.append('password', password || '');
             const url = `${AppUrl}/auth/register`;
             const response = await axios.post(url, {
@@ -54,7 +53,6 @@ const Register = ({ onLogin }) => {
                 password
             });
 
-            console.log('registration response', response)
             const token = response.data.token;
             if (token) {
                 localStorage.setItem('token', token)

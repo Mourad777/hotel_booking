@@ -3,12 +3,7 @@ import {
     Form,
     Input,
     Button,
-    Radio,
-    Select,
-    Cascader,
     DatePicker,
-    InputNumber,
-    TreeSelect,
     Switch,
 } from 'antd';
 import axios from 'axios';
@@ -75,14 +70,6 @@ export default function Booking({ selectedBeds, handleAccommodationDates, handle
                 <Form.Item label="E-mail">
                     <Input value={formValues.email} name="email" onChange={handleForm} />
                 </Form.Item>
-                {/* {selectedAccommodation.id && <Form.Item label="Select">
-                    <Select disabled={selectedAccommodation.type !== 'Dorm'} value={selectedBeds} onChange={handleSelectedBeds}>
-                        {selectedAccommodation.beds.map((bed, i) => <Select.Option key={bed.id} value="demo">Bed {i + 1}</Select.Option>)}
-                    </Select>
-                </Form.Item>} */}
-                {/* <Form.Item label="I am bringing a pet" valuePropName="checked">
-                    <Switch />
-                </Form.Item> */}
                 <Form.Item label="Credit card">
                     <Input value={formValues.creditCard} name="creditCard" onChange={handleForm} />
                 </Form.Item>

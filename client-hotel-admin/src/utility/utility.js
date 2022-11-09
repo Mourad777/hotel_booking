@@ -21,7 +21,6 @@ export const isAccommodationAvailable = (bookings, currentDate) => {
 }
 
 export const getDefaultHeader = (token) => {
-    console.log('token..', token)
     return {
         headers: {
             'Content-Type': 'multipart/form-data',

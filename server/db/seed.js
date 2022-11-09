@@ -85,34 +85,6 @@ async function seed() {
         isDraft: false,
     });
 
-    await Bed.create({
-        isBunkbed: true,
-        accommodationId: 4,
-        bunkbedLevel: 1,
-        accommodationId: dorm1.id,
-    });
-
-    await Bed.create({
-        isBunkbed: true,
-        accommodationId: 4,
-        bunkbedLevel: 2,
-        accommodationId: dorm1.id,
-    });
-
-
-    await Bed.create({
-        isBunkbed: true,
-        accommodationId: 4,
-        bunkbedLevel: 1,
-        accommodationId: dorm1.id,
-    });
-
-    await Bed.create({
-        isBunkbed: true,
-        accommodationId: 2,
-        accommodationId: dorm1.id,
-    });
-
     await Tour.create({
         type: 'Boat tour',
         title: 'Half day catamaran trip in the San Blas islands',
@@ -152,34 +124,3 @@ async function runSeed() {
 if (module === require.main) {
     runSeed();
 }
-
-
-
-// type: {
-//     type: Sequelize.STRING,
-//     allowNull: false,
-//   },
-//   title: {
-//     type: Sequelize.STRING,
-//     allowNull: false,
-//   },
-//   description: {
-//     type: Sequelize.STRING,
-//     allowNull: true,
-//   },
-//   capacity: {
-//     type: Sequelize.INTEGER,
-//     allowNull: false,
-//   },
-//   image: {
-//     type: Sequelize.STRING,
-//     allowNull: true,
-//   },
-//   duration: {
-//     type: Sequelize.INTEGER,
-//     allowNull: false,
-//   },
-//   timeSlots: {
-//     type: [Sequelize.INTEGER],
-//     allowNull: false,
-//   }

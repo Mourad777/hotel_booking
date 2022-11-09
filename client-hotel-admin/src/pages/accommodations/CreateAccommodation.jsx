@@ -121,11 +121,9 @@ export default function CreateAccommodation({ match }) {
 
     const handleImageDeletion = async (id,index) => {
         setImages((previousImages) =>{
-            console.log('previousImages',previousImages)
             const newList = previousImages.slice(0, index).concat(previousImages.slice(index + 1, previousImages.length))
             return newList;
         })
-
     }
 
     const handleAmenities = (position) => {

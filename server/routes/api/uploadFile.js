@@ -3,7 +3,6 @@ const { s3 } = require("../../utils");
 const router = require("express").Router();
 
 router.post("/", async (req, res, next) => {
-  console.log('req.body',req.body)
   const key = req.body.key;
   const fileType = req.body.fileType;
   const fileExtension =

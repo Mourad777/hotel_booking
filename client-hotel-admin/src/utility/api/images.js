@@ -1,5 +1,4 @@
 import axios from "axios";
-import { AppUrl, getDefaultHeader } from "../utility";
 const { REACT_APP_API_URL } = process.env;
 
 export const createImage = async (values, setIsLoading) => {
@@ -25,7 +24,6 @@ export const createImage = async (values, setIsLoading) => {
 
 export const deleteImage = async (id, setIsLoading) => {
     // const token = localStorage.getItem('token');
-    console.log('deleting image: ',id)
     let res = {};
     setIsLoading(true)
     try {

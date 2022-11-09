@@ -17,7 +17,6 @@ const Subscribers = ({ }) => {
 
         const channel = getPusher().subscribe("my-channel");
         channel.bind("SubscribersUpdated", async (data) => {
-            console.log('data', data)
             getInitialData();
         });
     }, []);

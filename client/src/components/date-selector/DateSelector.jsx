@@ -7,7 +7,6 @@ import Box from '@mui/material/Box';
 
 export default function BasicDateRangePicker() {
   const [value, setValue] = React.useState([null, null]);
-  console.log('value',value);
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <DateRangePicker

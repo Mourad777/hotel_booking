@@ -155,32 +155,32 @@ router.get("/", async (req, res, next) => {
 router.post("/", async (req, res, next) => {
     const { images: imageIds, amenities, beds: bedCount } = req.body
 
-    const newAccommodation = await Accommodation.create({ ...req.body, imagesOrder: imageIds });
 
-    if (imageIds.length > 0) {
-        await newAccommodation.addImages(imageIds)
-    }
-
-    await newAccommodation.addAmenities(amenities)
-
-    if (req.body.type === 'Dorm') {
-
-        const emptyArrayBedCount = Array.from({ length: bedCount });
-
-        await Promise.all(emptyArrayBedCount.map(async element => {
-            await Bed.create({ isBunkbed: false, accommodationId: newAccommodation.id })
-        }))
-    }
 
     try {
+        const newAccommodation = await Accommodation.create({ ...req.body, imagesOrder: imageIds });
 
+        if (imageIds.length > 0) {
+            await newAccommodation.addImages(imageIds)
+        }
+
+        await newAccommodation.addAmenities(amenities)
+        res.json(newAccommodation);
+        // if (req.body.type === 'Dorm') {
+
+        //     const emptyArrayBedCount = Array.from({ length: bedCount });
+
+        //     await Promise.all(emptyArrayBedCount.map(async element => {
+        //         await Bed.create({ isBunkbed: false, accommodationId: newAccommodation.id })
+        //     }))
+        // }
     } catch (error) {
         next(error);
     }
 });
 
 router.put("/update/:id", async (req, res, next) => {
-    console.log('updating accommodation************************************************************************')
+
     const { title, description, capacity, price, type, images: newImages, amenities: newAmenities } = req.body;
     const accommodationId = req.params.id;
     const accommodation = await Accommodation.findOne({
@@ -197,13 +197,7 @@ router.put("/update/:id", async (req, res, next) => {
         ],
         raw: false,
     });
-    console.log('accommodation to update: ', accommodation)
 
-    console.log('values: ', req.body)
-
-
-
-    const currentBeds = accommodation.beds;
     const currentAccommodationType = accommodation.type;
     const newAccommodationType = req.body.type;
     const currentNumberOfBeds = accommodation.beds.length;
@@ -234,34 +228,6 @@ router.put("/update/:id", async (req, res, next) => {
     //if previous accommodation type was dorm and is still dorm but number of beds increased create beds
     if (currentAccommodationType === 'Dorm' && newAccommodationType === 'Dorm' && (currentNumberOfBeds < newNumberOfBeds)) {
 
-        const bedsToCreate = newNumberOfBeds - currentNumberOfBeds
-
-        console.log('beds increased by', bedsToCreate)
-
-        const emptyArrayBedCount = Array.from({ length: bedsToCreate });
-
-        await Promise.all(emptyArrayBedCount.map(async element => {
-            await Bed.create({ isBunkbed: false, accommodationId })
-        }))
-    }
-    //if previous accommodation type was dorm and is still dorm but number of beds decreased delete beds
-    if (currentAccommodationType === 'Dorm' && newAccommodationType === 'Dorm' && (currentNumberOfBeds > newNumberOfBeds)) {
-        const bedsToDeleteCount = currentNumberOfBeds - newNumberOfBeds;
-        console.log('beds decreased by', bedsToDeleteCount)
-        const bedsToDelete = await Bed.destroy({
-            limit: bedsToDeleteCount,
-            where: {
-                accommodationId
-            },
-            order: [['createdAt', 'DESC']]
-
-        })
-
-        console.log('bedsToDelete', bedsToDelete)
-
-
-
-        // await Bed.destroy(bedsToDelete)
 
     }
 
@@ -277,10 +243,7 @@ router.put("/update/:id", async (req, res, next) => {
 
     //find out if images have been deleted
     const currentImagesIds = currentImages.map(image => image.id);
-    console.log('currentImagesIds', currentImagesIds)
-    console.log('newImages', newImages)
     const deletedImages = currentImagesIds.filter(imageId => !newImages.includes(imageId));
-    console.log('deletedImages', deletedImages)
 
     const imagesToDelete = await Image.findAll({
         where: {
@@ -290,9 +253,7 @@ router.put("/update/:id", async (req, res, next) => {
         }
     });
 
-    console.log('imagesToDelete', imagesToDelete)
     const urlsToDelete = imagesToDelete.map(image => image.url)
-    console.log('urls to delete', urlsToDelete)
 
     await deleteFiles(urlsToDelete)
 
@@ -317,20 +278,20 @@ router.put("/update/:id", async (req, res, next) => {
 
 router.delete("/delete/:accommodationId", async (req, res, next) => {
     const accommodationId = req.params.accommodationId;
-    console.log('accommodationId', accommodationId)
 
-    const deleteResult = await Accommodation.destroy({
-        where: {
-            id: accommodationId
-        },
-
-    })
-
-    console.log('Accommodation delete result: ', deleteResult)
     try {
+        const deleteResult = await Accommodation.destroy({
+            where: {
+                id: accommodationId
+            },
 
+        })
+
+        console.log('Accommodation delete result: ', deleteResult)
+        res.send({deleteResult})
     } catch (error) {
         next(error);
+        res.send({error})
     }
 });
 

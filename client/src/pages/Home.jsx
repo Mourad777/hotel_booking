@@ -77,10 +77,8 @@ const Home = (props) => {
         const checkoutDateFormatted = moment(toDate).format('YYYY-MM-DD HH:mm z');
         if (!value || (value[0] === value[1])) {
             const res = await axios.get(`${REACT_APP_API_URL}/accommodations`);
-            console.log('res accommodations', res)
             setAccommodations(res.data)
         } else {
-            console.log('checkinDateFormatted', checkinDateFormatted, 'checkoutDateFormatted', checkoutDateFormatted)
             const res = await axios.get(`${REACT_APP_API_URL}/accommodations/${checkinDateFormatted}/${checkoutDateFormatted}`);
             console.log('res accommodations', res)
             setAccommodations(res.data)

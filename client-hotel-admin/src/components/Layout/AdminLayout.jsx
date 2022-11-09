@@ -27,6 +27,7 @@ import SettingsIcon from '@material-ui/icons/Settings'
 import PostAddIcon from '@material-ui/icons/PostAdd';
 import ChromeReaderModeIcon from '@material-ui/icons/ChromeReaderMode';
 import DynamicFeedIcon from '@material-ui/icons/DynamicFeed';
+import CalendarMonthIcon from '@material-ui/icons/CalendarTodayTwoTone';
 import { useHistory } from 'react-router';
 import { logout } from '../../utility/api/auth';
 import { Fragment } from 'react';
@@ -206,7 +207,7 @@ export default function Layout({ children, isLoggedIn,onLogin }) {
                         <List>
                             <ListItem button onClick={handleReservationsExpansion}>
                                 <ListItemIcon>
-                                    <ChromeReaderModeIcon />
+                                    <CalendarMonthIcon />
                                 </ListItemIcon>
                                 <ListItemText primary="Reservations" />
                                 {nestedReservationsOpen ? <ExpandLess /> : <ExpandMore />}
@@ -227,13 +228,13 @@ export default function Layout({ children, isLoggedIn,onLogin }) {
                             </Collapse>
 
                         </List> 
-                        <Divider />
+                        {/* <Divider /> */}
                         <List>
                             {[
-                                { text: 'Messages', icon: MailIcon, url: '/messages' },
+                                // { text: 'Messages', icon: MailIcon, url: '/messages' },
                                 { text: 'Guests', icon: SubscriberIcon, url: '/guests' },
-                                { text: 'Settings', icon: SettingsIcon, url: '/settings' },
-                                { text: 'Logout', icon: LockIcon, url: '/login' },
+                                // { text: 'Settings', icon: SettingsIcon, url: '/settings' },
+                                // { text: 'Logout', icon: LockIcon, url: '/login' },
                             ].map((item, index) => (
                                 <ListItem
                                     style={item.url === location ? { background: 'rgb(240,240,240)' } : {}}

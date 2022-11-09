@@ -51,31 +51,13 @@ const Accommodation = ({ match, accommodationDates, handleAccommodationDates, ha
     const getAccommodationDetails = async () => {
         const res = await axios.get(`${REACT_APP_API_URL}/accommodations/${accommodationId}`);
         setAccommodation(res.data);
-        console.log('get accommodation response', res)
     }
 
     const onDateSelect = (value) => {
         if (!value) return;
         handleAccommodationDates(value)
-        console.log('value', value)
-        // const checkinDate = moment.utc(value[0]).format('YYYY-MM-DD')
-        // const checkoutDate = moment.utc(value[1]).format('YYYY-MM-DD')
-
-
-        //using utc will normalize the data for the server, without utc the timezones will not be taken into account
-        //and the intended date may not be registered
-
-        // const error = validateDates(checkinDate, checkoutDate)
-        // if (error) {
-        //     setDateError(error)
-        //     return
-        // } else setDateError('');
-
-        // setFromDate(checkinDate);
-        // setToDate(checkoutDate);
     }
 
-    console.log('accommodationDates', accommodationDates)
     return (
         <Fragment>
 

@@ -41,8 +41,6 @@ const Posts = ({ winSize }) => {
         setSelectedUser(null);
     }
 
-    console.log('selectedAccommodation', selectedAccommodation)
-    console.log('bookings', bookings)
     if (isLoading) {
         return <div style={{ position: 'fixed', zIndex: 5, top: '50%', left: '50%', transform: 'translateX(-50%)' }}><Loader /></div>
     } else {
@@ -87,7 +85,6 @@ const Posts = ({ winSize }) => {
                             .filter(booking => (!!selectedUser && booking.userId === selectedUser) || !selectedUser)
                             .filter(booking => (!!selectedAccommodation && booking.accommodationId === selectedAccommodation) || !selectedAccommodation)
                             .map((booking, i) => {
-                                console.log('booking',booking)
                                 return(
                                 <Fragment key={booking.id}>
                                     <tr style={{ height: 100 }}>

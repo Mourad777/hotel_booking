@@ -11,7 +11,7 @@ import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import Box from '@mui/material/Box';
 import moment from 'moment';
 import 'react-semantic-ui-datepickers/dist/react-semantic-ui-datepickers.css';
-import { Button,  Form, Select } from 'semantic-ui-react';
+import { Button, Form, Select } from 'semantic-ui-react';
 import { isAccommodationAvailable } from '../../utility/utility';
 const { REACT_APP_AWS_URL } = process.env;
 
@@ -27,7 +27,6 @@ const Accommodation = () => {
     const [dates, setDates] = useState([null, null]);
     const [selectedBeds, setSelectedBeds] = useState(1);
     const [selectedUser, setSelectedUser] = useState(null);
-    // const handleDatesChange = (event, data) => setDates(data.value);
 
     const getInitialData = async () => {
         const accommodation = await getAccommodation(accommodationId, setIsLoading);
@@ -38,8 +37,7 @@ const Accommodation = () => {
     const submitBooking = async (event) => {
         event.preventDefault();
         const { target } = event;
-        console.log('FormData', Object.fromEntries(new FormData(target)));
-        console.log('target.email.value', target.email.value);
+
         const formValues = Object.fromEntries(new FormData(target));
 
         const values = {
@@ -48,13 +46,11 @@ const Accommodation = () => {
             bookingStart: moment.utc(dates[0]).format('YYYY-MM-DD HH:mm z'),
             bookingEnd: moment.utc(dates[1]).format('YYYY-MM-DD HH:mm z'),
             accommodationId,
-            bedCount: selectedBeds,
         }
-        const newBooking = await createBooking(values, setIsLoading)
+        await createBooking(values, setIsLoading)
 
 
     }
-    console.log('selectedUser', selectedUser)
     useEffect(() => {
         getInitialData()
     }, []);
@@ -62,7 +58,6 @@ const Accommodation = () => {
     if (isLoading) return <div style={{ position: 'fixed', zIndex: 5, top: '50%', left: '50%', transform: 'translateX(-50%)' }}><Loader /></div>;
 
     const bedOptions = (accommodation.beds || []).map((bed, i) => ({ key: `bed[${bed.id}]`, text: i + 1, value: i + 1 }));
-    console.log('bedOptions', bedOptions)
 
     return (
         <div style={{ margin: 'auto', maxWidth: 800 }}>
@@ -81,11 +76,8 @@ const Accommodation = () => {
                         value={dates}
                         disablePast
                         shouldDisableDate={date => {
-                            // console.log('date',date)
                             const formattedDate = moment(date).format('YYYY-MM-DD');
 
-                            // console.log('formattedDate', formattedDate)
-                            // return true
                             if (accommodation.type === 'Dorm') {
                                 const availableBeds = [];
 
@@ -117,7 +109,6 @@ const Accommodation = () => {
                 </LocalizationProvider>
             </div>
             <Select placeholder='Select a user' value={selectedUser} onChange={(event, data) => setSelectedUser(data.value)} options={users} />
-            <Select disabled={bedOptions.length === 0} placeholder='Select number of beds' options={bedOptions} value={selectedBeds} onChange={(event, data) => setSelectedBeds(data.value)} />
             <Form onSubmit={submitBooking}>
                 <Form.Field>
                     <label>First Name</label>

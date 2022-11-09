@@ -6,3 +6,7 @@ Admin photo/video gallery
 AWS s3
 -videos are uploaded directly via the browser to s3 bucket using a pre-signed url because of there size and server memory requirements
 -photos are uploaded via the laravel server for the purpose of manipulating the size before storing them in the s3 bucket
+
+TODOS
+-Provide appropriate error codes from the server when something goes wrong
+-Crud operation for users

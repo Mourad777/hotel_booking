@@ -5,17 +5,12 @@ import { createAccommodation, updateAccommodation, getAccommodation } from '../.
 import { createImage, deleteImage } from '../../utility/api/images'
 import { getKey, orderPhotos } from '../../utility/utility';
 import SortableGallery from '../../components/gallery/Gallery'
-import arrayMove from "array-move";
 import Dropzone from '../../components/dropzone';
-import ImageList from '../../components/imageList';
 import cuid from 'cuid'
-import { DndProvider } from "react-dnd";
-import update from "immutability-helper";
-import { HTML5Backend } from 'react-dnd-html5-backend';
-import { useParams } from 'react-router-dom'
+import { useParams, useHistory } from 'react-router-dom'
 import { getAmenities } from '../../utility/api/amenities'
-const accommodationTypes = ['Apartment', 'Studio', 'House', 'Villa', 'Condo', 'Dorm', 'Private Room']
-// const amenities = ['Wifi', 'Pets', 'Lockers', 'Children allowed', 'Breakfast', 'Laundry', 'Dorm', 'Luggage storage', 'Bar', 'Meals', 'Common Area', 'Terrace', 'Smoking Area'];
+
+const accommodationTypes = ['Apartment', 'Studio', 'House', 'Villa', 'Condo', 'Private Room']
 
 const isObjectEmpty = (obj) => {
     return obj
@@ -26,8 +21,6 @@ const isObjectEmpty = (obj) => {
 const validateAccommodationForm = (values) => {
     const errors = {}
     if (!values.title) errors.title = 'Please provide a title';
-    console.log('price: ',values.price)
-    console.log('isNaN(values.price)',isNaN(values.price))
     if (isNaN(values.price) || !values.price) errors.price = 'Please provide a price';
     if ((values.beds < 2) && values.selectedAccommodation === 'Dorm') errors.beds = 'Select at least 2 beds';
     return errors;
@@ -35,15 +28,13 @@ const validateAccommodationForm = (values) => {
 
 
 const getAmenitiesIds = (amenities, amenitiesCheckedState) => {
-
     return amenities.filter((amenity, i) => amenitiesCheckedState[i] === true).map(selectedAmenity => selectedAmenity.id)
-
 }
 
 export default function CreateAccommodation({ match }) {
+    const history = useHistory();
 
     const { id: accommodationId } = useParams()
-    console.log('accommodationId', accommodationId);
     let newId;
     if (!accommodationId) newId = cuid();
     const [selectedAccommodation, setSelectedAccommodation] = useState(null);
@@ -64,29 +55,21 @@ export default function CreateAccommodation({ match }) {
             setAmenitiesCheckedState(amenitiesValues)
             setImages(orderPhotos(images, imagesOrder))
             setSelectedAccommodation(type)
-            console.log('rest: ', rest)
             setFormValues({ ...rest, beds: beds.length })
-            // console.log('got accommodation: ', accommodation)
         } else {
             setFormValues({ }) // necessary in case we have previous state from a preloaded form that we were editing so that the values don't carry over but instead start fresh
         }
     }
-    console.log('form values: ', formValues)
-    console.log('selected accommodation ', selectedAccommodation)
+
     useEffect(() => {
         getInitialData()
     }, []);
 
-    console.log('amenitiesCheckedState', amenitiesCheckedState)
-
-
-    console.log('amenities: ', amenities)
 
     const onDrop = useCallback(acceptedFiles => {
         // Loop through accepted files
         acceptedFiles.map(async (file, i) => {
             const awsPath = `accommodation-${accommodationId || newId}/pictures`;
-
             const key = getKey(file, awsPath)
             //upload file to aws
             await uploadFile(file, key);
@@ -108,12 +91,10 @@ export default function CreateAccommodation({ match }) {
         });
     }, []);
 
-    console.log('images:', images)
 
     const submitAccommodation = async (event) => {
 
         const validationErrors = validateAccommodationForm({ ...formValues, selectedAccommodation });
-        console.log('!isObjectEmpty(validationErrors)', !isObjectEmpty(validationErrors), validationErrors)
         if (!isObjectEmpty(validationErrors)) {
             setFormErrors(validationErrors)
             return;
@@ -121,7 +102,6 @@ export default function CreateAccommodation({ match }) {
 
 
         event.preventDefault();
-        console.log('creating accommodation: ', formValues)
         const values = {
             accommodationId: accommodationId || newId,
             ...formValues,
@@ -135,29 +115,20 @@ export default function CreateAccommodation({ match }) {
         } else {
             await createAccommodation(values, setIsLoading)
         }
+        history.push('/accommodations')
+        
     }
 
     const handleImageDeletion = async (id,index) => {
-        // await deleteImage(id,setIsLoading);
-        // console.log('index to cut out',index)
-        // console.log('before splicing',images);
-        // images.splice(index, 1);
-        // console.log('after splicing',images);
-
-
-
         setImages((previousImages) =>{
             console.log('previousImages',previousImages)
             const newList = previousImages.slice(0, index).concat(previousImages.slice(index + 1, previousImages.length))
-            // previousImages.splice(index, 1);
-            console.log('new list',newList)
             return newList;
         })
 
     }
-    console.log('********* images: ',images)
+
     const handleAmenities = (position) => {
-        console.log('position: ', position)
         const updatedCheckedState = amenitiesCheckedState.map((item, index) =>
             index === position ? !item : item
         );
@@ -167,7 +138,6 @@ export default function CreateAccommodation({ match }) {
     const handleForm = (event) => {
         const name = event.target.name;
         const value = event.target.value;
-        console.log('name', name, 'value', value)
         setFormValues({ ...formValues, [name]: value });
     }
 
@@ -189,11 +159,6 @@ export default function CreateAccommodation({ match }) {
                     <label>Capacity</label>
                     <input onChange={handleForm} value={formValues.capacity} type="number" name="capacity" placeholder='Capacity' />
                 </Form.Field>
-                <Form.Field>
-                    <label>Number of beds</label>
-                    <input disabled={selectedAccommodation !== 'Dorm'} value={formValues.beds} onChange={handleForm} type="number" name="beds" placeholder='Number of beds' />
-                    <label style={{ color: 'red' }}>{formErrors.beds}</label>
-                </Form.Field>
 
                 <h4>Amenities</h4>
                 {amenities.map((amenity, index) => {
@@ -213,7 +178,6 @@ export default function CreateAccommodation({ match }) {
 
                 <Select
                     placeholder='Accommodation type'
-
                     options={accommodationTypes.map(accommodation => ({ key: accommodation, value: accommodation, text: accommodation }))}
                     value={selectedAccommodation}
                     onChange={(event, data) => setSelectedAccommodation(data.value)} />

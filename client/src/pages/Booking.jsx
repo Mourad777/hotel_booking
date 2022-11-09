@@ -28,7 +28,6 @@ export default function Booking({ selectedBeds, handleAccommodationDates, handle
     }
 
     const submitReservation = async (values) => {
-        console.log('values: ', values);
 
         const response = await axios.post(`${REACT_APP_API_URL}/bookings`, {
             ...formValues,

@@ -38,23 +38,22 @@ export const getAccommodation = async (accommodationId, setIsLoading) => {
 
 export const createAccommodation = async (values, setIsLoading) => {
     // const token = localStorage.getItem('token');
-    let res = {};
+    let response;
+    
     setIsLoading(true)
     try {
-
-        const response = await axios.post(`${REACT_APP_API_URL}/accommodations`, values);
-
+        console.log('creating1')
+        response = await axios.post(`${REACT_APP_API_URL}/accommodations`, values);
+        console.log('creating2')
         console.log('response', response)
-
-        return response.data
 
     } catch (e) {
         console.log('Create accommodation error', e)
         setIsLoading(false)
     }
-    console.log('Create accommodation response', res)
+    console.log('Create accommodation response', response)
     setIsLoading(false)
-    return res.data
+    return response.data
 }
 
 export const updateAccommodation = async (accommodationId, values, setIsLoading) => {

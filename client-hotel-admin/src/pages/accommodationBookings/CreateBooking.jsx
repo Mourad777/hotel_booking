@@ -11,7 +11,7 @@ import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import Box from '@mui/material/Box';
 import moment from 'moment';
 import 'react-semantic-ui-datepickers/dist/react-semantic-ui-datepickers.css';
-import { Select } from 'semantic-ui-react';
+import { Button, Select } from 'semantic-ui-react';
 import { isAccommodationAvailable } from '../../utility/utility';
 import axios from 'axios';
 
@@ -36,8 +36,6 @@ const Accommodation = () => {
     const [selectedAccommodation, setSelectedAccommodation] = useState(null);
     const [selectedUser, setSelectedUser] = useState(null);
 
-    console.log('dates: ', dates)
-
     const getInitialData = async () => {
         if (reservationId) {
             const booking = await getBooking(reservationId, setIsLoading);
@@ -51,7 +49,6 @@ const Accommodation = () => {
     }
 
     const submitReservation = async (values) => {
-        console.log('values: ', values);
 
         if (reservationId) {
             const response = await axios.put(`${REACT_APP_API_URL}/bookings/${reservationId}`, {
@@ -62,7 +59,6 @@ const Accommodation = () => {
                 userId: selectedUser,
             });
 
-            console.log('response', response)
         } else {
             const response = await axios.post(`${REACT_APP_API_URL}/bookings`, {
                 bookingStart: moment.utc(dates[0]).format('YYYY-MM-DD HH:mm z'),
@@ -71,11 +67,7 @@ const Accommodation = () => {
                 bedCount: selectedBeds,
                 userId: selectedUser,
             });
-
-            console.log('response', response)
         }
-
-        
     }
 
     useEffect(() => {
@@ -96,9 +88,6 @@ const Accommodation = () => {
 
     if (isLoading) return <div style={{ position: 'fixed', zIndex: 5, top: '50%', left: '50%', transform: 'translateX(-50%)' }}><Loader /></div>;
 
-    // const bedOptions = (accommodation.beds || []).map((bed, i) => ({ key: `bed[${bed.id}]`, text: i + 1, value: i + 1 }));
-    // console.log('bedOptions', bedOptions)
-    console.log('users: ', users)
     return (
         <div style={{ margin: 'auto', maxWidth: 800 }}>
 
@@ -109,6 +98,7 @@ const Accommodation = () => {
                 {(accommodation.images.length > 0) && <img src={accommodation.images[0].url} />}
             </div> */}
             <h3 style={{ textAlign: 'center' }}>{reservationId ? 'Modify the booking' : 'Create a booking'}</h3>
+            <div style={{display:'flex',justifyContent:'space-around', margin:20}}>
             <Select onChange={handleSelectedUser} value={selectedUser} placeholder='Select a user' options={
                 users.map((user, i) => {
                     return { key: i, value: user.id, text: user.firstName + ' ' + user.lastName + ' ' + user.email }
@@ -117,6 +107,8 @@ const Accommodation = () => {
                 accommodations.map((accommodation, i) => {
                     return { key: i, value: accommodation.id, text: accommodation.title }
                 })} />
+            </div>
+
             <div style={{ display: 'flex', justifyContent: 'center' }}>
                 <LocalizationProvider dateAdapter={AdapterDateFns}>
                     <StaticDateRangePicker
@@ -160,14 +152,10 @@ const Accommodation = () => {
                     />
                 </LocalizationProvider>
             </div>
-            <Select onChange={handleSelectedBeds} value={selectedBeds} placeholder='Select number of beds' options={
-                reservationId ?
-                    booking.accommodation.beds.map((bed, i) => {
-                        return { key: i, value: i + 1, text: i + 1 + ' beds' }
-                    }) : (((accommodations || []).find(accommodation => accommodation.id === selectedAccommodation) || {}).beds || []).map((bed, i) => {
-                        return { key: i, value: i + 1, text: i + 1 + ' beds' }
-                    })} />
-            <button onClick={submitReservation}>Submit Reservation</button>
+            <div style={{display:'flex',justifyContent:'center',margin:20}}>
+            <Button onClick={submitReservation}>Submit Reservation</Button>
+
+            </div>
 
 
         </div >

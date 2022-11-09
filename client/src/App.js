@@ -11,7 +11,6 @@ function App() {
 
   const [selectedAccommodationDates, setSelectedAccommodationDates] = useState({})
   const [selectedAccommodation, setSelectedAccommodation] = useState({images:[]})
-  const [selectedBeds, setSelectedBeds] = useState(1)
 
   const handleAccommodationDates = (value) => {
     setSelectedAccommodationDates(value)
@@ -19,11 +18,6 @@ function App() {
 
   const handleAccommodation = (value) => {
     setSelectedAccommodation(value)
-  }
-
-  const handleSelectedBeds = (value) => {
-    console.log('value',value)
-    setSelectedBeds(value)
   }
 
   return (
@@ -38,8 +32,6 @@ function App() {
       <Route path="/accommodation/:accommodationId" exact render={(props) => {
         return (<Accommodation
           {...props}
-          selectedBeds={selectedBeds}
-          handleSelectedBeds={handleSelectedBeds}
           handleAccommodation={handleAccommodation}
           accommodation={selectedAccommodation}
           handleAccommodationDates={handleAccommodationDates}
@@ -50,11 +42,9 @@ function App() {
       <Route path="/booking" exact render={(props) => {
         return (<Booking
           {...props}
-          selectedBeds={selectedBeds}
           selectedAccommodation={selectedAccommodation}
           selectedAccommodationDates={selectedAccommodationDates}
           handleAccommodationDates={handleAccommodationDates}
-          handleSelectedBeds={handleSelectedBeds}
            />)
       }
       } />

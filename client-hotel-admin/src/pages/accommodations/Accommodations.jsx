@@ -2,6 +2,7 @@ import React, { useState, useEffect, Fragment } from 'react'
 import { useHistory } from 'react-router';
 import { getAccommodations, deleteAccommodation } from '../../utility/api/accommodations'
 import Loader from '../../components/Loader/Loader';
+import { Button } from 'semantic-ui-react';
 const { REACT_APP_AWS_URL } = process.env;
 
 const Accommodations = ({ }) => {
@@ -20,6 +21,10 @@ const Accommodations = ({ }) => {
 
     const handleDeleteAccommodation = async (accommodationId) => {
         await deleteAccommodation(accommodationId, setIsLoading)
+        setAccommodations(accommodations=>{
+            //get index of accommodation to delete
+            const accommodationIndex = accommodations.findIndex(accommodation=>accommodation.id === accommodationId)
+            return accommodations.splice(accommodationIndex,1)})
     }
 
 
@@ -57,7 +62,7 @@ const Accommodations = ({ }) => {
                                 </td>
                                 <td style={{ fontSize: '1.2em', textAlign: 'left', cursor: 'pointer' }} onClick={() => history.push(`/create-accommodation/${accommodation.id}`)}>{accommodation.title}</td>
                                 <td style={{ fontSize: '1.2em', textAlign: 'center' }}>{accommodation.accommodation_bookings.length}</td>
-                                <td style={{ fontSize: '1.2em', textAlign: 'center' }}><button onClick={()=>handleDeleteAccommodation(accommodation.id)}>Delete</button></td>
+                                <td style={{ fontSize: '1.2em', textAlign: 'center' }}><Button onClick={()=>handleDeleteAccommodation(accommodation.id)}>Delete</Button></td>
                             </tr>
                         </Fragment>
                     ))}

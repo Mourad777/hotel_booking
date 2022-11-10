@@ -13,7 +13,7 @@ const { REACT_APP_AWS_URL } = process.env;
 const { REACT_APP_API_URL } = process.env;
 
 const StyledRangePickerContainer = styled.div`
-  @media (max-width: 576px) {
+  @media (max-width: 790px) {
     .ant-picker-panels {
       flex-direction: column !important;
     }
@@ -143,13 +143,14 @@ const Home = (props) => {
 
                 return (
                     <StyledRoomListItem key={`accommodation[${accommodation.id}]`}>
-                        <StyledRoomThumbnailContainer>
+                     
                             <StyledRoomThumbnail src={REACT_APP_AWS_URL + accommodation.images[0].url} />
-                        </StyledRoomThumbnailContainer>
+                 
                         <StyledRoomDescriptionContainer>
                             <div>
                                 <h1>{accommodation.title}</h1>
                                 <h3>{accommodation.type}</h3>
+                                <h3>{accommodation.price}$ per night</h3>
                             </div>
 
                             <div>

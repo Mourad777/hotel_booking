@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useHistory, useParams } from 'react-router';
+import { useParams } from 'react-router';
 import { getUsers } from '../../utility/api/users';
 import { getAccommodations } from '../../utility/api/accommodations';
 import { getBooking } from '../../utility/api/accommodation-bookings';
@@ -17,7 +17,7 @@ import axios from 'axios';
 
 const { REACT_APP_API_URL } = process.env;
 
-const Accommodation = () => {
+const Accommodation = ({windowSize}) => {
 
     const { id: reservationId } = useParams();
     const [booking, setBooking] = useState({
@@ -26,10 +26,8 @@ const Accommodation = () => {
     });
 
     const [accommodations, setAccommodations] = useState([])
-
     const [users, setUsers] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
-
     const [dates, setDates] = useState([null, null]);
     const [selectedAccommodation, setSelectedAccommodation] = useState(null);
     const [selectedUser, setSelectedUser] = useState(null);
@@ -43,7 +41,6 @@ const Accommodation = () => {
         }
         await getUsers(setUsers, setIsLoading);
         await getAccommodations(setAccommodations, setIsLoading);
-
     }
 
     const submitReservation = async (values) => {
@@ -79,7 +76,7 @@ const Accommodation = () => {
     }
 
     if (isLoading) return <div style={{ position: 'fixed', zIndex: 5, top: '50%', left: '50%', transform: 'translateX(-50%)' }}><Loader /></div>;
-
+    console.log('win size',windowSize)
     return (
         <div style={{ margin: 'auto', maxWidth: 800 }}>
 
@@ -96,11 +93,10 @@ const Accommodation = () => {
                         return { key: i, value: accommodation.id, text: accommodation.title }
                     })} />
             </div>
-
             <div style={{ display: 'flex', justifyContent: 'center' }}>
                 <LocalizationProvider dateAdapter={AdapterDateFns}>
                     <StaticDateRangePicker
-                        displayStaticWrapperAs="desktop"
+                        displayStaticWrapperAs={windowSize[0] > 790 ? 'desktop' : 'mobile'}
                         value={[booking.bookingStart, booking.bookingEnd]}
                         disablePast
                         shouldDisableDate={date => {
@@ -108,7 +104,6 @@ const Accommodation = () => {
                             return isAccommodationAvailable(booking.accommodation.accommodation_bookings, formattedDate)
                                 ||
                                 moment(formattedDate).isBefore(moment().subtract(1, 'days'), 'day')//disable dates before today
-
                         }}
                         onChange={(newValue) => setDates(newValue)}
                         renderInput={(startProps, endProps) => (

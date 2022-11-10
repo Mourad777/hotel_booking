@@ -20,7 +20,7 @@ const validateDates = (checkin, checkout) => {
 }
 
 const StyledRangePickerContainer = styled.div`
-  @media (max-width: 576px) {
+  @media (max-width: 790px) {
     .ant-picker-panels {
       flex-direction: column !important;
     }
@@ -71,6 +71,13 @@ const Accommodation = ({ match, accommodationDates, handleAccommodationDates, ha
                 <div style={{ margin: '10px 0' }}>
                     <p style={{ fontSize: '1.1em', color: 'rgb(150,150,150)' }}>{accommodation.description}</p>
                 </div>
+                {accommodation.amenities && <div>
+                    <ul>
+                        {accommodation.amenities.map(amenity => {
+                            return <li>{amenity.name}</li>
+                        })}
+                    </ul>
+                </div>}
 
                 <div style={{ width: '100%' }}>
 

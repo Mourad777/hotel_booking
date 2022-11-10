@@ -46,15 +46,6 @@ const Accommodations = ({ }) => {
                     </tr>
                     {accommodations.map((accommodation, i) => (
                         <Fragment key={accommodation.id}>
-                            {/* <span style={titleStyle}>{p.title}</span>
-                                <p style={{ margin: '5px 0', fontSize: '1.3em' }}>{`Posted on ${new Date(p.created_at).toLocaleDateString()} ${!!p.author ? 'by ' + p.author : ''}`}</p>
-                                <div style={{ display: 'flex', justifyContent: 'left', alignItems: 'center' }}><span style={{ ...labelStyle, marginRight: 10 }}>Published: </span><Checkbox disabled checked={!!p.is_published} /></div> */}
-
-                            {/* <div style={{ display: 'flex', justifyContent: 'space-evenly' }}>
-                                    <StyledBlueButton maxWidth onClick={() => history.push(`/post/${p.id}/comments`)}><Icon name='comment outline' size='large' /> {p.comment_count}</StyledBlueButton>
-                                    <StyledBlueButton maxWidth onClick={() => history.push(`/edit-post/${p.id}`)}><Icon name='edit outline' size='large' /></StyledBlueButton>
-                                    <StyledRedButton maxWidth onClick={() => handleDeletePost(p.id)}> <Icon name='trash alternate outline' size='large' /></StyledRedButton>
-                                </div> */}
                             <tr style={{ height: 100 }}>
                                 <td style={{ fontSize: '1.2em', textAlign: 'left', cursor: 'pointer' }} onClick={() => history.push(`/create-accommodation/${accommodation.id}`)}>{i + 1}</td>
                                 <td style={{ fontSize: '1.2em', textAlign: 'left' }}>

@@ -7,9 +7,18 @@ import { StyledRoomListItem } from '../components/room-list-item/RoomListItem';
 import { StyledRoomThumbnail, StyledRoomThumbnailContainer } from '../components/room-thumbnail/RoomThumbnail';
 import { StyledRoomDescriptionContainer } from '../components/room-description/RoomDescription';
 import styled from 'styled-components';
+
 const { REACT_APP_AWS_URL } = process.env;
 
 const { REACT_APP_API_URL } = process.env;
+
+const StyledRangePickerContainer = styled.div`
+  @media (max-width: 576px) {
+    .ant-picker-panels {
+      flex-direction: column !important;
+    }
+  }
+`;
 
 const StyledLink = styled(Link)`
 color: #626262;
@@ -45,8 +54,6 @@ const CardImage = styled.img`
 width:255px;
 src:${props => props.src};
 `
-
-const { RangePicker } = DatePicker;
 
 const validateDates = (checkin, checkout) => {
     let error = '';
@@ -99,7 +106,7 @@ const Home = (props) => {
                 <div style={{ position: 'absolute', top: '20%', left: '50%', transform: 'translate(-50%,-50%)' }}>
 
                     <Space direction="vertical" size={12}>
-                        <RangePicker
+                        <DatePicker.RangePicker
                             value={accommodationDates}
                             placeholder={["Check-in", "Check-out"]}
                             onChange={getAccommodations}
@@ -107,7 +114,20 @@ const Home = (props) => {
                                 const currentWithoutTime = current.format('YYYY-MM-DD');
                                 return moment(currentWithoutTime).isBefore(moment().subtract(1, 'days'), 'day'); //disable all dates before today
                             }}
+                            panelRender={(panelNode) => (
+                                <StyledRangePickerContainer>{panelNode}</StyledRangePickerContainer>
+                            )}
+                            {...props}
                         />
+                        {/* <RangePicker
+                            value={accommodationDates}
+                            placeholder={["Check-in", "Check-out"]}
+                            onChange={getAccommodations}
+                            disabledDate={current => {
+                                const currentWithoutTime = current.format('YYYY-MM-DD');
+                                return moment(currentWithoutTime).isBefore(moment().subtract(1, 'days'), 'day'); //disable all dates before today
+                            }} /> */}
+
                         <p> {dateError}</p>
                     </Space>
                 </div>
@@ -115,7 +135,7 @@ const Home = (props) => {
 
             {accommodations.length > 0 && <Grid>
                 <Row>
-                    {accommodations.map((accommodation) => {<Column size={1}><CardImage src={REACT_APP_AWS_URL + accommodation.images[0].url} /></Column>})}
+                    {accommodations.map((accommodation) => { <Column size={1}><CardImage src={REACT_APP_AWS_URL + accommodation.images[0].url} /></Column> })}
                 </Row>
             </Grid>}
 

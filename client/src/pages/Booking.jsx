@@ -12,6 +12,7 @@ const { REACT_APP_AWS_URL } = process.env;
 const { RangePicker } = DatePicker;
 const { REACT_APP_API_URL } = process.env;
 
+
 export default function Booking({ handleAccommodationDates, selectedAccommodation, selectedAccommodationDates }) {
 
     const [formValues, setFormValues] = useState({})

@@ -19,6 +19,14 @@ const validateDates = (checkin, checkout) => {
     }
 }
 
+const StyledRangePickerContainer = styled.div`
+  @media (max-width: 576px) {
+    .ant-picker-panels {
+      flex-direction: column !important;
+    }
+  }
+`;
+
 const StyledLink = styled(Link)`
   color:rgb(0,0,0);
   font-size:1.2em;
@@ -34,7 +42,7 @@ padding: 10px; width: 100%; border: none; background: #e2e2e2; display:flex; jus
 const Accommodation = ({ match, accommodationDates, handleAccommodationDates, handleAccommodation }) => {
     const accommodationId = match.params.accommodationId
 
-    const [accommodation, setAccommodation] = useState({images:[]})
+    const [accommodation, setAccommodation] = useState({ images: [] })
     const [dateError, setDateError] = useState('')
 
     useEffect(() => {
@@ -66,7 +74,7 @@ const Accommodation = ({ match, accommodationDates, handleAccommodationDates, ha
 
                 <div style={{ width: '100%' }}>
 
-                    <RangePicker
+                    <DatePicker.RangePicker
                         value={accommodationDates}
                         style={{ width: '100%' }}
                         placeholder={["Check-in", "Check-out"]}
@@ -74,11 +82,14 @@ const Accommodation = ({ match, accommodationDates, handleAccommodationDates, ha
                         disabledDate={current => {
                             const formattedDate = current.format('YYYY-MM-DD');
 
-                                return isAccommodationAvailable(accommodation.accommodation_bookings, formattedDate)
-                                    ||
-                                    moment(formattedDate).isBefore(moment().subtract(1, 'days'), 'day')//disable dates before today
-                            
+                            return isAccommodationAvailable(accommodation.accommodation_bookings, formattedDate)
+                                ||
+                                moment(formattedDate).isBefore(moment().subtract(1, 'days'), 'day')//disable dates before today
+
                         }}
+                        panelRender={(panelNode) => (
+                            <StyledRangePickerContainer>{panelNode}</StyledRangePickerContainer>
+                        )}
                     />
                     <p> {dateError}</p>
 

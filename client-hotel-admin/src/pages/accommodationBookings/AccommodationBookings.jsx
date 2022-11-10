@@ -3,7 +3,7 @@ import { StyledThumbnailPreview } from '../../StyledComponents';
 import { useHistory } from 'react-router';
 import { getBookings } from '../../utility/api/accommodation-bookings';
 import Loader from '../../components/Loader/Loader';
-import { Select } from 'semantic-ui-react'
+import { Button, Select } from 'semantic-ui-react'
 import moment from 'moment';
 import { getUsers } from '../../utility/api/users';
 import { getAccommodations } from '../../utility/api/accommodations';
@@ -67,7 +67,7 @@ const Posts = ({ winSize }) => {
                             } />
                     </div>
                     <div>
-                        <button onClick={handleClearFilters}>Clear Filters</button>
+                        <Button onClick={handleClearFilters}>Clear Filters</Button>
                     </div>
                 </div>
                 <table style={{ margin: 'auto', width: '100%' }}>
@@ -94,7 +94,7 @@ const Posts = ({ winSize }) => {
                                         <td style={{ fontSize: '1.2em', textAlign: 'center' }}>{moment.utc(booking.bookingEnd).format('YYYY-MM-DD')}</td>
                                         <td style={{ fontSize: '1.2em', textAlign: 'center' }}>{booking.user.firstName + ' ' + booking.user.lastName}</td>
                                         <td style={{ fontSize: '1.2em', textAlign: 'center' }}>{booking.user.email}</td>
-                                        <td style={{ fontSize: '1.2em', textAlign: 'center' }}><button onClick={()=>handleDeleteBooking(booking.id)}>Delete</button></td>
+                                        <td style={{ fontSize: '1.2em', textAlign: 'center' }}><Button onClick={()=>handleDeleteBooking(booking.id)}>Delete</Button></td>
                                     </tr>
                                 </Fragment>
                             )})

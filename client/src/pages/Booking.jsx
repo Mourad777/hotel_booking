@@ -8,10 +8,10 @@ import {
 } from 'antd';
 import axios from 'axios';
 import moment from 'moment';
+import { StyledAccommodationPrice, StyledMainContainer, StyledMainImage, StyledMainTitle } from '../styles/booking'
 const { REACT_APP_AWS_URL } = process.env;
 const { RangePicker } = DatePicker;
 const { REACT_APP_API_URL } = process.env;
-
 
 export default function Booking({ handleAccommodationDates, selectedAccommodation, selectedAccommodationDates }) {
 
@@ -41,19 +41,10 @@ export default function Booking({ handleAccommodationDates, selectedAccommodatio
     }
 
     return (
-        <div style={{ maxWidth: 700, margin: 'auto', padding: 30 }}>
-            <h1 style={{ textAlign: 'center' }}>Booking</h1>
-            {selectedAccommodation.images.length > 0 && <img style={{ height: 400, width: 500 }} src={REACT_APP_AWS_URL + selectedAccommodation.images[0].url} />}
-            <Form
-                labelCol={{
-                    span: 14,
-                }}
-                wrapperCol={{
-                    span: 14,
-                }}
-                layout="vertical"
-                size="large"
-            >
+        <StyledMainContainer>
+            <StyledMainTitle>Booking</StyledMainTitle>
+            {selectedAccommodation.images.length > 0 && <StyledMainImage src={REACT_APP_AWS_URL + selectedAccommodation.images[0].url} />}
+            <Form labelCol={{ span: 14 }} wrapperCol={{ span: 14, }} layout="vertical" size="large">
                 <Form.Item label=" ">
                     <RangePicker
                         value={selectedAccommodationDates}
@@ -76,12 +67,11 @@ export default function Booking({ handleAccommodationDates, selectedAccommodatio
                 <Form.Item labelAlign='horizontal' label="I agree to the terms and conditions" valuePropName="checked">
                     <Switch />
                 </Form.Item>
-                <p style={{ fontSize: '1.5em' }}>{`${selectedAccommodation.price}$ per night`}</p>
+                <StyledAccommodationPrice>{`${selectedAccommodation.price}$ per night`}</StyledAccommodationPrice>
                 <Form.Item>
                     <Button onClick={submitReservation}>Reserve</Button>
                 </Form.Item>
             </Form>
-
-        </div>
+        </StyledMainContainer>
     )
 }

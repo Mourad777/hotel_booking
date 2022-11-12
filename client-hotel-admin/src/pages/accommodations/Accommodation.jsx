@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useHistory, useParams } from 'react-router';
+import { useParams } from 'react-router';
 import { getUsers } from '../../utility/api/users';
 import { getAccommodation } from '../../utility/api/accommodations';
 import { createBooking } from '../../utility/api/accommodation-bookings';
@@ -13,12 +13,13 @@ import moment from 'moment';
 import 'react-semantic-ui-datepickers/dist/react-semantic-ui-datepickers.css';
 import { Button, Form, Select } from 'semantic-ui-react';
 import { isAccommodationAvailable } from '../../utility/utility';
+
+
 const { REACT_APP_AWS_URL } = process.env;
 
 const Accommodation = () => {
 
     const { id: accommodationId } = useParams();
-    const history = useHistory();
     const [accommodation, setAccommodation] = useState({ images: [] });
     const [users, setUsers] = useState([]);
     const [isLoading, setIsLoading] = useState([]);

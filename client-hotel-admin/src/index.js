@@ -49,8 +49,8 @@ const App = () => {
             <PrivateRoute isLoggedIn={isLoggedIn} path="/accommodation/:id" component={Accommodation} />
             <PrivateRoute isLoggedIn={isLoggedIn} path="/bookings" component={Bookings} />
             <PrivateRoute isLoggedIn={isLoggedIn} path="/create-accommodation/:id?" component={CreateAccommodation} />
-            <PrivateRoute isLoggedIn={isLoggedIn} path="/create-reservation"  windowSize={useWindowSize()} component={CreateBooking} />
-            <PrivateRoute isLoggedIn={isLoggedIn} path="/create-reservation/:id"  windowSize={useWindowSize()} component={CreateBooking} />
+            <PrivateRoute isLoggedIn={isLoggedIn} path="/create-reservation"  component={CreateBooking} />
+            <PrivateRoute isLoggedIn={isLoggedIn} path="/create-reservation/:id"  component={CreateBooking} />
             {!isLoggedIn && (<Redirect to="/login" />)}
           </AdminLayout>
         </Switch>

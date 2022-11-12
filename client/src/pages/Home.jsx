@@ -103,7 +103,7 @@ const Home = (props) => {
                     backgroundSize: 'cover'
                 }}
                 />
-                <div style={{ position: 'absolute', top: '20%', left: '50%', transform: 'translate(-50%,-50%)' }}>
+                <div style={{ position: 'absolute', top: '20%', left: '50%', transform: 'translate(-50%,-50%)',minWidth:360 }}>
 
                     <Space direction="vertical" size={12}>
                         <DatePicker.RangePicker

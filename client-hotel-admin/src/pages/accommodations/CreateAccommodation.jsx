@@ -9,6 +9,11 @@ import Dropzone from '../../components/dropzone';
 import cuid from 'cuid'
 import { useParams, useHistory } from 'react-router-dom'
 import { getAmenities } from '../../utility/api/amenities'
+import styled from 'styled-components'
+
+const StyledDropzone = styled(Dropzone)`
+    border: 2px #e2e2e2 dashed;
+`
 
 const accommodationTypes = ['Apartment', 'Studio', 'House', 'Villa', 'Condo', 'Private Room']
 
@@ -140,7 +145,7 @@ export default function CreateAccommodation({ match }) {
 
     return (
         <Fragment>
-            <h2>Create a new accommodation</h2>
+            <h2 style={{textAlign:'center'}}>Create a new accommodation</h2>
 
             <Form onSubmit={submitAccommodation}>
                 <Form.Field>
@@ -183,14 +188,14 @@ export default function CreateAccommodation({ match }) {
                     <input onChange={handleForm} name="price" value={formValues.price} type="number" placeholder="Price" />
                     <label style={{ color: 'red' }}>{formErrors.price}</label>
                 </Form.Field>
-                <Button type='submit'>Submit</Button>
+
             </Form>
 
-            <Dropzone onDrop={onDrop} accept={"image/*"} />
+            <StyledDropzone style={{border:'5px solid blue'}} onDrop={onDrop} accept={"image/*"} />
 
-            <SortableGallery onImageDelete={handleImageDeletion} items={images} setItems={setImages} />
+            {images.length > 0 && <SortableGallery onImageDelete={handleImageDeletion} items={images} setItems={setImages} />}
 
-
+            <Button style={{ width: '100%', margin: 20 }} type='submit'>Submit</Button>
         </Fragment>
     )
 }

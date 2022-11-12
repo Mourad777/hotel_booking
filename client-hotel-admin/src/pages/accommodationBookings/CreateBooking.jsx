@@ -14,10 +14,16 @@ import 'react-semantic-ui-datepickers/dist/react-semantic-ui-datepickers.css';
 import { Button, Select } from 'semantic-ui-react';
 import { isAccommodationAvailable } from '../../utility/utility';
 import axios from 'axios';
+import styled from 'styled-components';
+import { useWindowSize } from '../../utility/windowSize';
+
+const StyledSelect = styled(Select)`
+width: 320px;
+`
 
 const { REACT_APP_API_URL } = process.env;
 
-const Accommodation = ({windowSize}) => {
+const Accommodation = () => {
 
     const { id: reservationId } = useParams();
     const [booking, setBooking] = useState({
@@ -75,28 +81,34 @@ const Accommodation = ({windowSize}) => {
         setSelectedUser(data.value)
     }
 
+    const windowSize = useWindowSize()
+
     if (isLoading) return <div style={{ position: 'fixed', zIndex: 5, top: '50%', left: '50%', transform: 'translateX(-50%)' }}><Loader /></div>;
-    console.log('win size',windowSize)
+
     return (
         <div style={{ margin: 'auto', maxWidth: 800 }}>
 
             {isLoading && <div style={{ position: 'fixed', zIndex: 5, top: '50%', left: '50%', transform: 'translateX(-50%)' }}><Loader /></div>}
 
-            <h3 style={{ textAlign: 'center' }}>{reservationId ? 'Modify the booking' : 'Create a booking'}</h3>
-            <div style={{ display: 'flex', justifyContent: 'space-around', margin: 20 }}>
-                <Select onChange={handleSelectedUser} value={selectedUser} placeholder='Select a user' options={
-                    users.map((user, i) => {
-                        return { key: i, value: user.id, text: user.firstName + ' ' + user.lastName + ' ' + user.email }
-                    })} />
-                <Select onChange={handleSelectedAccommodation} value={selectedAccommodation} placeholder='Select an accommodation' options={
-                    accommodations.map((accommodation, i) => {
-                        return { key: i, value: accommodation.id, text: accommodation.title }
-                    })} />
+            <h1 style={{ textAlign: 'center' }}>{reservationId ? 'Modify the booking' : 'Create a booking'}</h1>
+            <div style={{ display: 'flex', justifyContent: 'space-around', margin: 20, flexDirection: windowSize[0] > 900 ? 'row' : 'column' }}>
+                <div style={{margin:'20px auto',}}>
+                    <StyledSelect onChange={handleSelectedUser} value={selectedUser} placeholder='Select a user' options={
+                        users.map((user, i) => {
+                            return { key: i, value: user.id, text: user.firstName + ' ' + user.lastName + ' ' + user.email }
+                        })} />
+                </div>
+                <div style={{margin:'20px auto',}}>
+                    <StyledSelect onChange={handleSelectedAccommodation} value={selectedAccommodation} placeholder='Select an accommodation' options={
+                        accommodations.map((accommodation, i) => {
+                            return { key: i, value: accommodation.id, text: accommodation.title }
+                        })} />
+                </div>
             </div>
             <div style={{ display: 'flex', justifyContent: 'center' }}>
                 <LocalizationProvider dateAdapter={AdapterDateFns}>
                     <StaticDateRangePicker
-                        displayStaticWrapperAs={windowSize[0] > 790 ? 'desktop' : 'mobile'}
+                        displayStaticWrapperAs={windowSize[0] > 900 ? 'desktop' : 'mobile'}
                         value={[booking.bookingStart, booking.bookingEnd]}
                         disablePast
                         shouldDisableDate={date => {

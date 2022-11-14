@@ -11,16 +11,19 @@ import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import Box from '@mui/material/Box';
 import moment from 'moment';
 import 'react-semantic-ui-datepickers/dist/react-semantic-ui-datepickers.css';
-import { Button, Select } from 'semantic-ui-react';
+import { Button } from 'semantic-ui-react';
 import { isAccommodationAvailable } from '../../utility/utility';
 import axios from 'axios';
-import styled from 'styled-components';
 import { useWindowSize } from '../../utility/windowSize';
-
-const StyledSelect = styled(Select)`
-width: 320px;
-`
-
+import {
+    StyledContentWrapper,
+    StyledMainWrapper,
+    StyledSelect,
+    StyledSelectContainer,
+    StyledSelectsWrapper,
+    StyledSubmitButtonContainer,
+    StyledTitle
+} from '../../styles/create-booking'
 const { REACT_APP_API_URL } = process.env;
 
 const Accommodation = () => {
@@ -52,7 +55,7 @@ const Accommodation = () => {
     const submitReservation = async (values) => {
 
         if (reservationId) {
-            const response = await axios.put(`${REACT_APP_API_URL}/bookings/${reservationId}`, {
+            await axios.put(`${REACT_APP_API_URL}/bookings/${reservationId}`, {
                 bookingStart: moment.utc(dates[0]).format('YYYY-MM-DD HH:mm z'),
                 bookingEnd: moment.utc(dates[1]).format('YYYY-MM-DD HH:mm z'),
                 accommodationId: selectedAccommodation,
@@ -60,7 +63,7 @@ const Accommodation = () => {
             });
 
         } else {
-            const response = await axios.post(`${REACT_APP_API_URL}/bookings`, {
+            await axios.post(`${REACT_APP_API_URL}/bookings`, {
                 bookingStart: moment.utc(dates[0]).format('YYYY-MM-DD HH:mm z'),
                 bookingEnd: moment.utc(dates[1]).format('YYYY-MM-DD HH:mm z'),
                 accommodationId: selectedAccommodation,
@@ -83,29 +86,27 @@ const Accommodation = () => {
 
     const windowSize = useWindowSize()
 
-    if (isLoading) return <div style={{ position: 'fixed', zIndex: 5, top: '50%', left: '50%', transform: 'translateX(-50%)' }}><Loader /></div>;
+    if (isLoading) return <Loader />;
 
     return (
-        <div style={{ margin: 'auto', maxWidth: 800 }}>
-
-            {isLoading && <div style={{ position: 'fixed', zIndex: 5, top: '50%', left: '50%', transform: 'translateX(-50%)' }}><Loader /></div>}
-
-            <h1 style={{ textAlign: 'center' }}>{reservationId ? 'Modify the booking' : 'Create a booking'}</h1>
-            <div style={{ display: 'flex', justifyContent: 'space-around', margin: 20, flexDirection: windowSize[0] > 900 ? 'row' : 'column' }}>
-                <div style={{margin:'20px auto',}}>
+        <StyledMainWrapper>
+            {isLoading && <Loader />}
+            <StyledTitle>{reservationId ? 'Modify the booking' : 'Create a booking'}</StyledTitle>
+            <StyledSelectsWrapper windowSize={windowSize}>
+                <StyledSelectContainer>
                     <StyledSelect onChange={handleSelectedUser} value={selectedUser} placeholder='Select a user' options={
                         users.map((user, i) => {
                             return { key: i, value: user.id, text: user.firstName + ' ' + user.lastName + ' ' + user.email }
                         })} />
-                </div>
-                <div style={{margin:'20px auto',}}>
+                </StyledSelectContainer>
+                <StyledSelectContainer>
                     <StyledSelect onChange={handleSelectedAccommodation} value={selectedAccommodation} placeholder='Select an accommodation' options={
                         accommodations.map((accommodation, i) => {
                             return { key: i, value: accommodation.id, text: accommodation.title }
                         })} />
-                </div>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'center' }}>
+                </StyledSelectContainer>
+            </StyledSelectsWrapper>
+            <StyledContentWrapper>
                 <LocalizationProvider dateAdapter={AdapterDateFns}>
                     <StaticDateRangePicker
                         displayStaticWrapperAs={windowSize[0] > 900 ? 'desktop' : 'mobile'}
@@ -127,11 +128,11 @@ const Accommodation = () => {
                         )}
                     />
                 </LocalizationProvider>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'center', margin: 20 }}>
+            </StyledContentWrapper>
+            <StyledSubmitButtonContainer>
                 <Button onClick={submitReservation}>Submit Reservation</Button>
-            </div>
-        </div >
+            </StyledSubmitButtonContainer>
+        </StyledMainWrapper >
     )
 }
 

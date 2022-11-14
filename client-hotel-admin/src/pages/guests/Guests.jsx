@@ -1,30 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { List } from "semantic-ui-react";
 import Avatar from 'react-avatar';
-import { getSubscribers } from "../../utility/api";
 import Loader from "../../components/Loader/Loader";
-import { getPusher } from "../../utility/utility";
 
 const Subscribers = ({ }) => {
-    const [subscribers, setSubscribers] = useState([]);
+
     const [isLoading, setIsLoading] = useState(false);
-
-    const getInitialData = async () => {
-        getSubscribers(setSubscribers, setIsLoading)
-    }
-    useEffect(() => {
-        getInitialData();
-
-        const channel = getPusher().subscribe("my-channel");
-        channel.bind("SubscribersUpdated", async (data) => {
-            getInitialData();
-        });
-    }, []);
-
-
+   
     return (
         <div >
-            <h1>Subscribers</h1>
+            <h1>Guests</h1>
             {isLoading && <div style={{ position: 'fixed', zIndex: 5, top: '50%', left: '50%', transform: 'translateX(-50%)' }}><Loader /></div>}
             <List>
                 {subscribers.map((m, i) => (

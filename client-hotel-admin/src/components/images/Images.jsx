@@ -2,7 +2,7 @@ import React, { useState, createRef, useEffect, Fragment } from "react";
 import arrayMove from "array-move";
 import { StyledRedButton,} from '../../StyledComponents';
 import SortableGallery from '../gallery/Gallery'
-import Loader from "../../components/Loader/Loader";
+import Loader from "../Loader/Loader";
 import { Button } from "semantic-ui-react";
 
 

@@ -4,6 +4,19 @@ import { getAccommodations, deleteAccommodation } from '../../utility/api/accomm
 import Loader from '../../components/Loader/Loader';
 import { Button } from 'semantic-ui-react';
 import { useWindowSize } from '../../utility/windowSize';
+import {
+    StyledDeleteButton,
+    StyledAccommodationImage,
+    StyledMainContainer,
+    StyledMainTitle,
+    StyledMobileAccommodationImage,
+    StyledMobileAccommodationTitle,
+    StyledTable,
+    StyledTableData,
+    StyledTableHead,
+    StyledTableRow,
+} from '../../styles/accommodations';
+
 const { REACT_APP_AWS_URL } = process.env;
 
 const Accommodations = ({ }) => {
@@ -30,52 +43,52 @@ const Accommodations = ({ }) => {
     }
 
     const windowSize = useWindowSize()
-    console.log('windowSize', windowSize)
-    if (isLoading) return <div style={{ position: 'fixed', zIndex: 5, top: '50%', left: '50%', transform: 'translateX(-50%)' }}><Loader /></div>;
+
+    if (isLoading) return <Loader />;
 
     return (
-        <div style={{ margin: 'auto', maxWidth: 800 }}>
-
-            {isLoading && <div style={{ position: 'fixed', zIndex: 5, top: '50%', left: '50%', transform: 'translateX(-50%)' }}><Loader /></div>}
-
-            <h1 style={{textAlign:'center'}}>Accommodations</h1>
+        <StyledMainContainer>
+            {isLoading && <Loader />}
+            <StyledMainTitle>Accommodations</StyledMainTitle>
             {windowSize[0] > 700 ?
-                <table style={{ margin: 'auto', width: '100%' }}>
+                <StyledTable>
                     <tbody>
                         <tr>
-                            <th style={{ fontSize: '1.2em', textAlign: 'left' }}></th>
-                            <th style={{ fontSize: '1.2em', textAlign: 'left' }}></th>
-                            <th style={{ fontSize: '1.2em', textAlign: 'left' }}>Title</th>
-                            <th style={{ fontSize: '1.2em' }}>Bookings</th>
+                            <StyledTableHead></StyledTableHead>
+                            <StyledTableHead></StyledTableHead>
+                            <StyledTableHead>Title</StyledTableHead>
+                            <StyledTableHead>Bookings</StyledTableHead>
                         </tr>
                         {accommodations.map((accommodation, i) => (
                             <Fragment key={accommodation.id}>
-                                <tr style={{ height: 100 }}>
-                                    <td style={{ fontSize: '1.2em', textAlign: 'left', cursor: 'pointer' }} onClick={() => history.push(`/create-accommodation/${accommodation.id}`)}>{i + 1}</td>
-                                    <td style={{ fontSize: '1.2em', textAlign: 'left' }}>
-                                        <img style={{ width: 200, cursor: 'pointer' }} onClick={() => history.push(`/create-accommodation/${accommodation.id}`)} src={REACT_APP_AWS_URL + ((accommodation.images || [])[0] || {}).url} />
-                                    </td>
-                                    <td style={{ fontSize: '1.2em', textAlign: 'left', cursor: 'pointer' }} onClick={() => history.push(`/create-accommodation/${accommodation.id}`)}>{accommodation.title}</td>
-                                    <td style={{ fontSize: '1.2em', textAlign: 'center' }}>{accommodation.accommodation_bookings.length}</td>
-                                    <td style={{ fontSize: '1.2em', textAlign: 'center' }}><Button onClick={() => handleDeleteAccommodation(accommodation.id)}>Delete</Button></td>
-                                </tr>
+                                <StyledTableRow>
+                                    <StyledTableData>
+                                        {i + 1}
+                                    </StyledTableData>
+                                    <StyledTableData>
+                                        <StyledAccommodationImage onClick={() => history.push(`/create-accommodation/${accommodation.id}`)} src={REACT_APP_AWS_URL + ((accommodation.images || [])[0] || {}).url} />
+                                    </StyledTableData>
+                                    <StyledTableData>{accommodation.title}</StyledTableData>
+                                    <StyledTableData>{accommodation.accommodation_bookings.length}</StyledTableData>
+                                    <StyledTableData><Button onClick={() => handleDeleteAccommodation(accommodation.id)}>Delete</Button></StyledTableData>
+                                </StyledTableRow>
                             </Fragment>
                         ))}
                     </tbody>
-                </table>
+                </StyledTable>
                 : <Fragment>
                     {accommodations.map((accommodation, i) => (
                         <div>
-                            <h2 style={{textAlign:'center'}}>{accommodation.title}</h2>
-                            <img style={{ width: '100%', cursor: 'pointer' }} onClick={() => history.push(`/create-accommodation/${accommodation.id}`)} src={REACT_APP_AWS_URL + ((accommodation.images || [])[0] || {}).url} />
-                            <Button style={{width:'100%'}} onClick={() => handleDeleteAccommodation(accommodation.id)}>Delete</Button>
+                            <StyledMobileAccommodationTitle>{accommodation.title}</StyledMobileAccommodationTitle>
+                            <StyledMobileAccommodationImage
+                                onClick={() => history.push(`/create-accommodation/${accommodation.id}`)}
+                                src={REACT_APP_AWS_URL + ((accommodation.images || [])[0] || {}).url}
+                            />
+                            <StyledDeleteButton onClick={() => handleDeleteAccommodation(accommodation.id)}>Delete</StyledDeleteButton>
                         </div>))}
                 </Fragment>
             }
-
-
-
-        </div >
+        </StyledMainContainer >
     )
 }
 

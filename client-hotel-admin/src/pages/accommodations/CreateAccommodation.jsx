@@ -1,19 +1,14 @@
 import React, { Fragment, useCallback, useEffect, useState } from 'react'
-import { Form, Select, Checkbox, Button } from 'semantic-ui-react'
+import { Form, Select, Checkbox } from 'semantic-ui-react'
 import { uploadFile } from '../../utility/api/files'
 import { createAccommodation, updateAccommodation, getAccommodation } from '../../utility/api/accommodations'
-import { createImage, deleteImage } from '../../utility/api/images'
+import { createImage } from '../../utility/api/images'
 import { getKey, orderPhotos } from '../../utility/utility';
 import SortableGallery from '../../components/gallery/Gallery'
-import Dropzone from '../../components/dropzone';
 import cuid from 'cuid'
 import { useParams, useHistory } from 'react-router-dom'
 import { getAmenities } from '../../utility/api/amenities'
-import styled from 'styled-components'
-
-const StyledDropzone = styled(Dropzone)`
-    border: 2px #e2e2e2 dashed;
-`
+import { StyledDropzone, StyledMainTitle, StyledSubmitButton, StyledDropzoneContainer } from '../../styles/create-accommodation'
 
 const accommodationTypes = ['Apartment', 'Studio', 'House', 'Villa', 'Condo', 'Private Room']
 
@@ -145,13 +140,11 @@ export default function CreateAccommodation({ match }) {
 
     return (
         <Fragment>
-            <h2 style={{textAlign:'center'}}>Create a new accommodation</h2>
-
+            <StyledMainTitle>Create a new accommodation</StyledMainTitle>
             <Form onSubmit={submitAccommodation}>
                 <Form.Field>
                     <label>Title</label>
                     <input onChange={handleForm} value={formValues.title} name="title" placeholder='Title' />
-                    <label style={{ color: 'red' }}>{formErrors.title}</label>
                 </Form.Field>
                 <Form.Field>
                     <label>Description</label>
@@ -186,16 +179,13 @@ export default function CreateAccommodation({ match }) {
                 <Form.Field>
                     <label>{'Price'}</label>
                     <input onChange={handleForm} name="price" value={formValues.price} type="number" placeholder="Price" />
-                    <label style={{ color: 'red' }}>{formErrors.price}</label>
                 </Form.Field>
-
             </Form>
-
-            <StyledDropzone style={{border:'5px solid blue'}} onDrop={onDrop} accept={"image/*"} />
-
+            <StyledDropzoneContainer>
+                <StyledDropzone onDrop={onDrop} accept={"image/*"} />
+            </StyledDropzoneContainer>
             {images.length > 0 && <SortableGallery onImageDelete={handleImageDeletion} items={images} setItems={setImages} />}
-
-            <Button style={{ width: '100%', margin: 20 }} type='submit'>Submit</Button>
+            <StyledSubmitButton type='submit'>Submit</StyledSubmitButton>
         </Fragment>
     )
 }

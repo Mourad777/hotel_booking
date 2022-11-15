@@ -97,7 +97,7 @@ const Home = (props) => {
                                 <StyledLink to={`/accommodation/${accommodation.id}`}>
                                     Details
                                 </StyledLink>
-                                {!accommodation.roomId && <StyledLink onClick={() => handleAccommodation(accommodation)} to={`/booking`}>
+                                {!accommodation.roomId && <StyledLink to={`/booking/${accommodation.id}`}>
                                     Book
                                 </StyledLink>}
                             </StyledButtonsWrapper>

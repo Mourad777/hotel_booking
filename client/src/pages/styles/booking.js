@@ -21,7 +21,7 @@ width:360px;
 margin:auto;
 `
 
-export const StyledBookingConfirmationContainer = styled.div`
+export const StyledBookingMessageContainer = styled.div`
 width:320px;
 height: 320px;
 position:absolute;

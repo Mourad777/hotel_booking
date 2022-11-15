@@ -30,7 +30,7 @@ const validateDates = (checkin, checkout) => {
     }
 }
 
-const Accommodation = ({ match, accommodationDates, handleAccommodationDates, handleAccommodation }) => {
+const Accommodation = ({ match, accommodationDates, handleAccommodationDates }) => {
     const accommodationId = match.params.accommodationId
 
     const [accommodation, setAccommodation] = useState({ images: [], amenities: [] })
@@ -92,7 +92,7 @@ const Accommodation = ({ match, accommodationDates, handleAccommodationDates, ha
                     />
                     <StyledDateError> {dateError}</StyledDateError>
                     <StyledBookLinkContainer>
-                        <StyledLink onClick={() => handleAccommodation(accommodation)} to={`/booking`}>
+                        <StyledLink to={`/booking/${accommodation.id}`}>
                             Book
                         </StyledLink>
                     </StyledBookLinkContainer>
@@ -100,7 +100,6 @@ const Accommodation = ({ match, accommodationDates, handleAccommodationDates, ha
             </StyledMainContainer>
         )
     }
-
 }
 
 export default Accommodation;

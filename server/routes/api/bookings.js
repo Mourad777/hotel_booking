@@ -47,7 +47,7 @@ router.post("/", async (req, res, next) => {
 
   //need either user id or email to locate a user
   if (!req.body.userId && !req.body.email) {
-    return res.json({ error: 'Need to provide either a user id or e-mail' })
+    return res.status(400).json({ error: 'Need to provide either a user id or e-mail' })
   }
 
   try {

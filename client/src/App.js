@@ -9,14 +9,9 @@ import { useState } from 'react';
 function App() {
 
   const [selectedAccommodationDates, setSelectedAccommodationDates] = useState({})
-  const [selectedAccommodation, setSelectedAccommodation] = useState({images:[]})
 
   const handleAccommodationDates = (value) => {
     setSelectedAccommodationDates(value)
-  }
-
-  const handleAccommodation = (value) => {
-    setSelectedAccommodation(value)
   }
 
   return (
@@ -25,22 +20,18 @@ function App() {
         exact
         render={(props) => <Home
           {...props}
-          handleAccommodation={handleAccommodation}
           handleAccommodationDates={handleAccommodationDates}
           accommodationDates={selectedAccommodationDates} />} />
       <Route path="/accommodation/:accommodationId" exact render={(props) => {
         return (<Accommodation
           {...props}
-          handleAccommodation={handleAccommodation}
-          accommodation={selectedAccommodation}
           handleAccommodationDates={handleAccommodationDates}
           accommodationDates={selectedAccommodationDates} />)
       }
       } />
-      <Route path="/booking" exact render={(props) => {
+      <Route path="/booking/:accommodationId" exact render={(props) => {
         return (<Booking
           {...props}
-          selectedAccommodation={selectedAccommodation}
           selectedAccommodationDates={selectedAccommodationDates}
           handleAccommodationDates={handleAccommodationDates}
            />)

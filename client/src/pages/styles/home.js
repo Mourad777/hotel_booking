@@ -61,7 +61,7 @@ object-fit: cover;
 `
 
 export const StyledRoomListItem = styled.div`
-height:300px;
+height:100%;
 margin:10px;
 display:flex;
 @media (max-width: 750px) {

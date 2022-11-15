@@ -20,3 +20,13 @@ export const StyledFormWrapper = styled.div`
 width:360px;
 margin:auto;
 `
+
+export const StyledBookingConfirmationContainer = styled.div`
+width:320px;
+height: 320px;
+position:absolute;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+`
+

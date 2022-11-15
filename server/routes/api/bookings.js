@@ -60,7 +60,7 @@ router.post("/", async (req, res, next) => {
       ],
     });
     if (!accommodation) {
-      return res.json({ message: 'No accommodation found with the provided Id' })
+      return res.status(404).json({ message: 'No accommodation found with the provided Id' })
     }
 
     let userId;
@@ -98,7 +98,7 @@ router.post("/", async (req, res, next) => {
       }
       if (!isAccommodationAvailable) {
         isAccommodationAvailable = false;
-        return res.json({ message: 'the accommodation is not available on these dates' })
+        return res.status(409).json({ message: 'the accommodation is not available on these dates' })
       }
 
       booking = await AccommodationBooking.create({

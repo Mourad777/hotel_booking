@@ -33,9 +33,6 @@ export const StyledAccommodationType = styled.p`
 font-family: sans-serif; font-size: 1.2em; color: rgb(142,142,142); margin: 15px 0 15px 30px;
 `
 
-export const StyledImageWrapper = styled.div`
-height: 400px;
-`
 export const StyledMainImage = styled.img`
 width: 100%;
 `

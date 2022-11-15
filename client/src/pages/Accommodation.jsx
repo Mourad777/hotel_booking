@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios'
 import { DatePicker } from 'antd'
 import moment from 'moment';
@@ -14,12 +14,12 @@ import {
     StyledDatePickerWrapper,
     StyledDescription,
     StyledDescriptionWrapper,
-    StyledImageWrapper,
     StyledMainContainer,
     StyledMainImage,
     StyledMainTitle,
     StyledAmenitiesHeader,
-} from '../styles/accommodation'
+} from './styles/accommodation'
+import Loader from '../components/Loader/Loader';
 
 const { REACT_APP_AWS_URL, REACT_APP_API_URL } = process.env;
 
@@ -33,16 +33,19 @@ const validateDates = (checkin, checkout) => {
 const Accommodation = ({ match, accommodationDates, handleAccommodationDates, handleAccommodation }) => {
     const accommodationId = match.params.accommodationId
 
-    const [accommodation, setAccommodation] = useState({ images: [] })
+    const [accommodation, setAccommodation] = useState({ images: [], amenities: [] })
     const [dateError, setDateError] = useState('')
+    const [isLoading, setIsLoading] = useState(false)
 
     useEffect(() => {
         getAccommodationDetails()
     }, [])
 
     const getAccommodationDetails = async () => {
+        setIsLoading(true)
         const res = await axios.get(`${REACT_APP_API_URL}/accommodations/${accommodationId}`);
         setAccommodation(res.data);
+        setIsLoading(false)
     }
 
     const onDateSelect = (value) => {
@@ -50,49 +53,54 @@ const Accommodation = ({ match, accommodationDates, handleAccommodationDates, ha
         handleAccommodationDates(value)
     }
 
-    return (
-        <StyledMainContainer>
-            <StyledMainTitle>{accommodation.title}</StyledMainTitle>
-            {(accommodation.images.length > 0) && <StyledMainImage src={REACT_APP_AWS_URL + accommodation.images[0].url} />}
-            <StyledAccommodationType>{accommodation.type}</StyledAccommodationType>
-            {accommodation.description && <StyledDescriptionWrapper>
-                <StyledDescription>{accommodation.description}</StyledDescription>
-            </StyledDescriptionWrapper>}
-            <StyledAmenitiesHeader>Amenities</StyledAmenitiesHeader>
-            {accommodation.amenities && <div>
+    if (isLoading) {
+        return <Loader />
+    } else {
+        return (
+            <StyledMainContainer>
+                <StyledMainTitle>{accommodation.title}</StyledMainTitle>
+                {(accommodation.images.length > 0) && <StyledMainImage src={REACT_APP_AWS_URL + accommodation.images[0].url} />}
+                <StyledAccommodationType>{accommodation.type}</StyledAccommodationType>
+                {accommodation.description && <StyledDescriptionWrapper>
+                    <StyledDescription>{accommodation.description}</StyledDescription>
+                </StyledDescriptionWrapper>}
+                {accommodation.amenities.length > 0 && <StyledAmenitiesHeader>Amenities</StyledAmenitiesHeader>}
+
                 <StyledAmenitiesList>
                     {accommodation.amenities.map(amenity => {
                         return <StyledAmenitiesListItem>{amenity.name}</StyledAmenitiesListItem>
                     })}
                 </StyledAmenitiesList>
-            </div>}
-            <StyledDatePickerWrapper>
-                <DatePicker.RangePicker
-                    value={accommodationDates}
-                    style={{ width: '100%' }}
-                    placeholder={["Check-in", "Check-out"]}
-                    onChange={onDateSelect}
-                    disabledDate={current => {
-                        const formattedDate = current.format('YYYY-MM-DD');
 
-                        return isAccommodationAvailable(accommodation.accommodation_bookings, formattedDate)
-                            ||
-                            moment(formattedDate).isBefore(moment().subtract(1, 'days'), 'day')//disable dates before today
+                <StyledDatePickerWrapper>
+                    <DatePicker.RangePicker
+                        value={accommodationDates}
+                        style={{ width: '100%' }}
+                        placeholder={["Check-in", "Check-out"]}
+                        onChange={onDateSelect}
+                        disabledDate={current => {
+                            const formattedDate = current.format('YYYY-MM-DD');
 
-                    }}
-                    panelRender={(panelNode) => (
-                        <StyledRangePickerContainer>{panelNode}</StyledRangePickerContainer>
-                    )}
-                />
-                <StyledDateError> {dateError}</StyledDateError>
-                <StyledBookLinkContainer>
-                    <StyledLink onClick={() => handleAccommodation(accommodation)} to={`/booking`}>
-                        Book
-                    </StyledLink>
-                </StyledBookLinkContainer>
-            </StyledDatePickerWrapper>
-        </StyledMainContainer>
-    )
+                            return isAccommodationAvailable(accommodation.accommodation_bookings, formattedDate)
+                                ||
+                                moment(formattedDate).isBefore(moment().subtract(1, 'days'), 'day')//disable dates before today
+
+                        }}
+                        panelRender={(panelNode) => (
+                            <StyledRangePickerContainer>{panelNode}</StyledRangePickerContainer>
+                        )}
+                    />
+                    <StyledDateError> {dateError}</StyledDateError>
+                    <StyledBookLinkContainer>
+                        <StyledLink onClick={() => handleAccommodation(accommodation)} to={`/booking`}>
+                            Book
+                        </StyledLink>
+                    </StyledBookLinkContainer>
+                </StyledDatePickerWrapper>
+            </StyledMainContainer>
+        )
+    }
+
 }
 
 export default Accommodation;

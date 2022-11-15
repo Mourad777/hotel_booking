@@ -17,7 +17,7 @@ import {
     StyledHeaderWrapper,
     StyledAccommodationDetails,
     StyledButtonsWrapper,
-} from '../styles/home'
+} from './styles/home'
 
 const { REACT_APP_AWS_URL, REACT_APP_API_URL } = process.env;
 

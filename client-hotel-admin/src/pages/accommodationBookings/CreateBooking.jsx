@@ -55,20 +55,23 @@ const Accommodation = () => {
     const submitReservation = async (values) => {
 
         if (reservationId) {
-            await axios.put(`${REACT_APP_API_URL}/bookings/${reservationId}`, {
+            const response = await axios.put(`${REACT_APP_API_URL}/bookings/${reservationId}`, {
                 bookingStart: moment.utc(dates[0]).format('YYYY-MM-DD HH:mm z'),
                 bookingEnd: moment.utc(dates[1]).format('YYYY-MM-DD HH:mm z'),
                 accommodationId: selectedAccommodation,
                 userId: selectedUser,
             });
+            console.log('booking response',response)
+
 
         } else {
-            await axios.post(`${REACT_APP_API_URL}/bookings`, {
+            const response = await axios.post(`${REACT_APP_API_URL}/bookings`, {
                 bookingStart: moment.utc(dates[0]).format('YYYY-MM-DD HH:mm z'),
                 bookingEnd: moment.utc(dates[1]).format('YYYY-MM-DD HH:mm z'),
                 accommodationId: selectedAccommodation,
                 userId: selectedUser,
             });
+            console.log('booking response',response)
         }
     }
 

@@ -17,10 +17,11 @@ import {
     StyledImageWrapper,
     StyledMainContainer,
     StyledMainImage,
-    StyledMainTitle
+    StyledMainTitle,
+    StyledAmenitiesHeader,
 } from '../styles/accommodation'
 
-const { REACT_APP_AWS_URL,REACT_APP_API_URL } = process.env;
+const { REACT_APP_AWS_URL, REACT_APP_API_URL } = process.env;
 
 const validateDates = (checkin, checkout) => {
     let error;
@@ -52,13 +53,12 @@ const Accommodation = ({ match, accommodationDates, handleAccommodationDates, ha
     return (
         <StyledMainContainer>
             <StyledMainTitle>{accommodation.title}</StyledMainTitle>
-            <StyledAccommodationType style={{ fontFamily: 'sans-serif', fontSize: '1.2em', color: 'rgb(200,200,200)' }}>{accommodation.type}</StyledAccommodationType>
-            <StyledImageWrapper>
-                {(accommodation.images.length > 0) && <StyledMainImage src={REACT_APP_AWS_URL + accommodation.images[0].url} />}
-            </StyledImageWrapper>
-            <StyledDescriptionWrapper style={{ margin: '10px 0' }}>
+            {(accommodation.images.length > 0) && <StyledMainImage src={REACT_APP_AWS_URL + accommodation.images[0].url} />}
+            <StyledAccommodationType>{accommodation.type}</StyledAccommodationType>
+            {accommodation.description && <StyledDescriptionWrapper>
                 <StyledDescription>{accommodation.description}</StyledDescription>
-            </StyledDescriptionWrapper>
+            </StyledDescriptionWrapper>}
+            <StyledAmenitiesHeader>Amenities</StyledAmenitiesHeader>
             {accommodation.amenities && <div>
                 <StyledAmenitiesList>
                     {accommodation.amenities.map(amenity => {

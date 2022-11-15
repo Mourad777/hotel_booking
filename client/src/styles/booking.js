@@ -9,10 +9,14 @@ text-align:center;
 `
 
 export const StyledMainImage = styled.img`
-height: 400px; 
-width: 500px;
+width: 100%;
 `
 
 export const StyledAccommodationPrice = styled.p`
 font-size: 1.5em;
+`
+
+export const StyledFormWrapper = styled.div`
+width:360px;
+margin:auto;
 `

@@ -23,7 +23,7 @@ import {
     StyledSelectsWrapper,
     StyledSubmitButtonContainer,
     StyledTitle
-} from '../../styles/create-booking'
+} from '../styles/create-booking'
 const { REACT_APP_API_URL } = process.env;
 
 const Accommodation = () => {

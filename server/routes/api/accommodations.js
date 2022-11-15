@@ -4,10 +4,6 @@ const moment = require('moment');
 const { Op } = require("sequelize");
 const { deleteFiles } = require("../../utils");
 
-function isEmpty(obj) {
-    return Object.keys(obj).length === 0;
-}
-
 router.get("/:accommodationId", async (req, res, next) => {
     const accommodationId = req.params.accommodationId;
 
@@ -82,10 +78,6 @@ router.get("/:checkin/:checkout", async (req, res, next) => {
                     }
                 }
             })
-
-
-
-
         });
 
         const rawAvailableAccommodations = availableAccommodations.map(accommodation => accommodation.dataValues)
@@ -163,15 +155,14 @@ router.put("/update/:id", async (req, res, next) => {
 
     const urlsToDelete = imagesToDelete.map(image => image.url)
 
-    await deleteFiles(urlsToDelete)
-    await accommodation.removeImages(currentImages)
-    await accommodation.addImages(newImages)
-    await accommodation.removeAmenities(currentAmenities)
-    await accommodation.addAmenities(newAmenities)
-    await accommodation.save();
-
     try {
-
+        await deleteFiles(urlsToDelete)
+        await accommodation.removeImages(currentImages)
+        await accommodation.addImages(newImages)
+        await accommodation.removeAmenities(currentAmenities)
+        await accommodation.addAmenities(newAmenities)
+        await accommodation.save();
+        res.send({accommodation})
     } catch (error) {
         next(error);
     }
@@ -179,19 +170,17 @@ router.put("/update/:id", async (req, res, next) => {
 
 router.delete("/delete/:accommodationId", async (req, res, next) => {
     const accommodationId = req.params.accommodationId;
-
     try {
         const deleteResult = await Accommodation.destroy({
             where: {
                 id: accommodationId
             },
-
         })
 
-        res.send({deleteResult})
+        res.send({ deleteResult })
     } catch (error) {
         next(error);
-        res.send({error})
+        res.send({ error })
     }
 });
 

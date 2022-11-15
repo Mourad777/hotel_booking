@@ -10,7 +10,7 @@ router.get("/:bookingId", async (req, res, next) => {
   const bookingId = req.params.bookingId;
 
   try {
-    const bookings = await AccommodationBooking.findOne({
+    const booking = await AccommodationBooking.findOne({
       where: { id: bookingId }, include: [
         { model: User, order: ["createdAt", "DESC"] },
         {
@@ -20,7 +20,7 @@ router.get("/:bookingId", async (req, res, next) => {
       ],
     });
 
-    res.json(bookings);
+    res.json(booking);
   } catch (error) {
     next(error);
   }

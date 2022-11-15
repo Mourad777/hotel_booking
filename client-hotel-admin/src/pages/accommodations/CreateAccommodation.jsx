@@ -4,11 +4,12 @@ import { uploadFile } from '../../utility/api/files'
 import { createAccommodation, updateAccommodation, getAccommodation } from '../../utility/api/accommodations'
 import { createImage } from '../../utility/api/images'
 import { getKey, orderPhotos } from '../../utility/utility';
-import SortableGallery from '../../components/gallery/Gallery'
+import SortableGallery from '../../components/Sortable-list/SortableList'
 import cuid from 'cuid'
 import { useParams, useHistory } from 'react-router-dom'
 import { getAmenities } from '../../utility/api/amenities'
-import { StyledDropzone, StyledMainTitle, StyledSubmitButton, StyledDropzoneContainer } from '../../styles/create-accommodation'
+import { StyledDropzone, StyledMainTitle, StyledSubmitButton, StyledDropzoneContainer, StyledSubmitButtonContainer } from '../styles/create-accommodation'
+import Loader from '../../components/Loader/Loader'
 
 const accommodationTypes = ['Apartment', 'Studio', 'House', 'Villa', 'Condo', 'Private Room']
 
@@ -64,33 +65,6 @@ export default function CreateAccommodation({ match }) {
         getInitialData()
     }, []);
 
-
-    const onDrop = useCallback(acceptedFiles => {
-        // Loop through accepted files
-        acceptedFiles.map(async (file, i) => {
-            const awsPath = `accommodation-${accommodationId || newId}/pictures`;
-            const key = getKey(file, awsPath)
-            //upload file to aws
-            await uploadFile(file, key);
-            //create image document in postgres which has the url info and the associated accommodation id
-            const imageData = await createImage({ url: key, accommodationId, isThumbnail: false }, setIsLoading)
-            // Initialize FileReader browser API
-            const reader = new FileReader();
-            // onload callback gets called after the reader reads the file data
-            reader.onload = function (e) {
-                // add the image into the state. Since FileReader reading process is asynchronous, its better to get the latest snapshot state (i.e., prevState) and update it. 
-                setImages(prevState => [
-                    ...prevState,
-                    { id: imageData.newImage.id, url: key, title: '', index: i }
-                ]);
-            };
-            // Read the file as Data URL (since we accept only images)
-            reader.readAsDataURL(file);
-            return file;
-        });
-    }, []);
-
-
     const submitAccommodation = async (event) => {
 
         const validationErrors = validateAccommodationForm({ ...formValues, selectedAccommodation });
@@ -98,7 +72,6 @@ export default function CreateAccommodation({ match }) {
             setFormErrors(validationErrors)
             return;
         }
-
 
         event.preventDefault();
         const values = {
@@ -138,54 +111,85 @@ export default function CreateAccommodation({ match }) {
         setFormValues({ ...formValues, [name]: value });
     }
 
-    return (
-        <Fragment>
-            <StyledMainTitle>Create a new accommodation</StyledMainTitle>
-            <Form onSubmit={submitAccommodation}>
-                <Form.Field>
-                    <label>Title</label>
-                    <input onChange={handleForm} value={formValues.title} name="title" placeholder='Title' />
-                </Form.Field>
-                <Form.Field>
-                    <label>Description</label>
-                    <textarea onChange={handleForm} value={formValues.description} name="description" placeholder='Description' />
-                </Form.Field>
-                <Form.Field>
-                    <label>Capacity</label>
-                    <input onChange={handleForm} value={formValues.capacity} type="number" name="capacity" placeholder='Capacity' />
-                </Form.Field>
+    const onDrop = useCallback(acceptedFiles => {
+        // Loop through accepted files
+        acceptedFiles.map(async (file, i) => {
+            const awsPath = `accommodation-${accommodationId || newId}/pictures`;
+            const key = getKey(file, awsPath)
+            //upload file to aws
+            await uploadFile(file, key, undefined, undefined, setIsLoading);
+            //create image document in postgres which has the url info and the associated accommodation id
+            const imageData = await createImage({ url: key, accommodationId, isThumbnail: false }, setIsLoading)
+            // Initialize FileReader browser API
+            const reader = new FileReader();
+            // onload callback gets called after the reader reads the file data
+            reader.onload = function (e) {
+                // add the image into the state. Since FileReader reading process is asynchronous, its better to get the latest snapshot state (i.e., prevState) and update it. 
+                setImages(prevState => [
+                    ...prevState,
+                    { id: imageData.newImage.id, url: key, title: '', index: i }
+                ]);
+            };
+            // Read the file as Data URL (since we accept only images)
+            reader.readAsDataURL(file);
+            return file;
+        });
+    }, []);
 
-                <h4>Amenities</h4>
-                {amenities.map((amenity, index) => {
-                    return (
-                        <Form.Field>
-                            <Checkbox
-                                key={index}
-                                label={amenity.name}
-                                name={amenity.name}
-                                value={index}
-                                checked={amenitiesCheckedState[index]}
-                                onChange={() => handleAmenities(index)}
-                            />
-                        </Form.Field>
-                    );
-                })}
+    if (isLoading) {
+        return <Loader />
+    } else {
+        return (
+            <Fragment>
+                <StyledMainTitle>Create a new accommodation</StyledMainTitle>
+                <Form onSubmit={submitAccommodation}>
+                    <Form.Field>
+                        <label>Title</label>
+                        <input onChange={handleForm} value={formValues.title} name="title" placeholder='Title' />
+                    </Form.Field>
+                    <Form.Field>
+                        <label>Description</label>
+                        <textarea onChange={handleForm} value={formValues.description} name="description" placeholder='Description' />
+                    </Form.Field>
+                    <Form.Field>
+                        <label>Capacity</label>
+                        <input onChange={handleForm} value={formValues.capacity} type="number" name="capacity" placeholder='Capacity' />
+                    </Form.Field>
 
-                <Select
-                    placeholder='Accommodation type'
-                    options={accommodationTypes.map(accommodation => ({ key: accommodation, value: accommodation, text: accommodation }))}
-                    value={selectedAccommodation}
-                    onChange={(event, data) => setSelectedAccommodation(data.value)} />
-                <Form.Field>
-                    <label>{'Price'}</label>
-                    <input onChange={handleForm} name="price" value={formValues.price} type="number" placeholder="Price" />
-                </Form.Field>
-            </Form>
-            <StyledDropzoneContainer>
-                <StyledDropzone onDrop={onDrop} accept={"image/*"} />
-            </StyledDropzoneContainer>
-            {images.length > 0 && <SortableGallery onImageDelete={handleImageDeletion} items={images} setItems={setImages} />}
-            <StyledSubmitButton type='submit'>Submit</StyledSubmitButton>
-        </Fragment>
-    )
+                    <h4>Amenities</h4>
+                    {amenities.map((amenity, index) => {
+                        return (
+                            <Form.Field>
+                                <Checkbox
+                                    key={index}
+                                    label={amenity.name}
+                                    name={amenity.name}
+                                    value={index}
+                                    checked={amenitiesCheckedState[index]}
+                                    onChange={() => handleAmenities(index)}
+                                />
+                            </Form.Field>
+                        );
+                    })}
+
+                    <Select
+                        placeholder='Accommodation type'
+                        options={accommodationTypes.map(accommodation => ({ key: accommodation, value: accommodation, text: accommodation }))}
+                        value={selectedAccommodation}
+                        onChange={(event, data) => setSelectedAccommodation(data.value)} />
+                    <Form.Field>
+                        <label>{'Price'}</label>
+                        <input onChange={handleForm} name="price" value={formValues.price} type="number" placeholder="Price" />
+                    </Form.Field>
+                </Form>
+                <StyledDropzoneContainer>
+                    <StyledDropzone onDrop={onDrop} accept={"image/*"} />
+                </StyledDropzoneContainer>
+                {images.length > 0 && <SortableGallery onImageDelete={handleImageDeletion} items={images} setItems={setImages} />}
+                <StyledSubmitButtonContainer>
+                    <StyledSubmitButton onClick={submitAccommodation} type='submit'>Submit</StyledSubmitButton>
+                </StyledSubmitButtonContainer>
+            </Fragment>
+        )
+    }
 }

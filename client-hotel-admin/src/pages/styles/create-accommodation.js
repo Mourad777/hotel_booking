@@ -1,6 +1,6 @@
 import styled from "styled-components"
 import { Button } from "semantic-ui-react"
-import Dropzone from '../components/dropzone';
+import Dropzone from '../../components/Dropzone/dropzone';
 
 
 export const StyledMainTitle = styled.h1`text-align:center;`
@@ -14,4 +14,10 @@ export const StyledSubmitButton = styled(Button)`
 `
 export const StyledDropzoneContainer = styled.div`
     margin: 20px;
+`
+
+export const StyledSubmitButtonContainer = styled.div`
+width:100%;
+display:flex;
+justify-content:space-around;
 `

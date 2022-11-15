@@ -26,7 +26,7 @@ import {
     StyledTableImageWrapper,
     StyledTableRow,
     StyledTitle
-} from '../../styles/accommodation-bookings';
+} from '../styles/accommodation-bookings';
 const { REACT_APP_AWS_URL } = process.env;
 
 const Posts = () => {

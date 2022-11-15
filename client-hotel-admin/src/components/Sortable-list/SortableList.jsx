@@ -1,21 +1,20 @@
 import React from "react";
 import { SortableContainer, SortableElement } from "react-sortable-hoc";
 import arrayMove from "array-move";
+import { StyledAdminGalleryContainer, StyledDeleteButton, StyledGalleryImage, StyledInnerItem, StyledItem } from "../styles/sortable-list";
 const { REACT_APP_AWS_URL } = process.env;
 
-
 const SortableItem = SortableElement(({ item, onImageDelete }) => (
-    <div className="item">
-        <div className="inner-item">
-            <img className="gallery-image" src={REACT_APP_AWS_URL + item.url} />
-
-        </div>
-        <button onClick={() => onImageDelete(item.id)} style={{ cursor: 'pointer', padding: 10, color: 'red', border: 'red 1px solid', background: 'rgba(219, 112, 147,0.1)' }}>Delete</button>
-    </div>
+    <StyledItem>
+        <StyledInnerItem>
+            <StyledGalleryImage src={REACT_APP_AWS_URL + item.url} />
+        </StyledInnerItem>
+        <StyledDeleteButton onClick={() => onImageDelete(item.id)}>Delete</StyledDeleteButton>
+    </StyledItem>
 ));
 
 const SortableList = SortableContainer(({ items, onImageDelete }) => (
-    <div className="admin-gallery-container">
+    <StyledAdminGalleryContainer>
         {items.map((item, index) => (
             <SortableItem
                 key={`${item.id}`}
@@ -24,7 +23,7 @@ const SortableList = SortableContainer(({ items, onImageDelete }) => (
                 onImageDelete={(id) => onImageDelete(id, index)}
             />
         ))}
-    </div>
+    </StyledAdminGalleryContainer>
 ));
 
 const SortableComponent = ({ items, setItems, onImageDelete }) => {
@@ -38,7 +37,6 @@ const SortableComponent = ({ items, setItems, onImageDelete }) => {
             items={items}
             onSortEnd={onSortEnd}
             axis="xy"
-            helperClass="SortableHelper"
             onImageDelete={onImageDelete}
         />
     );

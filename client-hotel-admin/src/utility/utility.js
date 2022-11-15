@@ -10,8 +10,6 @@ export const getKey = (file, path) => {
     return key;
 };
 
-export const AppUrl = 'http://localhost:3001/';
-
 export const isAccommodationAvailable = (bookings, currentDate) => {
     if (!bookings) return false;
     return (bookings.findIndex(booking => moment(currentDate).isBetween(moment(booking.bookingStart), moment(booking.bookingEnd), 'day')

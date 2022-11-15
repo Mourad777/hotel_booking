@@ -4,8 +4,6 @@ router.use("/bookings", require("./bookings"));
 
 router.use("/accommodations", require("./accommodations"));
 
-router.use("/auth", require("./auth"));
-
 router.use("/users", require("./users"));
 
 router.use("/images", require("./images"));

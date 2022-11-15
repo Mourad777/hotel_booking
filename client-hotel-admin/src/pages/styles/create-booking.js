@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { Select } from "semantic-ui-react";
 
 export const StyledMainWrapper = styled.div`
-margin: auto; maxWidth: 800px;
+margin: auto; max-width: 800px;
 `
 
 export const StyledContentWrapper = styled.div`
@@ -18,7 +18,7 @@ width: 320px;
 export const StyledSelectsWrapper = styled.div`
 display: flex; 
 justify-content: space-around; 
-margin-bottom: 20px; 
+margin-bottom: 20px;
 flex-direction: ${props => props.windowSize[0] > 700 ? 'row' : 'column'};
 `
 

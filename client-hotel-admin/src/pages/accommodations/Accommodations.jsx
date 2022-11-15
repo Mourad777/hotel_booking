@@ -15,7 +15,7 @@ import {
     StyledTableData,
     StyledTableHead,
     StyledTableRow,
-} from '../../styles/accommodations';
+} from '../styles/accommodations';
 
 const { REACT_APP_AWS_URL } = process.env;
 

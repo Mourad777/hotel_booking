@@ -2,7 +2,8 @@ import axios from "axios";
 
 const { REACT_APP_API_URL } = process.env;
 
-export const uploadFile = async (file, key, token = "", fileType = 'NA') => {
+export const uploadFile = async (file, key, token = "", fileType = 'NA',setIsLoading) => {
+    setIsLoading(true)
     const fileInfo = new FormData();
     fileInfo.append("key", key);
     fileInfo.append("fileType", fileType);//s3 object tag
@@ -20,8 +21,10 @@ export const uploadFile = async (file, key, token = "", fileType = 'NA') => {
         const response = await axios.post( uploadConfig.data.presignedUrl.url, form );
 
         console.log("Upload file response: ", response);
+        setIsLoading(false)
     } catch (err) {
         console.log("Upload file error: ", err);
+        setIsLoading(false)
     }
     return uploadConfig;
 };

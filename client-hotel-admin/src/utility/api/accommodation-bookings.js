@@ -1,13 +1,11 @@
 import axios from "axios";
-import { getDefaultHeader } from "../utility";
 const { REACT_APP_API_URL } = process.env;
 
 export const getBookings = async (setBookings, setIsLoading) => {
-    const token = localStorage.getItem('token');
     let res = {};
     setIsLoading(true)
     try {
-        res = await axios.get(`${REACT_APP_API_URL}/bookings`, getDefaultHeader(token));
+        res = await axios.get(`${REACT_APP_API_URL}/bookings`);
 
     } catch (e) {
         console.log('Fetch bookings error', e)
@@ -20,11 +18,10 @@ export const getBookings = async (setBookings, setIsLoading) => {
 }
 
 export const getBooking = async (reservationId, setIsLoading) => {
-    const token = localStorage.getItem('token');
     let res = {};
     setIsLoading(true)
     try {
-        res = await axios.get(`${REACT_APP_API_URL}/bookings/${reservationId}`, getDefaultHeader(token));
+        res = await axios.get(`${REACT_APP_API_URL}/bookings/${reservationId}`);
 
     } catch (e) {
         console.log('Fetch booking error', e)
@@ -37,7 +34,6 @@ export const getBooking = async (reservationId, setIsLoading) => {
 }
 
 export const createBooking = async (values, setIsLoading) => {
-    const token = localStorage.getItem('token');
     let res = {};
     setIsLoading(true)
     try {
@@ -58,7 +54,6 @@ export const createBooking = async (values, setIsLoading) => {
 }
 
 export const deleteBooking = async (id, setIsLoading) => {
-    const token = localStorage.getItem('token');
     let res;
     setIsLoading(true)
     try {

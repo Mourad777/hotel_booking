@@ -53,39 +53,52 @@ router.get("/:checkin/:checkout", async (req, res, next) => {
         const momentCheckinDate = moment(checkinDate);
         const momentCheckoutDate = moment(checkoutDate);
 
-        const availableAccommodations = [];
+        const unavailableAccommodations = []
 
         accommodations.forEach(accommodation => {
-            if (accommodation.accommodation_bookings.length === 0) {
-                availableAccommodations.push(accommodation)
-                return
-            }
-
             accommodation.accommodation_bookings.forEach(booking => {
-
                 const momentBookingStart = moment(booking.bookingStart);
                 const momentBookingEnd = moment(booking.bookingEnd);
                 const isDatesOccupied = (momentCheckinDate.isBetween(momentBookingStart, momentBookingEnd)) ||
                     (momentCheckoutDate.isBetween(momentBookingStart, momentBookingEnd))
-                if (!isDatesOccupied) {
-                    if (
-                        availableAccommodations.findIndex(acc => acc.id === accommodation.id) > -1
-                    ) {
-                        return
-                    } else {
-                        availableAccommodations.push(accommodation)
-                        return
-                    }
+                if (isDatesOccupied) {
+                    unavailableAccommodations.push(accommodation.id);
                 }
             })
         });
 
-        const rawAvailableAccommodations = availableAccommodations.map(accommodation => accommodation.dataValues)
+        const filteredAvailableAccommodations = accommodations.filter(accommodation=>{
+            if(unavailableAccommodations.includes(accommodation.id)) {
+                return false;
+            } else return true
+        })
+
+        const rawAvailableAccommodations = filteredAvailableAccommodations.map(accommodation => accommodation.dataValues)
         res.json(rawAvailableAccommodations)
     } catch (error) {
         next(error);
     }
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 router.get("/", async (req, res, next) => {
     const accommodations = await Accommodation.findAll({

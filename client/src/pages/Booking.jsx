@@ -15,6 +15,7 @@ import {
     StyledMainTitle,
     StyledFormWrapper,
     StyledBookingMessageContainer,
+    StyledBookingMessage,
 } from './styles/booking'
 import Loader from '../components/Loader/Loader';
 import { isAccommodationAvailable } from '../utility/utils';
@@ -22,7 +23,7 @@ const { REACT_APP_AWS_URL } = process.env;
 const { RangePicker } = DatePicker;
 const { REACT_APP_API_URL } = process.env;
 
-export default function Booking({match, handleAccommodationDates, selectedAccommodationDates }) {
+export default function Booking({ match, handleAccommodationDates, selectedAccommodationDates }) {
 
     const [formValues, setFormValues] = useState({})
     const [isLoading, setIsLoading] = useState(false)
@@ -30,7 +31,7 @@ export default function Booking({match, handleAccommodationDates, selectedAccomm
     const [bookingMessage, setBookingMessage] = useState(null);
 
     const accommodationId = match.params.accommodationId
- 
+
     const handleForm = (event) => {
         const name = event.target.name;
         const value = event.target.value;
@@ -40,7 +41,7 @@ export default function Booking({match, handleAccommodationDates, selectedAccomm
     const getAccommodationDetails = async () => {
         setIsLoading(true)
         const res = await axios.get(`${REACT_APP_API_URL}/accommodations/${accommodationId}`);
-        console.log('res',res)
+        console.log('res', res)
         setAccommodation(res.data);
         setIsLoading(false)
     }
@@ -48,7 +49,6 @@ export default function Booking({match, handleAccommodationDates, selectedAccomm
     useEffect(() => {
         getAccommodationDetails()
     }, [])
-
 
     const submitReservation = async (values) => {
         setIsLoading(true)
@@ -60,8 +60,12 @@ export default function Booking({match, handleAccommodationDates, selectedAccomm
                 accommodationId: accommodation.id,
             });
             console.log('response', response)
+            const bookingMessage = `Successfully booked ${accommodation.title} from ${selectedAccommodationDates[0]} to ${selectedAccommodationDates[1]}`
+            setBookingMessage(bookingMessage)
             setIsLoading(false)
         } catch (e) {
+            console.log('e',e.response.data)
+            setBookingMessage(e.response.data) 
             setIsLoading(false)
         }
     }
@@ -72,7 +76,7 @@ export default function Booking({match, handleAccommodationDates, selectedAccomm
     }
     if (bookingMessage) {
         return <StyledBookingMessageContainer>
-            {bookingMessage}
+            <StyledBookingMessage>{bookingMessage}</StyledBookingMessage>
         </StyledBookingMessageContainer>
     }
     if (isLoading) {
@@ -91,11 +95,11 @@ export default function Booking({match, handleAccommodationDates, selectedAccomm
                                 onChange={onDateSelect}
                                 disabledDate={current => {
                                     const formattedDate = current.format('YYYY-MM-DD');
-        
+
                                     return isAccommodationAvailable(accommodation.accommodation_bookings, formattedDate)
                                         ||
                                         moment(formattedDate).isBefore(moment().subtract(1, 'days'), 'day')//disable dates before today
-        
+
                                 }}
                             />
                         </Form.Item>

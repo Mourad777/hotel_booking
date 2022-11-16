@@ -31,9 +31,11 @@ router.get("/", async (req, res, next) => {
     const bookings = await AccommodationBooking.findAll({
       include: [
         { model: User, order: ["createdAt", "DESC"] },
-        { model: Accommodation, order: ["createdAt", "DESC"], include: [
-          { model: Image, order: ["createdAt", "DESC"] },
-        ], },
+        {
+          model: Accommodation, order: ["createdAt", "DESC"], include: [
+            { model: Image, order: ["createdAt", "DESC"] },
+          ],
+        },
       ],
     });
 
@@ -87,26 +89,26 @@ router.post("/", async (req, res, next) => {
 
     let booking;
 
-      let isAccommodationAvailable = true;
-      for (var m = moment(bookingStart); m.isBefore(bookingEnd); m.add(1, 'days')) {
-        const formattedDate = m.format('YYYY-MM-DD');
-        const isAvailable = isAccommodationAvailableAtDate(accommodation.accommodation_bookings, formattedDate);
+    let isAccommodationAvailable = true;
+    for (var m = moment(bookingStart); m.isBefore(bookingEnd); m.add(1, 'days')) {
+      const formattedDate = m.format('YYYY-MM-DD');
+      const isAvailable = isAccommodationAvailableAtDate(accommodation.accommodation_bookings, formattedDate);
 
-        if (!isAvailable) {
-          isAccommodationAvailable = false;
-        }
-      }
-      if (!isAccommodationAvailable) {
+      if (!isAvailable) {
         isAccommodationAvailable = false;
-        return res.status(409).json({ message: 'the accommodation is not available on these dates' })
       }
+    }
+    if (!isAccommodationAvailable) {
+      isAccommodationAvailable = false;
+      return res.status(400).send('the accommodation is not available on these dates')
+    }
 
-      booking = await AccommodationBooking.create({
-        transactionId: 'abc123',
-        userId,
-        ...req.body
-      });
-    
+    booking = await AccommodationBooking.create({
+      transactionId: 'abc123',
+      userId,
+      ...req.body
+    });
+
     res.json({
       booking,
     });
@@ -135,12 +137,12 @@ router.delete("/delete/:bookingId", async (req, res, next) => {
     const bookingId = req.params.bookingId;
 
     const deleteResult = await AccommodationBooking.destroy({
-        where: {
-            id: bookingId
-        },
+      where: {
+        id: bookingId
+      },
     })
 
-    res.send({deleteResult})
+    res.send({ deleteResult })
 
   } catch (error) {
     next(error);

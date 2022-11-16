@@ -30,3 +30,7 @@ left:50%;
 transform:translate(-50%,-50%);
 `
 
+export const StyledBookingMessage = styled.p`
+font-size:1.2em;
+color:rgb(110,110,110);
+`

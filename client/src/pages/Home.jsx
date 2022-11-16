@@ -78,15 +78,15 @@ const Home = (props) => {
                 </StyledDatePickerContainer>
             </StyledHeaderWrapper>
 
-            {accommodations.length > 0 && <Grid>
+            {(accommodations.length > 0) && <Grid>
                 <Row>
-                    {accommodations.map((accommodation) => { <Column size={1}><CardImage src={REACT_APP_AWS_URL + accommodation.images[0].url} /></Column> })}
+                    {accommodations.map((accommodation) => { <Column size={1}>{accommodation.images[0] && <CardImage src={REACT_APP_AWS_URL + accommodation.images[0].url} />}</Column> })}
                 </Row>
             </Grid>}
             {accommodations.map(accommodation => {
                 return (
                     <StyledRoomListItem key={`accommodation[${accommodation.id}]`}>
-                        <StyledRoomThumbnail src={REACT_APP_AWS_URL + accommodation.images[0].url} />
+                        {accommodation.images[0] && <StyledRoomThumbnail src={REACT_APP_AWS_URL + accommodation.images[0].url} />}
                         <StyledRoomDescriptionContainer>
                             <div>
                                 <h1>{accommodation.title}</h1>

@@ -19,6 +19,7 @@ import {
 } from './styles/booking'
 import Loader from '../components/Loader/Loader';
 import { isAccommodationAvailable } from '../utility/utils';
+import { submitReservation } from '../utility/api';
 const { REACT_APP_AWS_URL } = process.env;
 const { RangePicker } = DatePicker;
 const { REACT_APP_API_URL } = process.env;
@@ -50,25 +51,11 @@ export default function Booking({ match, handleAccommodationDates, selectedAccom
         getAccommodationDetails()
     }, [])
 
-    const submitReservation = async (values) => {
-        setIsLoading(true)
-        try {
-            const response = await axios.post(`${REACT_APP_API_URL}/bookings`, {
-                ...formValues,
-                bookingStart: moment.utc(selectedAccommodationDates[0]).format('YYYY-MM-DD HH:mm z'),
-                bookingEnd: moment.utc(selectedAccommodationDates[1]).format('YYYY-MM-DD HH:mm z'),
-                accommodationId: accommodation.id,
-            });
-            console.log('response', response)
-            const bookingMessage = `Successfully booked ${accommodation.title} from ${selectedAccommodationDates[0]} to ${selectedAccommodationDates[1]}`
-            setBookingMessage(bookingMessage)
-            setIsLoading(false)
-        } catch (e) {
-            console.log('e',e.response.data)
-            setBookingMessage(e.response.data) 
-            setIsLoading(false)
-        }
+    const handleSubmitReservation = async () => {
+        const values = { formValues, accommodation, selectedAccommodationDates }
+        await submitReservation(values, setBookingMessage, setIsLoading)
     }
+
 
     const onDateSelect = (value) => {
         if (!value) return;
@@ -95,11 +82,9 @@ export default function Booking({ match, handleAccommodationDates, selectedAccom
                                 onChange={onDateSelect}
                                 disabledDate={current => {
                                     const formattedDate = current.format('YYYY-MM-DD');
-
                                     return isAccommodationAvailable(accommodation.accommodation_bookings, formattedDate)
                                         ||
                                         moment(formattedDate).isBefore(moment().subtract(1, 'days'), 'day')//disable dates before today
-
                                 }}
                             />
                         </Form.Item>
@@ -120,7 +105,7 @@ export default function Booking({ match, handleAccommodationDates, selectedAccom
                         </Form.Item>
                         <StyledAccommodationPrice>{`${accommodation.price}$ per night`}</StyledAccommodationPrice>
                         <Form.Item>
-                            <Button onClick={submitReservation}>Reserve</Button>
+                            <Button onClick={handleSubmitReservation}>Reserve</Button>
                         </Form.Item>
                     </Form>
                 </StyledFormWrapper>

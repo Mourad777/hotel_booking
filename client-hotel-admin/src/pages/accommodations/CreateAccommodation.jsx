@@ -1,5 +1,5 @@
 import React, { Fragment, useCallback, useEffect, useState } from 'react'
-import { Form, Select, Checkbox } from 'semantic-ui-react'
+import { Form, Checkbox } from 'semantic-ui-react'
 import { uploadFile } from '../../utility/api/files'
 import { createAccommodation, updateAccommodation, getAccommodation } from '../../utility/api/accommodations'
 import { createImage } from '../../utility/api/images'
@@ -8,8 +8,17 @@ import SortableGallery from '../../components/Sortable-list/SortableList'
 import cuid from 'cuid'
 import { useParams, useHistory } from 'react-router-dom'
 import { getAmenities } from '../../utility/api/amenities'
-import { StyledDropzone, StyledMainTitle, StyledSubmitButton, StyledDropzoneContainer, StyledSubmitButtonContainer } from '../styles/create-accommodation'
+import {
+    StyledDropzone,
+    StyledMainTitle,
+    StyledSubmitButton,
+    StyledDropzoneContainer,
+    StyledSubmitButtonContainer,
+    StyledNumberInput,
+    StyledSelect
+} from '../styles/create-accommodation'
 import Loader from '../../components/Loader/Loader'
+
 
 const accommodationTypes = ['Apartment', 'Studio', 'House', 'Villa', 'Condo', 'Private Room']
 
@@ -153,7 +162,7 @@ export default function CreateAccommodation({ match }) {
                     </Form.Field>
                     <Form.Field>
                         <label>Capacity</label>
-                        <input onChange={handleForm} value={formValues.capacity} type="number" name="capacity" placeholder='Capacity' />
+                        <StyledNumberInput onChange={handleForm} value={formValues.capacity} type="number" name="capacity" placeholder='Capacity' />
                     </Form.Field>
 
                     <h4>Amenities</h4>
@@ -171,15 +180,17 @@ export default function CreateAccommodation({ match }) {
                             </Form.Field>
                         );
                     })}
-
-                    <Select
-                        placeholder='Accommodation type'
-                        options={accommodationTypes.map(accommodation => ({ key: accommodation, value: accommodation, text: accommodation }))}
-                        value={selectedAccommodation}
-                        onChange={(event, data) => setSelectedAccommodation(data.value)} />
+                    <Form.Field>
+                        <label>Accommodation Type</label>
+                        <StyledSelect
+                            placeholder='Accommodation type'
+                            options={accommodationTypes.map(accommodation => ({ key: accommodation, value: accommodation, text: accommodation }))}
+                            value={selectedAccommodation}
+                            onChange={(event, data) => setSelectedAccommodation(data.value)} />
+                    </Form.Field>
                     <Form.Field>
                         <label>{'Price'}</label>
-                        <input onChange={handleForm} name="price" value={formValues.price} type="number" placeholder="Price" />
+                        <StyledNumberInput onChange={handleForm} name="price" value={formValues.price} type="number" placeholder="Price" />
                     </Form.Field>
                 </Form>
                 <StyledDropzoneContainer>

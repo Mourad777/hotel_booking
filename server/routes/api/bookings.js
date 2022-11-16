@@ -49,13 +49,12 @@ router.post("/", async (req, res, next) => {
 
   //need either user id or email to locate a user
   if (!req.body.userId && !req.body.email) {
-    return res.status(400).json({ error: 'Need to provide either a user id or e-mail' })
+    return res.status(400).json({ message: 'Need to provide either a user id or e-mail' })
   }
 
   try {
 
     const { email = '', firstName, lastName, bookingStart, bookingEnd, accommodationId } = req.body;
-
     const accommodation = await Accommodation.findOne({
       where: { id: accommodationId }, include: [
         { model: AccommodationBooking, order: ["createdAt", "DESC"] },
@@ -100,7 +99,7 @@ router.post("/", async (req, res, next) => {
     }
     if (!isAccommodationAvailable) {
       isAccommodationAvailable = false;
-      return res.status(400).send('the accommodation is not available on these dates')
+      return res.status(401).send({ message: 'The accommodation is not available on these dates.' })
     }
 
     booking = await AccommodationBooking.create({
@@ -111,6 +110,9 @@ router.post("/", async (req, res, next) => {
 
     res.json({
       booking,
+      message: `The accommodation ${accommodation.title} was successfully booked for
+       ${(user.firstName || newUser.firstName) + ' ' + (user.lastName || newUser.lastName)} from
+        ${moment(bookingStart)} to ${moment(bookingEnd)}`
     });
   } catch (error) {
     next(error);
@@ -125,7 +127,35 @@ router.put("/:id", async (req, res, next) => {
     const booking = await AccommodationBooking.findByPk(bookingId);
     booking.bookingStart = bookingStart
     booking.bookingEnd = bookingEnd
+
+    const accommodation = await Accommodation.findOne({
+      where: { id: booking.accommodationId }, include: [
+        { model: AccommodationBooking, order: ["createdAt", "DESC"] },
+      ],
+    });
+
+    //exclude the booking that you're modifying or else it will always say not available
+    const filteredBookings = accommodation.accommodation_bookings.filter(booking => {
+      return booking.id !== parseInt(bookingId)
+    })
+
+    let isAccommodationAvailable = true;
+    for (var m = moment(bookingStart); m.isBefore(bookingEnd); m.add(1, 'days')) {
+      const formattedDate = m.format('YYYY-MM-DD');
+      const isAvailable = isAccommodationAvailableAtDate(filteredBookings, formattedDate);
+
+      if (!isAvailable) {
+        isAccommodationAvailable = false;
+      }
+    }
+
+    if (!isAccommodationAvailable) {
+      isAccommodationAvailable = false;
+      return res.status(401).send({ message: 'The accommodation is not available on these dates.' })
+    }
+
     await booking.save()
+    return res.send({booking, message: `The booking was updated to check-in: ${bookingStart} - check-out: ${bookingEnd}` })
   } catch (error) {
     next(error);
   }

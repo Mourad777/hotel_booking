@@ -18,7 +18,7 @@ export const StyledLink = styled(Link)`
 `;
 
 export const StyledBookLinkContainer = styled.div`
-padding: 10px; width: 100%; border: none; background: #e2e2e2; display:flex; justify-content:center;
+padding: 10px; width: 100%; border: none; display:flex; justify-content:center;
 `
 
 export const StyledMainContainer = styled.div`
@@ -52,7 +52,7 @@ export const StyledAmenitiesListItem = styled.li`
 
 `
 
-export const StyledDatePickerWrapper = styled.p`
+export const StyledDatePickerWrapper = styled.div`
 width:100%;
 `
 

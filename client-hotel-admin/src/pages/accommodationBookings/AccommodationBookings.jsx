@@ -51,6 +51,10 @@ const Posts = () => {
 
     const handleDeleteBooking = async (bookingId) => {
         await deleteBooking(bookingId, setIsLoading)
+
+        setBookings(bookings => {
+            return bookings.filter(booking => booking.id !== bookingId)
+        })
     }
 
     const handleClearFilters = () => {

@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyledLoader, StyledLoaderWrapper } from '../styles/'
+import { StyledLoader, StyledLoaderWrapper } from '../styles/loader'
 
 const Loader = () => (<StyledLoaderWrapper ><StyledLoader /></StyledLoaderWrapper>);
 

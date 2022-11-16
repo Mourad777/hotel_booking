@@ -33,24 +33,42 @@ export const getBooking = async (reservationId, setIsLoading) => {
 
 }
 
-export const createBooking = async (values, setIsLoading) => {
-    let res = {};
+export const createBooking = async (values, setIsLoading, setBookingMessage) => {
     setIsLoading(true)
     try {
-
         const response = await axios.post(`${REACT_APP_API_URL}/bookings`, values);
-
-        console.log('response', response)
-
-        return response.data
-
+        console.log('booking response', response)
+        if (response.data) {
+            setBookingMessage(response.data.message)
+        }
+        setIsLoading(false)
+        return response.data.booking
     } catch (e) {
         console.log('Create bookings error', e)
+        if (e.response) {
+            setBookingMessage(e.response.data.message)
+        }
         setIsLoading(false)
     }
-    console.log('Create bookings response', res)
-    setIsLoading(false)
-    return res.data
+}
+
+export const updateBooking = async (values, reservationId, setIsLoading, setBookingMessage) => {
+    setIsLoading(true)
+    try {
+        const response = await axios.put(`${REACT_APP_API_URL}/bookings/${reservationId}`, values);
+        console.log('response', response)
+        if (response.data) {
+            setBookingMessage(response.data.message)
+        }
+        setIsLoading(false)
+        return response.data.booking
+    } catch (e) {
+        console.log('Update bookings error', e)
+        if (e.response) {
+            setBookingMessage(e.response.data.message)
+        }
+        setIsLoading(false)
+    }
 }
 
 export const deleteBooking = async (id, setIsLoading) => {

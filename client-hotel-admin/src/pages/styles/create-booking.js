@@ -29,3 +29,8 @@ margin: 20px auto;
 export const StyledSubmitButtonContainer = styled.div`
 margin: 20px;display:flex;justify-content:center;
 `
+
+export const StyledBookingMessage = styled.p`
+text-align:center;
+font-size:1.2em;
+`

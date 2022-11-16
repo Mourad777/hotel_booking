@@ -36,9 +36,7 @@ const Accommodations = ({ }) => {
     const handleDeleteAccommodation = async (accommodationId) => {
         await deleteAccommodation(accommodationId, setIsLoading)
         setAccommodations(accommodations => {
-            //get index of accommodation to delete
-            const accommodationIndex = accommodations.findIndex(accommodation => accommodation.id === accommodationId)
-            return accommodations.splice(accommodationIndex, 1)
+            return accommodations.filter(accommodation => accommodation.id !== accommodationId)
         })
     }
 

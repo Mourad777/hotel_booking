@@ -11,7 +11,7 @@ const Accommodation = db.define("accommodations", {
     allowNull: false,
   },
   description: {
-    type: Sequelize.STRING,
+    type: Sequelize.TEXT,
     allowNull: true,
   },
   price: {

@@ -20,6 +20,8 @@ import {
     StyledAmenitiesHeader,
 } from './styles/accommodation'
 import Loader from '../components/Loader/Loader';
+import history from '../utility/history';
+import { Button } from 'antd';
 
 const { REACT_APP_AWS_URL, REACT_APP_API_URL } = process.env;
 
@@ -92,9 +94,9 @@ const Accommodation = ({ match, accommodationDates, handleAccommodationDates }) 
                     />
                     <StyledDateError> {dateError}</StyledDateError>
                     <StyledBookLinkContainer>
-                        <StyledLink to={`/booking/${accommodation.id}`}>
+                        <Button onClick={() => history.push(`/booking/${accommodation.id}`)}>
                             Book
-                        </StyledLink>
+                        </Button>
                     </StyledBookLinkContainer>
                 </StyledDatePickerWrapper>
             </StyledMainContainer>

@@ -1,7 +1,6 @@
 import styled from "styled-components"
-import { Button } from "semantic-ui-react"
+import { Button, Select } from "semantic-ui-react"
 import Dropzone from '../../components/Dropzone/dropzone';
-
 
 export const StyledMainTitle = styled.h1`text-align:center;`
 
@@ -17,7 +16,12 @@ export const StyledDropzoneContainer = styled.div`
 `
 
 export const StyledSubmitButtonContainer = styled.div`
-width:100%;
-display:flex;
-justify-content:space-around;
+max-width:300px;
+margin:auto;
 `
+
+export const StyledNumberInput = styled.input`
+max-width:200px;
+`
+
+export const StyledSelect = styled(Select)`max-width:200px`

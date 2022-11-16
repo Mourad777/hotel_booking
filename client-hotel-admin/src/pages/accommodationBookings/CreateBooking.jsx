@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router';
 import { getUsers } from '../../utility/api/users';
 import { getAccommodations } from '../../utility/api/accommodations';
-import { getBooking } from '../../utility/api/accommodation-bookings';
+import { createBooking, getBooking, updateBooking } from '../../utility/api/accommodation-bookings';
 import Loader from '../../components/Loader/Loader';
 import TextField from '@mui/material/TextField';
 import StaticDateRangePicker from '@mui/lab/StaticDateRangePicker';
@@ -13,7 +13,6 @@ import moment from 'moment';
 import 'react-semantic-ui-datepickers/dist/react-semantic-ui-datepickers.css';
 import { Button } from 'semantic-ui-react';
 import { isAccommodationAvailable } from '../../utility/utility';
-import axios from 'axios';
 import { useWindowSize } from '../../utility/windowSize';
 import {
     StyledContentWrapper,
@@ -22,9 +21,10 @@ import {
     StyledSelectContainer,
     StyledSelectsWrapper,
     StyledSubmitButtonContainer,
-    StyledTitle
+    StyledTitle,
+    StyledBookingMessage
 } from '../styles/create-booking'
-const { REACT_APP_API_URL } = process.env;
+import { updateAccommodationsState } from '../../utility/updateState/accommodations';
 
 const Accommodation = () => {
 
@@ -40,6 +40,7 @@ const Accommodation = () => {
     const [dates, setDates] = useState([null, null]);
     const [selectedAccommodation, setSelectedAccommodation] = useState(null);
     const [selectedUser, setSelectedUser] = useState(null);
+    const [bookingMessage, setBookingMessage] = useState(null);
 
     const getInitialData = async () => {
         if (reservationId) {
@@ -53,25 +54,25 @@ const Accommodation = () => {
     }
 
     const submitReservation = async (values) => {
-
+        const data = {
+            bookingStart: moment.utc(dates[0]).format('YYYY-MM-DD HH:mm z'),
+            bookingEnd: moment.utc(dates[1]).format('YYYY-MM-DD HH:mm z'),
+            accommodationId: selectedAccommodation,
+            userId: selectedUser,
+        }
+        console.log('current booking',booking)
         if (reservationId) {
-            const response = await axios.put(`${REACT_APP_API_URL}/bookings/${reservationId}`, {
-                bookingStart: moment.utc(dates[0]).format('YYYY-MM-DD HH:mm z'),
-                bookingEnd: moment.utc(dates[1]).format('YYYY-MM-DD HH:mm z'),
-                accommodationId: selectedAccommodation,
-                userId: selectedUser,
-            });
-            console.log('booking response',response)
-
-
+            const updatedBooking = await updateBooking(data, reservationId, setIsLoading, setBookingMessage);
+            console.log('updated booking',updatedBooking)
+            if (!updatedBooking) return
+            const updatedAccommodations = updateAccommodationsState(accommodations, selectedAccommodation, updatedBooking, reservationId)
+            setAccommodations(updatedAccommodations)
+            setBooking(updatedBooking)
         } else {
-            const response = await axios.post(`${REACT_APP_API_URL}/bookings`, {
-                bookingStart: moment.utc(dates[0]).format('YYYY-MM-DD HH:mm z'),
-                bookingEnd: moment.utc(dates[1]).format('YYYY-MM-DD HH:mm z'),
-                accommodationId: selectedAccommodation,
-                userId: selectedUser,
-            });
-            console.log('booking response',response)
+            const newBooking = await createBooking(data, setIsLoading, setBookingMessage);
+            if (!newBooking) return
+            const updatedAccommodations = updateAccommodationsState(accommodations, selectedAccommodation, newBooking)
+            setAccommodations(updatedAccommodations)
         }
     }
 
@@ -116,8 +117,12 @@ const Accommodation = () => {
                         value={[booking.bookingStart, booking.bookingEnd]}
                         disablePast
                         shouldDisableDate={date => {
+                            if (!selectedAccommodation || accommodations.length === 0) return false;
+                            if (reservationId) {
+                                return false
+                            }
                             const formattedDate = moment(date).format('YYYY-MM-DD');
-                            return isAccommodationAvailable(booking.accommodation.accommodation_bookings, formattedDate)
+                            return (isAccommodationAvailable(accommodations.find(accommodation => accommodation.id === selectedAccommodation).accommodation_bookings, formattedDate))
                                 ||
                                 moment(formattedDate).isBefore(moment().subtract(1, 'days'), 'day')//disable dates before today
                         }}
@@ -132,6 +137,9 @@ const Accommodation = () => {
                     />
                 </LocalizationProvider>
             </StyledContentWrapper>
+            <StyledBookingMessage>
+                {bookingMessage}
+            </StyledBookingMessage>
             <StyledSubmitButtonContainer>
                 <Button onClick={submitReservation}>Submit Reservation</Button>
             </StyledSubmitButtonContainer>

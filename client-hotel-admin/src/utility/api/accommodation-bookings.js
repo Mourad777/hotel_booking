@@ -2,35 +2,31 @@ import axios from "axios";
 const { REACT_APP_API_URL } = process.env;
 
 export const getBookings = async (setBookings, setIsLoading) => {
-    let res = {};
+
     setIsLoading(true)
     try {
-        res = await axios.get(`${REACT_APP_API_URL}/bookings`);
-
+        const res = await axios.get(`${REACT_APP_API_URL}/bookings`);
+        console.log('Fetch bookings response', res)
+        const bookings = res.data || [];
+        setBookings(bookings);
+        setIsLoading(false)
     } catch (e) {
-        console.log('Fetch bookings error', e)
+        console.log('Fetch bookings error', e.response)
         setIsLoading(false)
     }
-    console.log('Fetch bookings response', res)
-    const bookings = res.data || [];
-    setBookings(bookings);
-    setIsLoading(false)
 }
 
 export const getBooking = async (reservationId, setIsLoading) => {
-    let res = {};
     setIsLoading(true)
     try {
-        res = await axios.get(`${REACT_APP_API_URL}/bookings/${reservationId}`);
-
+        const res = await axios.get(`${REACT_APP_API_URL}/bookings/${reservationId}`);
+        console.log('Fetch booking response', res)
+        setIsLoading(false)
+        return res.data || [];
     } catch (e) {
-        console.log('Fetch booking error', e)
+        console.log('Fetch booking error', e.response)
         setIsLoading(false)
     }
-    console.log('Fetch booking response', res)
-    setIsLoading(false)
-    return res.data || [];
-
 }
 
 export const createBooking = async (values, setIsLoading, setBookingMessage) => {
@@ -44,7 +40,7 @@ export const createBooking = async (values, setIsLoading, setBookingMessage) => 
         setIsLoading(false)
         return response.data.booking
     } catch (e) {
-        console.log('Create bookings error', e)
+        console.log('Create bookings error', e.response)
         if (e.response) {
             setBookingMessage(e.response.data.message)
         }
@@ -63,7 +59,7 @@ export const updateBooking = async (values, reservationId, setIsLoading, setBook
         setIsLoading(false)
         return response.data.booking
     } catch (e) {
-        console.log('Update bookings error', e)
+        console.log('Update bookings error', e.response)
         if (e.response) {
             setBookingMessage(e.response.data.message)
         }
@@ -72,15 +68,13 @@ export const updateBooking = async (values, reservationId, setIsLoading, setBook
 }
 
 export const deleteBooking = async (id, setIsLoading) => {
-    let res;
     setIsLoading(true)
     try {
-        res = await axios.delete(`${REACT_APP_API_URL}/bookings/delete/${id}`);
-
+        const res = await axios.delete(`${REACT_APP_API_URL}/bookings/delete/${id}`);
+        setIsLoading(false)
+        console.log('Fetch bookings response', res)
     } catch (e) {
-        console.log('Fetch bookings error', e)
+        console.log('Fetch bookings error', e.response)
         setIsLoading(false)
     }
-    setIsLoading(false)
-    console.log('Fetch bookings response', res)
 }

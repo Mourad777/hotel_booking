@@ -2,7 +2,6 @@ import axios from "axios";
 const { REACT_APP_API_URL } = process.env;
 
 export const getAccommodations = async (setAccommodations, setIsLoading) => {
-    const token = localStorage.getItem('token');
     setIsLoading(true)
     try {
         const res = await axios.get(`${REACT_APP_API_URL}/accommodations/all/all`);
@@ -12,13 +11,12 @@ export const getAccommodations = async (setAccommodations, setIsLoading) => {
         setIsLoading(false)
 
     } catch (e) {
-        console.log('Fetch accommodations error', e)
+        console.log('Fetch accommodations error', e.response)
         setIsLoading(false)
     }
 }
 
 export const getAccommodation = async (accommodationId, setIsLoading) => {
-    const token = localStorage.getItem('token');
     setIsLoading(true)
     try {
         const res = await axios.get(`${REACT_APP_API_URL}/accommodations/${accommodationId}`);
@@ -27,7 +25,7 @@ export const getAccommodation = async (accommodationId, setIsLoading) => {
         return res.data || [];
 
     } catch (e) {
-        console.log('Fetch accommodation error', e)
+        console.log('Fetch accommodation error', e.response)
         setIsLoading(false)
     }
 }
@@ -40,21 +38,20 @@ export const createAccommodation = async (values, setIsLoading) => {
         setIsLoading(false)
         return response.data
     } catch (e) {
-        console.log('Create accommodation error', e)
+        console.log('Create accommodation error', e.response)
         setIsLoading(false)
     }
 }
 
 export const updateAccommodation = async (accommodationId, values, setIsLoading) => {
-    let res = {};
     setIsLoading(true)
     try {
         const response = await axios.put(`${REACT_APP_API_URL}/accommodations/update/${accommodationId}`, values);
-        console.log('Create accommodation response', res)
+        console.log('Create accommodation response', response)
         setIsLoading(false)
         return response.data
     } catch (e) {
-        console.log('Create accommodation error', e)
+        console.log('Create accommodation error', e.response)
         setIsLoading(false)
     }
 }
@@ -66,7 +63,7 @@ export const deleteAccommodation = async (id, setIsLoading) => {
        setIsLoading(false)
        console.log('Fetch accommodations response', res)
     } catch (e) {
-        console.log('Fetch accommodations error', e)
+        console.log('Fetch accommodations error', e.response)
         setIsLoading(false)
     }
 }

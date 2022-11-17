@@ -1,5 +1,4 @@
 import axios from "axios";
-import { getDefaultHeader } from "../utility";
 const { REACT_APP_API_URL } = process.env;
 
 export const getAmenities = async (setCheckedState, setIsLoading) => {
@@ -7,7 +6,7 @@ export const getAmenities = async (setCheckedState, setIsLoading) => {
     let res = {};
     setIsLoading(true)
     try {
-        res = await axios.get(`${REACT_APP_API_URL}/amenities`, getDefaultHeader(token));
+        res = await axios.get(`${REACT_APP_API_URL}/amenities`);
 
     } catch (e) {
         console.log('Fetch amenities error', e)

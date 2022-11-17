@@ -30,7 +30,7 @@ const validateDates = (checkin, checkout) => {
 }
 
 const Home = (props) => {
-    const { handleAccommodationDates, accommodationDates, handleAccommodation } = props;
+    const { handleAccommodationDates, accommodationDates } = props;
     const [accommodations, setAccommodations] = useState([])
     const [dateError, setDateError] = useState('')
 
@@ -40,7 +40,8 @@ const Home = (props) => {
         const checkinDateFormatted = moment(fromDate).format('YYYY-MM-DD HH:mm z');
         const checkoutDateFormatted = moment(toDate).format('YYYY-MM-DD HH:mm z');
         if (!value || (value[0] === value[1])) {
-            const res = await axios.get(`${REACT_APP_API_URL}/accommodations`);
+            const res = await axios.get(`${REACT_APP_API_URL}/accommodations/all/all`);
+            console.log('res accommodations', res)
             setAccommodations(res.data)
         } else {
             const res = await axios.get(`${REACT_APP_API_URL}/accommodations/${checkinDateFormatted}/${checkoutDateFormatted}`);
@@ -86,7 +87,7 @@ const Home = (props) => {
             {accommodations.map(accommodation => {
                 return (
                     <StyledRoomListItem key={`accommodation[${accommodation.id}]`}>
-                        {accommodation.images[0] && <StyledRoomThumbnail src={REACT_APP_AWS_URL + accommodation.images[accommodation.images.length-1].url} />}
+                        {accommodation.images[0] && <StyledRoomThumbnail src={REACT_APP_AWS_URL + accommodation.images[0].url} />}
                         <StyledRoomDescriptionContainer>
                             <div>
                                 <h1>{accommodation.title}</h1>

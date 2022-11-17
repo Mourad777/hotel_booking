@@ -1,12 +1,11 @@
 import axios from "axios";
-import { getDefaultHeader } from "../utility";
 const { REACT_APP_API_URL } = process.env;
 
 export const getAccommodations = async (setAccommodations, setIsLoading) => {
     const token = localStorage.getItem('token');
     setIsLoading(true)
     try {
-        const res = await axios.get(`${REACT_APP_API_URL}/accommodations/all/all`, getDefaultHeader(token));
+        const res = await axios.get(`${REACT_APP_API_URL}/accommodations/all/all`);
         console.log('Fetch accommodations response', res)
         const accommodations = res.data || [];
         setAccommodations(accommodations);
@@ -22,7 +21,7 @@ export const getAccommodation = async (accommodationId, setIsLoading) => {
     const token = localStorage.getItem('token');
     setIsLoading(true)
     try {
-        const res = await axios.get(`${REACT_APP_API_URL}/accommodations/${accommodationId}`, getDefaultHeader(token));
+        const res = await axios.get(`${REACT_APP_API_URL}/accommodations/${accommodationId}`);
         console.log('Fetch accommodation response', res)
         setIsLoading(false)
         return res.data || [];

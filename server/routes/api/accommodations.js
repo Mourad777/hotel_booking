@@ -28,7 +28,6 @@ router.get("/:checkin/:checkout", async (req, res, next) => {
     const checkoutDate = req.params.checkout;
 
     try {
-
         if (checkinDate === 'all' && checkoutDate === 'all') {
             const accommodations = await Accommodation.findAll({
                 include: [
@@ -56,19 +55,26 @@ router.get("/:checkin/:checkout", async (req, res, next) => {
         const unavailableAccommodations = []
 
         accommodations.forEach(accommodation => {
+            console.log('accommodation: ', accommodation.title)
             accommodation.accommodation_bookings.forEach(booking => {
                 const momentBookingStart = moment(booking.bookingStart);
                 const momentBookingEnd = moment(booking.bookingEnd);
-                const isDatesOccupied = (momentCheckinDate.isBetween(momentBookingStart, momentBookingEnd)) ||
-                    (momentCheckoutDate.isBetween(momentBookingStart, momentBookingEnd))
+                const isDatesOccupied =
+                    (momentCheckinDate.isBetween(momentBookingStart, momentBookingEnd)) ||
+                    (momentCheckoutDate.isBetween(momentBookingStart, momentBookingEnd)) ||
+                    (momentBookingStart.isBetween(momentCheckinDate, momentCheckoutDate)) ||
+                    (momentBookingEnd.isBetween(momentCheckinDate, momentCheckoutDate))
                 if (isDatesOccupied) {
+
+                    console.log('booking: ', momentBookingStart, 'to', momentBookingEnd)
+                    console.log('******************* occupied ********************')
                     unavailableAccommodations.push(accommodation.id);
                 }
             })
         });
 
-        const filteredAvailableAccommodations = accommodations.filter(accommodation=>{
-            if(unavailableAccommodations.includes(accommodation.id)) {
+        const filteredAvailableAccommodations = accommodations.filter(accommodation => {
+            if (unavailableAccommodations.includes(accommodation.id)) {
                 return false;
             } else return true
         })
@@ -175,7 +181,7 @@ router.put("/update/:id", async (req, res, next) => {
         await accommodation.removeAmenities(currentAmenities)
         await accommodation.addAmenities(newAmenities)
         await accommodation.save();
-        res.send({accommodation})
+        res.send({ accommodation })
     } catch (error) {
         next(error);
     }

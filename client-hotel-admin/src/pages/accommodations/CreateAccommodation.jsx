@@ -10,6 +10,7 @@ import { useParams, useHistory } from 'react-router-dom'
 import { getAmenities } from '../../utility/api/amenities'
 import {
     StyledDropzone,
+    StyledMainContainer,
     StyledMainTitle,
     StyledSubmitButton,
     StyledDropzoneContainer,
@@ -58,7 +59,9 @@ export default function CreateAccommodation({ match }) {
 
         const amenitiesList = await getAmenities(setAmenitiesCheckedState, setIsLoading);
         setAmenities(amenitiesList)
+        console.log('accommodationId',accommodationId)
         if (accommodationId) { //if there is and accommodatin id that means we are editing a previously created accommodation and need to populate the form
+            console.log('getting accommodation')
             const { images, type, imagesOrder, amenities, ...rest } = await getAccommodation(accommodationId, setIsLoading);
             const amenitiesValues = amenitiesList.map(amenity => amenities.findIndex(chosenAmenity => chosenAmenity.name === amenity.name) > -1)
             setAmenitiesCheckedState(amenitiesValues)
@@ -151,48 +154,50 @@ export default function CreateAccommodation({ match }) {
         return (
             <Fragment>
                 <StyledMainTitle>Create a new accommodation</StyledMainTitle>
-                <Form onSubmit={submitAccommodation}>
-                    <Form.Field>
-                        <label>Title</label>
-                        <input onChange={handleForm} value={formValues.title} name="title" placeholder='Title' />
-                    </Form.Field>
-                    <Form.Field>
-                        <label>Description</label>
-                        <textarea onChange={handleForm} value={formValues.description} name="description" placeholder='Description' />
-                    </Form.Field>
-                    <Form.Field>
-                        <label>Capacity</label>
-                        <StyledNumberInput onChange={handleForm} value={formValues.capacity} type="number" name="capacity" placeholder='Capacity' />
-                    </Form.Field>
+                <StyledMainContainer>
+                    <Form onSubmit={submitAccommodation}>
+                        <Form.Field>
+                            <label>Title</label>
+                            <input onChange={handleForm} value={formValues.title} name="title" placeholder='Title' />
+                        </Form.Field>
+                        <Form.Field>
+                            <label>Description</label>
+                            <textarea onChange={handleForm} value={formValues.description} name="description" placeholder='Description' />
+                        </Form.Field>
+                        <Form.Field>
+                            <label>Capacity</label>
+                            <StyledNumberInput onChange={handleForm} value={formValues.capacity} type="number" name="capacity" placeholder='Capacity' />
+                        </Form.Field>
 
-                    <h4>Amenities</h4>
-                    {amenities.map((amenity, index) => {
-                        return (
-                            <Form.Field>
-                                <Checkbox
-                                    key={index}
-                                    label={amenity.name}
-                                    name={amenity.name}
-                                    value={index}
-                                    checked={amenitiesCheckedState[index]}
-                                    onChange={() => handleAmenities(index)}
-                                />
-                            </Form.Field>
-                        );
-                    })}
-                    <Form.Field>
-                        <label>Accommodation Type</label>
-                        <StyledSelect
-                            placeholder='Accommodation type'
-                            options={accommodationTypes.map(accommodation => ({ key: accommodation, value: accommodation, text: accommodation }))}
-                            value={selectedAccommodation}
-                            onChange={(event, data) => setSelectedAccommodation(data.value)} />
-                    </Form.Field>
-                    <Form.Field>
-                        <label>{'Price'}</label>
-                        <StyledNumberInput onChange={handleForm} name="price" value={formValues.price} type="number" placeholder="Price" />
-                    </Form.Field>
-                </Form>
+                        <h4>Amenities</h4>
+                        {amenities.map((amenity, index) => {
+                            return (
+                                <Form.Field>
+                                    <Checkbox
+                                        key={index}
+                                        label={amenity.name}
+                                        name={amenity.name}
+                                        value={index}
+                                        checked={amenitiesCheckedState[index]}
+                                        onChange={() => handleAmenities(index)}
+                                    />
+                                </Form.Field>
+                            );
+                        })}
+                        <Form.Field>
+                            <label>Accommodation Type</label>
+                            <StyledSelect
+                                placeholder='Accommodation type'
+                                options={accommodationTypes.map(accommodation => ({ key: accommodation, value: accommodation, text: accommodation }))}
+                                value={selectedAccommodation}
+                                onChange={(event, data) => setSelectedAccommodation(data.value)} />
+                        </Form.Field>
+                        <Form.Field>
+                            <label>{'Price'}</label>
+                            <StyledNumberInput onChange={handleForm} name="price" value={formValues.price} type="number" placeholder="Price" />
+                        </Form.Field>
+                    </Form>
+                </StyledMainContainer>
                 <StyledDropzoneContainer>
                     <StyledDropzone onDrop={onDrop} accept={"image/*"} />
                 </StyledDropzoneContainer>

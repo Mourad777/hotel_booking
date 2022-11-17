@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
-import { Router, Switch } from "react-router-dom";
+import { Redirect, Router, Switch } from "react-router-dom";
 import _ from "lodash";
 import Loader from "./components/Loader/Loader";
 import 'semantic-ui-css/semantic.min.css';
@@ -18,7 +18,7 @@ const Bookings = React.lazy(() => import("./pages/accommodationBookings/Accommod
 const App = () => {
 
   const [isLoggedIn, setIsLoggedIn] = useState(true);
-  
+
   const handleLogin = (isLoggedIn) => {
     setIsLoggedIn(isLoggedIn)
   }
@@ -26,15 +26,17 @@ const App = () => {
   return (
     <Router history={history}>
       <React.Suspense fallback={<div style={{ position: 'fixed', zIndex: 5, top: '50%', left: '50%', transform: 'translateX(-50%)' }}><Loader /></div>}>
-        <Switch>
-          <Layout onLogin={handleLogin} isLoggedIn={isLoggedIn}>
+        <Layout onLogin={handleLogin} isLoggedIn={isLoggedIn}>
+          <Switch>
             <PrivateRoute isLoggedIn={isLoggedIn} path="/accommodations" component={Accommodations} />
             <PrivateRoute isLoggedIn={isLoggedIn} path="/bookings" component={Bookings} />
-            <PrivateRoute isLoggedIn={isLoggedIn} path="/create-accommodation/:id?" component={CreateAccommodation} />
-            <PrivateRoute isLoggedIn={isLoggedIn} path="/create-reservation"  component={CreateBooking} />
-            <PrivateRoute isLoggedIn={isLoggedIn} path="/create-reservation/:id"  component={CreateBooking} />
-          </Layout>
-        </Switch>
+            <PrivateRoute isLoggedIn={isLoggedIn} path="/create-accommodation/:id" component={CreateAccommodation} />
+            <PrivateRoute isLoggedIn={isLoggedIn} path="/create-accommodation" component={CreateAccommodation} />
+            <PrivateRoute isLoggedIn={isLoggedIn} path="/create-reservation/:id" component={CreateBooking} />
+            <PrivateRoute isLoggedIn={isLoggedIn} path="/create-reservation" component={CreateBooking} />
+            <Redirect to="/accommodations" />
+          </Switch>
+        </Layout>
       </React.Suspense>
     </Router>
   );

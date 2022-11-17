@@ -86,7 +86,7 @@ const Home = (props) => {
             {accommodations.map(accommodation => {
                 return (
                     <StyledRoomListItem key={`accommodation[${accommodation.id}]`}>
-                        {accommodation.images[0] && <StyledRoomThumbnail src={REACT_APP_AWS_URL + accommodation.images[0].url} />}
+                        {accommodation.images[0] && <StyledRoomThumbnail src={REACT_APP_AWS_URL + accommodation.images[accommodation.images.length-1].url} />}
                         <StyledRoomDescriptionContainer>
                             <div>
                                 <h1>{accommodation.title}</h1>

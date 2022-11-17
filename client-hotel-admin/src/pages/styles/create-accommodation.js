@@ -25,3 +25,5 @@ max-width:200px;
 `
 
 export const StyledSelect = styled(Select)`max-width:200px`
+
+export const StyledMainContainer = styled.div`max-width:500px; margin:auto;`

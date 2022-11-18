@@ -9,32 +9,12 @@ async function seed() {
     await db.sync({ force: true });
     console.log("db synced!");
 
-    await User.create({
-        firstName: "Thomas",
-        lastName: "Edisson",
-        email: "thomas@email.com",
-        password: "123456",
-        isAdmin: true,
-    });
+    // await Promise.all(amenities.map(async amenity => {
+    //     await Amenity.create({
+    //         name:amenity
+    //     });
 
-    await User.create({
-        firstName: "Robert",
-        lastName: "Santiago",
-        email: "robert@email.com",
-        password: "123456",
-        isAdmin: false,
-    });
-
-    await Configuration.create({
-        bookingPaymentRequired: true,
-    });
-
-    await Promise.all(amenities.map(async amenity => {
-        await Amenity.create({
-            name:amenity
-        });
-
-    }))
+    // }))
 
 }
 async function runSeed() {

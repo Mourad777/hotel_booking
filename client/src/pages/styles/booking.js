@@ -17,8 +17,11 @@ font-size: 1.5em;
 `
 
 export const StyledFormWrapper = styled.div`
-width:360px;
+width:300px;
 margin:auto;
+@media (min-width: 500px) {
+      width: 450px;
+  }
 `
 
 export const StyledBookingMessageContainer = styled.div`
@@ -33,4 +36,10 @@ transform:translate(-50%,-50%);
 export const StyledBookingMessage = styled.p`
 font-size:1.2em;
 color:rgb(110,110,110);
+`
+
+export const StyledDatePickerWrapper = styled.div`
+width:100%;
+display:flex;
+justify-content:space-around;
 `

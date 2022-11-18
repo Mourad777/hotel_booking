@@ -39,6 +39,7 @@ width: 100%;
 
 export const StyledDescriptionWrapper = styled.div`
 margin: 10px 0;
+padding:20px;
 `
 export const StyledDescription = styled.p`
 font-size: 1.1em; color: rgb(150,150,150);

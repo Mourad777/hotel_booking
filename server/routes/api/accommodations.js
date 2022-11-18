@@ -5,6 +5,7 @@ const { Op } = require("sequelize");
 const { deleteFiles } = require("../../utils");
 
 router.get("/:accommodationId", async (req, res, next) => {
+    
     const accommodationId = req.params.accommodationId;
 
     try {

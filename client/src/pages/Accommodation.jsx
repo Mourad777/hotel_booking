@@ -5,7 +5,6 @@ import moment from 'moment';
 import { isAccommodationAvailable } from '../utility/utils';
 import {
     StyledBookLinkContainer,
-    StyledLink,
     StyledRangePickerContainer,
     StyledAccommodationType,
     StyledAmenitiesList,

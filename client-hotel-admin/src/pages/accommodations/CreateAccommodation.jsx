@@ -42,8 +42,9 @@ const getAmenitiesIds = (amenities, amenitiesCheckedState) => {
 }
 
 export default function CreateAccommodation({ match }) {
+    console.log('match:',match)
     const history = useHistory();
-
+    console.log('useParams()',useParams())
     const { id: accommodationId } = useParams()
     let newId;
     if (!accommodationId) newId = cuid();

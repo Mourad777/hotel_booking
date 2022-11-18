@@ -110,9 +110,7 @@ router.post("/", async (req, res, next) => {
 
     res.json({
       booking,
-      message: `The accommodation ${accommodation.title} was successfully booked for
-       ${(user.firstName || newUser.firstName) + ' ' + (user.lastName || newUser.lastName)} from
-        ${moment(bookingStart)} to ${moment(bookingEnd)}`
+      message: `The accommodation ${accommodation.title} was successfully booked from ${moment(bookingStart)} to ${moment(bookingEnd)}`
     });
   } catch (error) {
     next(error);
@@ -155,7 +153,7 @@ router.put("/:id", async (req, res, next) => {
     }
 
     await booking.save()
-    return res.send({booking, message: `The booking was updated to check-in: ${bookingStart} - check-out: ${bookingEnd}` })
+    return res.send({ booking, message: `The booking was updated to check-in: ${bookingStart} - check-out: ${bookingEnd}` })
   } catch (error) {
     next(error);
   }

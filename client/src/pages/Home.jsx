@@ -35,15 +35,15 @@ const Home = (props) => {
     const [dateError, setDateError] = useState('')
 
     const getAccommodations = async (value) => {
-        const fromDate = moment(value[0]);
-        const toDate = moment(value[1]);
-        const checkinDateFormatted = moment(fromDate).format('YYYY-MM-DD HH:mm z');
-        const checkoutDateFormatted = moment(toDate).format('YYYY-MM-DD HH:mm z');
         if (!value || (value[0] === value[1])) {
             const res = await axios.get(`${REACT_APP_API_URL}/accommodations/all/all`);
             console.log('res accommodations', res)
             setAccommodations(res.data)
         } else {
+            const fromDate = moment(value[0]);
+            const toDate = moment(value[1]);
+            const checkinDateFormatted = moment(fromDate).format('YYYY-MM-DD HH:mm z');
+            const checkoutDateFormatted = moment(toDate).format('YYYY-MM-DD HH:mm z');
             const res = await axios.get(`${REACT_APP_API_URL}/accommodations/${checkinDateFormatted}/${checkoutDateFormatted}`);
             console.log('res accommodations', res)
             setAccommodations(res.data)

@@ -16,6 +16,7 @@ import {
     StyledFormWrapper,
     StyledBookingMessageContainer,
     StyledBookingMessage,
+    StyledDatePickerWrapper
 } from './styles/booking'
 import Loader from '../components/Loader/Loader';
 import { isAccommodationAvailable } from '../utility/utils';
@@ -76,17 +77,19 @@ export default function Booking({ match, handleAccommodationDates, selectedAccom
                 <StyledFormWrapper>
                     <Form layout="vertical" size="large">
                         <Form.Item label=" ">
-                            <RangePicker
-                                value={selectedAccommodationDates}
-                                placeholder={["Check-in", "Check-out"]}
-                                onChange={onDateSelect}
-                                disabledDate={current => {
-                                    const formattedDate = current.format('YYYY-MM-DD');
-                                    return isAccommodationAvailable(accommodation.accommodation_bookings, formattedDate)
-                                        ||
-                                        moment(formattedDate).isBefore(moment().subtract(1, 'days'), 'day')//disable dates before today
-                                }}
-                            />
+                            <StyledDatePickerWrapper>
+                                <RangePicker
+                                    value={selectedAccommodationDates}
+                                    placeholder={["Check-in", "Check-out"]}
+                                    onChange={onDateSelect}
+                                    disabledDate={current => {
+                                        const formattedDate = current.format('YYYY-MM-DD');
+                                        return isAccommodationAvailable(accommodation.accommodation_bookings, formattedDate)
+                                            ||
+                                            moment(formattedDate).isBefore(moment().subtract(1, 'days'), 'day')//disable dates before today
+                                    }}
+                                />
+                            </StyledDatePickerWrapper>
                         </Form.Item>
                         <Form.Item label="First name">
                             <Input value={formValues.firstName} name="firstName" onChange={handleForm} />

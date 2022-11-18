@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { Select } from "semantic-ui-react";
 
 export const StyledMainWrapper = styled.div`
-margin: auto; max-width: 800px;
+margin: auto; max-width: 800px; width:100%;
 `
 
 export const StyledContentWrapper = styled.div`

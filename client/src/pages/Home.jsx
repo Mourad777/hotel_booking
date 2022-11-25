@@ -1,12 +1,7 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import moment from 'moment';
-import axios from 'axios'
 import { DatePicker, Space } from 'antd'
 import {
-    CardImage,
-    Column,
-    Grid,
-    Row,
     StyledLink,
     StyledRangePickerContainer,
     StyledRoomDescriptionContainer,
@@ -18,8 +13,10 @@ import {
     StyledAccommodationDetails,
     StyledButtonsWrapper,
 } from './styles/home'
+import Loader from '../components/Loader/Loader';
+import { fetchAccommodations } from '../utility/api';
 
-const { REACT_APP_AWS_URL, REACT_APP_API_URL } = process.env;
+const { REACT_APP_AWS_URL } = process.env;
 
 const validateDates = (checkin, checkout) => {
     let error = '';
@@ -33,27 +30,19 @@ const Home = (props) => {
     const { handleAccommodationDates, accommodationDates } = props;
     const [accommodations, setAccommodations] = useState([])
     const [dateError, setDateError] = useState('')
+    const [isLoading, setIsLoading] = useState(false)
 
     const getAccommodations = async (value) => {
-        if (!value || (value[0] === value[1])) {
-            const res = await axios.get(`${REACT_APP_API_URL}/accommodations/all/all`);
-            console.log('res accommodations', res)
-            setAccommodations(res.data)
-        } else {
-            const fromDate = moment(value[0]);
-            const toDate = moment(value[1]);
-            const checkinDateFormatted = moment(fromDate).format('YYYY-MM-DD HH:mm z');
-            const checkoutDateFormatted = moment(toDate).format('YYYY-MM-DD HH:mm z');
-            const res = await axios.get(`${REACT_APP_API_URL}/accommodations/${checkinDateFormatted}/${checkoutDateFormatted}`);
-            console.log('res accommodations', res)
-            setAccommodations(res.data)
-        }
+        await fetchAccommodations(value, setAccommodations, setIsLoading)
         handleAccommodationDates(value);
     }
 
     useEffect(() => {
         getAccommodations(accommodationDates)
     }, [])
+    if (isLoading) {
+        return <Loader />
+    }
 
     return (
         <Fragment>
@@ -78,12 +67,6 @@ const Home = (props) => {
                     </Space>
                 </StyledDatePickerContainer>
             </StyledHeaderWrapper>
-
-            {(accommodations.length > 0) && <Grid>
-                <Row>
-                    {accommodations.map((accommodation) => { <Column size={1}>{accommodation.images[0] && <CardImage src={REACT_APP_AWS_URL + accommodation.images[0].url} />}</Column> })}
-                </Row>
-            </Grid>}
             {accommodations.map(accommodation => {
                 return (
                     <StyledRoomListItem key={`accommodation[${accommodation.id}]`}>

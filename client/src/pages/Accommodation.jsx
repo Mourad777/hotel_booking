@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios'
 import { DatePicker } from 'antd'
 import moment from 'moment';
 import { isAccommodationAvailable } from '../utility/utils';
@@ -21,8 +20,9 @@ import {
 import Loader from '../components/Loader/Loader';
 import history from '../utility/history';
 import { Button } from 'antd';
+import { fetchSingleAccommodations } from '../utility/api';
 
-const { REACT_APP_AWS_URL, REACT_APP_API_URL } = process.env;
+const { REACT_APP_AWS_URL } = process.env;
 
 const validateDates = (checkin, checkout) => {
     let error;
@@ -43,11 +43,9 @@ const Accommodation = ({ match, accommodationDates, handleAccommodationDates }) 
     }, [])
 
     const getAccommodationDetails = async () => {
-        setIsLoading(true)
-        const res = await axios.get(`${REACT_APP_API_URL}/accommodations/${accommodationId}`);
-        setAccommodation(res.data);
-        setIsLoading(false)
+        await fetchSingleAccommodations(accommodationId, setAccommodation, setIsLoading)
     }
+
 
     const onDateSelect = (value) => {
         if (!value) return;
